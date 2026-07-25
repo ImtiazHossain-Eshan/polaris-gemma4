@@ -1,7 +1,3 @@
-# Polaris: A Gemma 4 North Star for Global Education
-
-## Turning a Bangladeshi student's ambition into an evidence-grounded plan they can start this week
-
 ### The problem
 
 A motivated student can search for "how to get into a top university" and receive thousands of results. That abundance is part of the problem. Requirements, scholarships, deadlines, case studies, and generic advice are scattered across sources. Students with access to experienced counselors can turn those fragments into a strategy; many students in Bangladesh cannot.
@@ -85,11 +81,3 @@ Polaris does not guarantee admission and says so explicitly. Retrieved material 
 ### What comes next
 
 We would add source freshness checks, university-specific evidence packs, Bangla voice input, calendar exports, mentor review, and outcome-based evaluation with consenting students. We also want to compare generated plans against counselor rubrics and measure whether recommendations remain feasible over time.
-
-### Links
-
-- **Live app and demo:** https://polaris-gemma4.vercel.app/demo
-- **Public repository:** https://github.com/ImtiazHossain-Eshan/polaris-gemma4
-- **Model:** Gemma 4 via the official Google Gen AI SDK
-
-Polaris turns open-model intelligence into something a student can use: a north star, a sequence of next steps, and a reason to begin now.
