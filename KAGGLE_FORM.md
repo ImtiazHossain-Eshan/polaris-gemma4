@@ -20,7 +20,7 @@ Paste the complete contents of `KAGGLE_DESCRIPTION.md`.
 
 ## Card image
 
-Upload `submission-assets/polaris-kaggle-card-560x280.png`.
+Upload `submission-assets/polaris-kaggle-card-thumbnail-v2-560x280.png`.
 
 ## Submission track
 

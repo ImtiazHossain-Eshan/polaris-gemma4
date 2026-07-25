@@ -3,7 +3,7 @@
 ## Public assets
 
 - [x] Production demo: https://polaris-gemma4.vercel.app/demo
-- [x] Kaggle card: `submission-assets/polaris-kaggle-card-560x280.png`
+- [x] Kaggle card: `submission-assets/polaris-kaggle-card-thumbnail-v2-560x280.png`
 - [x] Public repository: https://github.com/ImtiazHossain-Eshan/polaris-gemma4
 - [ ] Fresh 2-3 minute demo video: add URL here after upload
 - [x] Repository branch containing Gemma 4 competition build is public
