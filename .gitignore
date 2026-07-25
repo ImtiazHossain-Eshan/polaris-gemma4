@@ -67,4 +67,9 @@ desktop.ini
 *.zip
 *.bak
 *.tmp
+# ---- Local submission workflow notes ----
+SUBMISSION_CHECKLIST.md
+KAGGLE_FORM.md
+KAGGLE_DESCRIPTION.md
+PITCH.md
 DEMO_SCRIPT.md

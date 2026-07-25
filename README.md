@@ -1,129 +1,98 @@
-# Polaris - Gemma 4 Academic Strategist
+# Polaris
 
-> An evidence-grounded, Bangladesh-aware university admissions copilot powered exclusively by Google DeepMind's open Gemma 4 model.
+Polaris is a Gemma 4-powered academic strategy workspace for students planning international university applications. It turns a short student profile into a structured roadmap, deadline plan, and evidence-grounded guidance system.
 
-[Live application](https://polaris-gemma4.vercel.app/) / [Public judge demo](https://polaris-gemma4.vercel.app/demo) / [Public repository](https://github.com/ImtiazHossain-Eshan/polaris-gemma4) / [Kaggle writeup](./KAGGLE_WRITEUP.md)
+[Live demo](https://polaris-gemma4.vercel.app/demo) | [Repository](https://github.com/ImtiazHossain-Eshan/polaris-gemma4) | [Kaggle writeup](./KAGGLE_WRITEUP.md)
 
-## The problem
+## Overview
 
-Ambitious students in Bangladesh can find university requirements online, but turning scattered information into a realistic month-by-month strategy is difficult. Generic advice ignores academic stage, limited local access, scholarship needs, and the difference between being busy and building the signals admissions teams actually evaluate.
+Many students can find university requirements online, but still struggle to decide what to do first. Admissions pages, scholarship rules, test timelines, and profile advice are scattered across too many sources. Polaris focuses on the planning gap: it converts a student's current stage, target degree, academic position, and constraints into a plan they can act on immediately.
 
-Polaris converts a six-field student snapshot into a measurable 6-18 month roadmap. It surfaces profile gaps, retrieves relevant university and scholarship evidence, and recommends concrete actions with success metrics.
+The public demo is configured for judge review. It opens directly at `/demo`, requires no account, and exposes the product workspace without subscription or payment gates.
 
-## Why Gemma 4 is essential
+## Core Capabilities
 
-Gemma 4 is not a decorative chatbot layer. It performs the core judgment that templates cannot:
+- Personalized roadmap generation with milestones, priorities, success criteria, and honest profile gaps.
+- Roadmap-aware Strategist chat for academic planning, research direction, scholarship preparation, and weekly prioritization.
+- Deadline workspace with calendar views, urgency scoring, and task-level tracking.
+- University, resource, partner, consultant, community, and family-support views drawn from the original Polaris product experience.
+- Public model trace on Strategist responses showing the Gemma 4 model used and retrieved sources.
 
-- interprets an incomplete student profile in context;
-- reasons across academic, testing, extracurricular, skills, and application trade-offs;
-- synthesizes retrieved evidence into personalized rationales;
-- produces schema-constrained JSON that the product can render and track;
-- powers the streaming Strategist and durable memory extraction.
+## Gemma 4 Integration
 
-The server has a hard allowlist containing only:
+Gemma 4 is the only generative model used by this project. The application uses it for roadmap reasoning, Strategist responses, research synthesis, and durable student-memory extraction.
 
-- `gemma-4-26b-a4b-it` (default)
-- `gemma-4-31b-it` (optional stronger configuration)
+The model boundary is intentionally small and auditable:
 
-The registry contains one generative adapter. Client-supplied provider or model values are ignored. No other LLM or generative foundation model is used. Tavily, when configured, is retrieval only; BM25, probability scoring, and fallback planning are deterministic algorithms.
-
-## Architecture
-
-```mermaid
-flowchart LR
-  U[Student snapshot] --> V[Zod validation]
-  V --> R[BM25 retrieval]
-  K[(Curated admissions KB)] --> R
-  R --> P[Prompt + JSON schema]
-  P --> G[Gemma 4]
-  G --> J[Validated roadmap JSON]
-  J --> D[Interactive roadmap UI]
-  U --> M[Transparent probability engine]
-  M --> D
-  T[Tavily search, optional] --> P
+```text
+Student profile
+  -> request validation
+  -> deterministic BM25 retrieval
+  -> Gemma 4 prompt and schema
+  -> validated roadmap data
+  -> interactive Polaris workspace
 ```
 
-The competition boundary lives in [`lib/llm/gemma.ts`](./lib/llm/gemma.ts), the sole streaming adapter in [`lib/llm/providers/gemma.ts`](./lib/llm/providers/gemma.ts), and the enforced router in [`lib/llm/router.ts`](./lib/llm/router.ts).
+The server allowlists the Gemma 4 model IDs in `lib/llm/gemma.ts`, registers a single generative provider in `lib/llm/providers/gemma.ts`, and routes requests through `lib/llm/router.ts`. Client-supplied provider values are ignored. Retrieval, probability scoring, and offline fallback planning are deterministic support systems, not replacement language models.
 
-## What works
+## Repository Structure
 
-1. **Public all-access workspace** - `/demo` exposes every user-facing area without authentication, subscription gates, or checkout.
-2. **Structured roadmap generation** - 8-12 milestones, honest gaps, priorities, rationales, and measurable outcomes.
-3. **Evidence grounding** - deterministic BM25 retrieval over curated university, scholarship, admissions, and case-study documents.
-4. **Grounded Strategist** - public roadmap-aware advice plus the full authenticated streaming experience, both powered by Gemma 4.
-5. **Inspectable model trace** - the demo exposes the exact model ID, thinking level, retrieval method, and source policy.
-6. **Offline resilience** - if the API is unavailable, a clearly labeled deterministic planner keeps the prototype demonstrable; it is never presented as model output.
-7. **Interactive product breadth** - progress, deadlines, university fit and comparison, resources, connections, partners, consultants, community, family, bookings, access ledger, and settings.
+```text
+app/demo/                    Public all-access demo workspace
+app/api/demo/                Public roadmap and Strategist endpoints
+app/api/roadmap/             Authenticated roadmap endpoint
+components/                  Product interface components
+lib/llm/                     Gemma 4 integration and routing boundary
+lib/rag/                     Deterministic BM25 retrieval
+lib/ml/                      Transparent probability scoring
+lib/roadmap/                 Roadmap schema, generation, and state logic
+data/                        Curated admissions and scholarship evidence
+docs/ARCHITECTURE.md         Technical architecture notes
+KAGGLE_WRITEUP.md            Official project writeup
+submission-assets/           Public Kaggle card and thumbnail assets
+```
 
-## Run locally
+## Running Locally
 
-Requirements: Node.js 20+, pnpm 11+, and a Google AI Studio API key with Gemma 4 access.
+Requirements:
+
+- Node.js 20+
+- pnpm 11+
+- Google AI Studio API key with Gemma 4 access
 
 ```bash
 pnpm install
 cp .env.local.example .env.local
-# Set GEMMA_API_KEY in .env.local
 pnpm dev
 ```
 
-Open `http://localhost:3000/demo` for the public competition workspace. It begins with a complete plan; live generation is optional. Every navigation destination under `/demo/*` is usable without an account.
+Set `GEMMA_API_KEY` in `.env.local`, then open `http://localhost:3000/demo`.
 
-The authenticated workspace additionally requires `MONGODB_URI` and `NEXTAUTH_SECRET`. See `.env.local.example` for the complete list.
+The authenticated workspace also uses MongoDB and NextAuth configuration. The public demo route is the recommended review path because it does not require account setup.
 
-### Environment variables
+## Environment Variables
 
 | Variable | Required | Purpose |
-|---|---:|---|
-| `GEMMA_API_KEY` | For AI output | Server-side Google AI Studio credential |
-| `GEMMA_MODEL` | No | One of the two whitelisted Gemma 4 IDs |
-| `TAVILY_API_KEY` | No | Non-generative public web retrieval |
-| `MONGODB_URI` | Workspace only | Profiles, roadmaps, threads, and progress |
-| `NEXTAUTH_SECRET` | Workspace only | Authentication session security |
+| --- | --- | --- |
+| `GEMMA_API_KEY` | Yes for live model output | Server-side Google AI Studio credential |
+| `GEMMA_MODEL` | Optional | Gemma 4 model override from the server allowlist |
+| `TAVILY_API_KEY` | Optional | Non-generative public web retrieval |
+| `MONGODB_URI` | Authenticated workspace | Profile, roadmap, thread, and progress storage |
+| `NEXTAUTH_SECRET` | Authenticated workspace | Session security |
 
-## Verification
+## Validation
 
 ```bash
 pnpm exec tsc --noEmit
 pnpm build
 ```
 
-Both commands pass in the competition branch. The production build includes the full `/demo/*` workspace plus public, rate-limited roadmap and Strategist endpoints.
+The competition branch has been validated with both commands. The production deployment is available at `https://polaris-gemma4.vercel.app/demo`.
 
-## Repository map
+## Responsible Use
 
-```text
-app/demo/                    Public all-access judge workspace
-app/api/demo/                Rate-limited roadmap + Strategist APIs
-app/api/roadmap/             Authenticated roadmap API
-lib/llm/gemma.ts             Gemma 4 allowlist + structured generation
-lib/llm/providers/gemma.ts   Sole streaming model adapter
-lib/llm/router.ts            Server-enforced Gemma-only routing
-lib/rag/search.ts            Deterministic BM25 retrieval
-lib/ml/probability.ts        Transparent non-generative scoring
-data/                        Curated admissions evidence
-docs/ARCHITECTURE.md         Technical design and compliance boundary
-KAGGLE_WRITEUP.md            Submission-ready report
-```
+Polaris provides planning support, not admissions guarantees. Probability estimates are directional and based on transparent academic and activity factors. Recommendations should be checked against official university and scholarship sources before a student makes high-stakes decisions.
 
-## Responsible design
+## Hackathon Context
 
-- Advice is guidance, never a guarantee of admission.
-- Probability estimates use transparent academic and activity factors, not demographic attributes.
-- The public endpoint is validated and rate-limited.
-- API keys remain server-side.
-- Retrieved evidence is shown so recommendations are inspectable.
-- Deterministic fallbacks are explicitly labeled and never impersonate Gemma 4.
-
-## Technology
-
-Next.js 15 / React 19 / TypeScript / Tailwind CSS / `@google/genai` / Gemma 4 / Zod / MongoDB / NextAuth / BM25 retrieval
-
-## Official Gemma references
-
-- [Run Gemma with the Gemini API](https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api)
-- [Gemma 4 model overview](https://ai.google.dev/gemma/docs/core)
-- [Gemma 4 model card](https://ai.google.dev/gemma/docs/core/model_card_4)
-
-## Team
-
-Built by Imtiaz Hossain Eshan for the Build with Gemma 4 Community Hackathon, Bangladesh.
+Built by Imtiaz Hossain Eshan for the Build with Gemma: ML, AI, Deep Learning & NLP Community Hackathon in Bangladesh.
