@@ -41,19 +41,24 @@ type Props = {
   /** Called when the user starts/finishes a drag — for transition control. */
   onResizeStart: () => void;
   onResizeEnd: () => void;
+  demo?: boolean;
 };
 
 export function ChatHistoryRail({
   activeId, onSelect, onNew, collapsed, onToggleCollapse, reloadKey,
-  width, onResize, resizing, onResizeStart, onResizeEnd,
+  width, onResize, resizing, onResizeStart, onResizeEnd, demo = false,
 }: Props) {
-  const [threads, setThreads] = useState<ThreadSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [threads, setThreads] = useState<ThreadSummary[]>(demo ? [{
+    id: "demo-conversation", title: "Why am I at 41% for MIT?", messageCount: 2,
+    lastMessageAt: new Date().toISOString(), createdAt: new Date().toISOString(),
+  }] : []);
+  const [loading, setLoading] = useState(!demo);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftTitle, setDraftTitle] = useState("");
 
   const load = useCallback(async () => {
+    if (demo) return;
     setLoading(true);
     try {
       const res = await fetch("/api/chat/threads", { cache: "no-store" });
@@ -64,7 +69,7 @@ export function ChatHistoryRail({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [demo]);
 
   useEffect(() => { void load(); }, [load, reloadKey]);
 
@@ -73,7 +78,7 @@ export function ChatHistoryRail({
     if (!trimmed) { setEditingId(null); return; }
     setThreads((prev) => prev.map((t) => t.id === id ? { ...t, title: trimmed } : t));
     setEditingId(null);
-    await fetch(`/api/chat/threads/${id}`, {
+    if (!demo) await fetch(`/api/chat/threads/${id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ title: trimmed }),
@@ -83,7 +88,7 @@ export function ChatHistoryRail({
   async function remove(id: string) {
     if (!confirm("Delete this conversation? This cannot be undone.")) return;
     setThreads((prev) => prev.filter((t) => t.id !== id));
-    await fetch(`/api/chat/threads/${id}`, { method: "DELETE" }).catch(() => { /* ignore */ });
+    if (!demo) await fetch(`/api/chat/threads/${id}`, { method: "DELETE" }).catch(() => { /* ignore */ });
     if (activeId === id) onNew();
   }
 

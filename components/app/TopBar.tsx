@@ -38,9 +38,14 @@ const TITLES: Record<string, { eyebrow: string; title: string }> = {
   settings:     { eyebrow: "Account",   title: "Settings" },
 };
 
-export function TopBar() {
+type TopBarProps = {
+  basePath?: string;
+  demoUser?: { name: string; email: string; plan: "free" | "pro" | "elite" };
+};
+
+export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
   const path = usePathname();
-  const id = path.split("/")[1] || "roadmap";
+  const id = basePath ? (path.split("/")[2] || "roadmap") : (path.split("/")[1] || "roadmap");
   const t = TITLES[id] ?? TITLES.roadmap;
   const [search, setSearch] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
@@ -49,9 +54,9 @@ export function TopBar() {
   const { theme, toggle: toggleTheme } = useTheme();
   const { events } = useRoadmapStrategist();
 
-  const name = session?.user?.name ?? "";
-  const email = session?.user?.email ?? "";
-  const plan = (session?.user?.plan as "free" | "pro" | "elite") ?? "free";
+  const name = demoUser?.name ?? session?.user?.name ?? "";
+  const email = demoUser?.email ?? session?.user?.email ?? "";
+  const plan = demoUser?.plan ?? (session?.user?.plan as "free" | "pro" | "elite") ?? "free";
   const initials =
     name.split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? "").join("") || "P";
   const planTone = plan === "elite" ? "aurora" : plan === "pro" ? "polaris" : "ink";
@@ -60,22 +65,24 @@ export function TopBar() {
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   useEffect(() => {
     let alive = true;
-    fetch("/api/account", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (alive && d?.account?.avatarUrl) setAvatarUrl(d.account.avatarUrl); })
-      .catch(() => {});
+    if (!demoUser) {
+      fetch("/api/account", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (alive && d?.account?.avatarUrl) setAvatarUrl(d.account.avatarUrl); })
+        .catch(() => {});
+    }
     function onAvatar(e: Event) {
       setAvatarUrl((e as CustomEvent<{ url: string }>).detail?.url ?? "");
     }
     window.addEventListener("polaris:avatarUpdated", onAvatar);
     return () => { alive = false; window.removeEventListener("polaris:avatarUpdated", onAvatar); };
-  }, []);
+  }, [demoUser]);
 
   // Profile completion — lazy-loaded the first time the menu opens, using the
   // same getMissingFields logic the /account page renders.
-  const [completion, setCompletion] = useState<number | null>(null);
+  const [completion, setCompletion] = useState<number | null>(demoUser ? 100 : null);
   useEffect(() => {
-    if (!profileOpen || completion !== null) return;
+    if (demoUser || !profileOpen || completion !== null) return;
     let alive = true;
     Promise.all([
       fetch("/api/account").then((r) => (r.ok ? r.json() : null)),
@@ -88,7 +95,7 @@ export function TopBar() {
       })
       .catch(() => { if (alive) setCompletion(100); });
     return () => { alive = false; };
-  }, [profileOpen, completion]);
+  }, [profileOpen, completion, demoUser]);
 
   // Strategist insight count — store events from this session.
   const insightCount = events.length;
@@ -155,12 +162,12 @@ export function TopBar() {
         </label>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-          <button className="hidden md:inline-flex h-8 px-3 rounded-lg text-[13px] font-medium items-center gap-1.5 bg-white/[0.06] ring-1 ring-inset ring-white/[0.10] text-paper hover:bg-white/[0.10] hover:-translate-y-px transition-all">
+                    <Link href={basePath || "/roadmap"} className="hidden md:inline-flex h-8 px-3 rounded-lg text-[13px] font-medium items-center gap-1.5 bg-white/[0.06] ring-1 ring-inset ring-white/[0.10] text-paper hover:bg-white/[0.10] hover:-translate-y-px transition-all">
             New task
-          </button>
-          <button className="hidden lg:inline-flex h-8 px-3 rounded-lg text-[13px] font-medium items-center gap-1.5 text-paper/75 hover:bg-white/[0.06] hover:text-paper transition-colors">
+          </Link>
+                    <Link href={basePath || "/roadmap"} className="hidden lg:inline-flex h-8 px-3 rounded-lg text-[13px] font-medium items-center gap-1.5 text-paper/75 hover:bg-white/[0.06] hover:text-paper transition-colors">
             Replan
-          </button>
+          </Link>
           <div className="hidden md:block h-6 w-px bg-white/[0.10] mx-1" />
 
           {/* theme toggle */}
@@ -280,7 +287,7 @@ export function TopBar() {
                             />
                           </div>
                           {completion < 100 && (
-                            <Link href="/account" onClick={() => setProfileOpen(false)}
+                            <Link href={basePath ? `${basePath}/settings` : "/account"} onClick={() => setProfileOpen(false)}
                               className="mt-1.5 inline-block text-[10.5px] font-semibold text-polaris-600 dark:text-polaris-300 hover:underline">
                               Complete your profile →
                             </Link>
@@ -292,10 +299,10 @@ export function TopBar() {
 
                   {/* links */}
                   <ul className="py-1.5">
-                    <MenuLink href="/account" onClick={() => setProfileOpen(false)} icon={<UserGlyph />}>Account</MenuLink>
-                    <MenuLink href="/settings" onClick={() => setProfileOpen(false)} icon={<CogGlyph />}>Settings</MenuLink>
-                    <MenuLink href="/billing" onClick={() => setProfileOpen(false)} icon={<CardGlyph />}>Billing &amp; plan</MenuLink>
-                    <MenuLink href="/transactions" onClick={() => setProfileOpen(false)} icon={<ReceiptGlyph />}>Transactions</MenuLink>
+                    <MenuLink href={basePath ? `${basePath}/settings` : "/account"} onClick={() => setProfileOpen(false)} icon={<UserGlyph />}>Account</MenuLink>
+                    <MenuLink href={`${basePath}/settings`} onClick={() => setProfileOpen(false)} icon={<CogGlyph />}>Settings</MenuLink>
+                    <MenuLink href={`${basePath}/billing`} onClick={() => setProfileOpen(false)} icon={<CardGlyph />}>Billing &amp; plan</MenuLink>
+                    <MenuLink href={`${basePath}/transactions`} onClick={() => setProfileOpen(false)} icon={<ReceiptGlyph />}>Transactions</MenuLink>
                     <li>
                       <button
                         onClick={openStreak}
@@ -311,12 +318,13 @@ export function TopBar() {
                     <button
                       onClick={() => {
                         setProfileOpen(false);
-                        signOut({ callbackUrl: "/" });
+                        if (demoUser) window.location.href = "/";
+                        else signOut({ callbackUrl: "/" });
                       }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] text-rose-600 dark:text-rose-300 hover:bg-rose-500/[0.07] transition-colors"
                       role="menuitem"
                     >
-                      <LogoutGlyph /> Sign out
+                      <LogoutGlyph /> {demoUser ? "Exit demo" : "Sign out"}
                     </button>
                   </div>
                 </motion.div>

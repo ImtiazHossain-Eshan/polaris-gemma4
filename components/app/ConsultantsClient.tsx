@@ -58,11 +58,13 @@ type BookingState =
   | { step: "done"; free: boolean };
 
 export function ConsultantsClient({
-  consultants, matches, initialOpenId,
+  consultants, matches, initialOpenId, demo = false, basePath = "",
 }: {
   consultants: ConsultantView[];
   matches: ConsultantMatch[];
   initialOpenId: string | null;
+  demo?: boolean;
+  basePath?: string;
 }) {
   const [openId, setOpenId] = useState<string | null>(initialOpenId);
   const [serviceFilter, setServiceFilter] = useState<ServiceKey | "all">("all");
@@ -110,7 +112,7 @@ export function ConsultantsClient({
             </p>
           </div>
           <Link
-            href="/bookings"
+            href={`${basePath}/bookings`}
             className="rounded-full bg-paper-card ring-1 ring-inset ring-polaris-500/15 dark:ring-white/[0.12] px-4 py-2 text-[12.5px] font-semibold text-ink hover:bg-paper-soft transition-colors"
           >
             My bookings →
@@ -120,8 +122,8 @@ export function ConsultantsClient({
         {/* Free-resources-first + disclosure */}
         <div className="mt-4 rounded-2xl bg-aurora-50 dark:bg-aurora-400/10 ring-1 ring-inset ring-aurora-400/30 px-4 py-3 text-[12.5px] text-aurora-700 dark:text-aurora-100 leading-relaxed">
           <span className="font-semibold">Free first:</span> many questions are answered by the{" "}
-          <Link href="/resources" className="underline underline-offset-2 font-semibold">knowledge hub</Link>{" "}
-          and the <Link href="/community" className="underline underline-offset-2 font-semibold">community</Link> at no cost.
+          <Link href={`${basePath}/resources`} className="underline underline-offset-2 font-semibold">knowledge hub</Link>{" "}
+          and the <Link href={`${basePath}/community`} className="underline underline-offset-2 font-semibold">community</Link> at no cost.
           Book a consultant when you want dedicated, personal time.
         </div>
       </motion.div>
@@ -214,7 +216,7 @@ export function ConsultantsClient({
 
       {/* ── Profile + booking modal ── */}
       <AnimatePresence>
-        {open && <ProfileModal c={open} onClose={() => setOpenId(null)} />}
+        {open && <ProfileModal c={open} onClose={() => setOpenId(null)} demo={demo} basePath={basePath} />}
       </AnimatePresence>
     </div>
   );
@@ -344,7 +346,7 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
 
 /* ═══ Profile + booking modal ═══ */
 
-function ProfileModal({ c, onClose }: { c: ConsultantView; onClose: () => void }) {
+function ProfileModal({ c, onClose, demo = false, basePath = "" }: { c: ConsultantView; onClose: () => void; demo?: boolean; basePath?: string }) {
   const [service, setService] = useState<ServiceKey>(c.services[0]);
   const [type, setType] = useState<ConsultationType>(c.types[0]);
   const [slot, setSlot] = useState<string | null>(null);
@@ -374,6 +376,7 @@ function ProfileModal({ c, onClose }: { c: ConsultantView; onClose: () => void }
     setBusy(true);
     setError(null);
     try {
+      if (demo) { setState({ step: "done", free: true }); return; }
       const r = await fetch("/api/consultants/bookings", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -481,7 +484,7 @@ function ProfileModal({ c, onClose }: { c: ConsultantView; onClose: () => void }
                 {slot && new Date(slot).toLocaleString("en-GB", { weekday: "long", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                 {" · "}{CONSULTATION_TYPE_META[type].label} with {c.name}
               </p>
-              <Link href="/bookings" className="mt-4 inline-flex rounded-full bg-ink text-paper px-5 py-2.5 text-[12.5px] font-semibold hover:bg-polaris-700 transition-colors">
+              <Link href={`${basePath}/bookings`} className="mt-4 inline-flex rounded-full bg-ink text-paper px-5 py-2.5 text-[12.5px] font-semibold hover:bg-polaris-700 transition-colors">
                 View my bookings →
               </Link>
             </motion.div>

@@ -80,10 +80,11 @@ function isValidTab(v: string | null): v is SettingsSectionId {
 
 export function SettingsShell({
   sections,
-  snapshot,
+  snapshot, basePath = "",
 }: {
   sections: Partial<Record<SettingsSectionId, React.ReactNode>>;
   snapshot: React.ReactNode;
+  basePath?: string;
 }) {
   const router = useRouter();
   const search = useSearchParams();
@@ -95,9 +96,9 @@ export function SettingsShell({
     const next = new URLSearchParams(Array.from(search.entries()));
     if (next.get("tab") === active) return;
     next.set("tab", active);
-    router.replace(`/settings?${next.toString()}`, { scroll: false });
+    router.replace(`${basePath || "/settings"}?${next.toString()}`, { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  }, [active, basePath]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-5">

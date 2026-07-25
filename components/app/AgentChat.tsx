@@ -26,6 +26,7 @@ type Props = {
   studentInitials: string;
   pathLabel: string;
   contextChips?: string[];
+  demo?: boolean;
 };
 
 const STORAGE_KEY = "polaris.strategist.thread";
@@ -54,6 +55,17 @@ type ProviderInfo = {
 
 type ModelChoice = { providerId: string; modelId: string } | "auto";
 
+const DEMO_PROVIDERS: ProviderInfo[] = [{
+  id: "gemma",
+  name: "Gemma 4",
+  defaultTier: "free",
+  configured: true,
+  models: [
+    { id: "gemma-4-26b-a4b-it", label: "Gemma 4 26B", tier: "free" },
+    { id: "gemma-4-31b-it", label: "Gemma 4 31B", tier: "free" },
+  ],
+}];
+
 const MODES: Array<{ id: Mode; label: string }> = [
   { id: "general",  label: "General"  },
   { id: "research", label: "Research" },
@@ -61,7 +73,7 @@ const MODES: Array<{ id: Mode; label: string }> = [
   { id: "coding",   label: "Coding"   },
 ];
 
-export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Props) {
+export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo = false }: Props) {
   // Start empty on both server and client — sessionStorage can't be read
   // during SSR, so initializing from it desyncs hydration. The cached thread
   // is restored in the effect just below (declared before the persist effect
@@ -142,6 +154,12 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
     } catch { /* ignore */ }
 
     let cancelled = false;
+    if (demo) {
+      prefLoadedRef.current = true;
+      setProviders(DEMO_PROVIDERS);
+      setModel("auto");
+      return () => { cancelled = true; };
+    }
     fetch("/api/account/model-pref", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -157,7 +175,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
       .catch(() => { /* offline/unauthenticated — local state stands */ })
       .finally(() => { if (!cancelled) prefLoadedRef.current = true; });
     return () => { cancelled = true; };
-  }, []);
+  }, [demo]);
   useEffect(() => { localStorage.setItem(MODEL_KEY, model === "auto" ? "auto" : JSON.stringify(model)); }, [model]);
   useEffect(() => { localStorage.setItem(MODE_KEY, mode); }, [mode]);
   useEffect(() => { localStorage.setItem(ROUTE_MODE_KEY, routeMode); }, [routeMode]);
@@ -167,7 +185,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
   // Write-through: debounce-save the preference server-side so it persists
   // across devices and steers server jobs (roadmap generation, replans).
   useEffect(() => {
-    if (!prefLoadedRef.current) return;
+    if (demo || !prefLoadedRef.current) return;
     const t = setTimeout(() => {
       void fetch("/api/account/model-pref", {
         method: "PUT",
@@ -181,17 +199,21 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
       }).catch(() => { /* best-effort */ });
     }, 600);
     return () => clearTimeout(t);
-  }, [model, routeMode, allowPaid, offline]);
+  }, [model, routeMode, allowPaid, offline, demo]);
 
   // Fetch the single server-enforced Gemma 4 provider.
   const refreshProviders = useCallback(async () => {
+    if (demo) {
+      setProviders(DEMO_PROVIDERS);
+      return;
+    }
     try {
       const r = await fetch("/api/providers", { cache: "no-store" });
       if (!r.ok) return;
       const data = await r.json();
       if (data?.providers) setProviders(data.providers as ProviderInfo[]);
     } catch { /* ignore */ }
-  }, []);
+  }, [demo]);
 
   useEffect(() => {
     if (!open) return;
@@ -260,6 +282,12 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
   const applyInsight = useCallback(async (reason: string) => {
     setApplyBusy(true);
     try {
+      if (demo) {
+        roadmapStore.emit("STRATEGIST_RECOMMENDATION_APPLIED", `Demo recommendation: ${reason.slice(0, 120)}`);
+        setApplied("Preview applied to this browser session.");
+        setTimeout(() => setApplied(null), 8000);
+        return;
+      }
       const r = await fetch("/api/roadmap/v2/adapt", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -276,7 +304,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
     } finally {
       setApplyBusy(false);
     }
-  }, []);
+  }, [demo]);
   useEffect(() => {
     const v = parseInt(localStorage.getItem(WIDTH_KEY) ?? "", 10);
     if (Number.isFinite(v) && v >= MIN_RAIL_WIDTH && v <= MAX_RAIL_WIDTH) {
@@ -310,6 +338,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
   const loadedThreadRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (demo) return;
     const id = localStorage.getItem(ACTIVE_THREAD_KEY) || null;
     threadIdRef.current = id;
     if (!id || loadedThreadRef.current === id) return;
@@ -332,10 +361,11 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
       })
       .catch(() => { /* thread may have been deleted — keep local cache */ });
     return () => { cancelled = true; };
-  }, [pathnameForSync]);
+  }, [pathnameForSync, demo]);
 
   /** Create (or reuse) the shared thread; returns its id. */
   const ensureThread = useCallback(async (firstUserText: string): Promise<string | null> => {
+    if (demo) return null;
     if (threadIdRef.current) return threadIdRef.current;
     try {
       const title = firstUserText.length > 60 ? firstUserText.slice(0, 57) + "…" : firstUserText;
@@ -356,7 +386,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
     } catch {
       return null;
     }
-  }, []);
+  }, [demo]);
 
   const persistMessage = useCallback(async (
     tid: string,
@@ -364,7 +394,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
     text: string,
     sources?: StrategistSource[],
   ) => {
-    if (!text.trim()) return;
+    if (demo || !text.trim()) return;
     try {
       await fetch(`/api/chat/threads/${tid}/messages`, {
         method: "POST",
@@ -372,7 +402,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
         body: JSON.stringify({ role, text, ...(sources?.length ? { sources } : {}), mode }),
       });
     } catch { /* best-effort */ }
-  }, [mode]);
+  }, [mode, demo]);
 
   const send = useCallback(async (override?: string) => {
     const text = (override ?? draft).trim();
@@ -398,6 +428,29 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     try {
+      if (demo) {
+        setThinking("Consulting Gemma 4…");
+        const response = await fetch("/api/demo/strategist", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            section: pathnameForSync.split("/")[2] || "roadmap",
+            roadmapSummary: JSON.stringify(strategistContextPayload(roadmapStore.get())),
+          }),
+          signal: ctrl.signal,
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data?.error || "The Strategist is temporarily unavailable.");
+        const sources: StrategistSource[] = (data.sources || []).map((source: { title?: string; source?: string }) => ({
+          label: source.title || "Polaris knowledge base",
+          uri: "#",
+          kind: "kb" as const,
+        }));
+        setMessages((items) => withLastAgent(items, (message) => ({ ...message, text: data.text, sources })));
+        setRouteInfo({ provider: "Gemma 4", model: data.trace?.model || "Gemma 4", reason: "Competition demo route" });
+        return;
+      }
       const body: Record<string, unknown> = {
         message: text,
         mode,
@@ -494,14 +547,14 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [] }: Pro
       setThinking(null);
       abortRef.current = null;
     }
-  }, [draft, streaming, mode, model, routeMode, offline, allowPaid, ensureThread, persistMessage]);
+  }, [draft, streaming, mode, model, routeMode, offline, allowPaid, ensureThread, persistMessage, demo, pathnameForSync]);
 
   function stop() { abortRef.current?.abort(); }
 
   // The /strategist page already hosts the full-feature chat in the main
   // canvas — don't duplicate it as a right rail there.
   const pathname = usePathname();
-  if (pathname === "/strategist") return null;
+  if (pathname === "/strategist" || pathname === "/demo/strategist") return null;
 
   if (!open) return null;
 

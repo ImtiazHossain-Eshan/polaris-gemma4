@@ -39,7 +39,7 @@ const STATUS_META: Record<BookingView["status"], { label: string; cls: string }>
   completed:       { label: "Completed",       cls: "bg-polaris-100 text-polaris-700 ring-polaris-300 dark:bg-polaris-400/20 dark:text-polaris-100" },
 };
 
-export function BookingsClient({ initial }: { initial: BookingView[] }) {
+export function BookingsClient({ initial, demo = false, basePath = "" }: { initial: BookingView[]; demo?: boolean; basePath?: string }) {
   const [bookings, setBookings] = useState(initial);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -57,6 +57,7 @@ export function BookingsClient({ initial }: { initial: BookingView[] }) {
   async function cancel(b: BookingView) {
     setBusyId(b.id);
     try {
+      if (demo) { setBookings((cur) => cur.map((x) => x.id === b.id ? { ...x, status: "cancelled" } : x)); setToast("Booking cancelled in demo mode."); return; }
       const r = await fetch(`/api/consultants/bookings/${b.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
@@ -112,7 +113,7 @@ export function BookingsClient({ initial }: { initial: BookingView[] }) {
               Your <span className="grad-text">bookings</span>
             </h1>
           </div>
-          <Link href="/consultants" className="rounded-full bg-ink text-paper px-4 py-2 text-[12.5px] font-semibold hover:bg-polaris-700 transition-colors">
+          <Link href={`${basePath}/consultants`} className="rounded-full bg-ink text-paper px-4 py-2 text-[12.5px] font-semibold hover:bg-polaris-700 transition-colors">
             Find a consultant →
           </Link>
         </div>

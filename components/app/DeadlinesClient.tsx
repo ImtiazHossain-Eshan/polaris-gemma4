@@ -149,9 +149,10 @@ function fmtDate(date: string): string {
 
 /* ════════════════════════════════════════════════════════════════════════ */
 
-export function DeadlinesClient({ initial }: { initial: UiDeadline[] }) {
+export function DeadlinesClient({ initial, demo = false }: { initial: UiDeadline[]; demo?: boolean }) {
+  void demo;
   const [items, setItems] = useState<UiDeadline[]>(initial);
-  const [view, setView] = useState<View>("agenda");
+  const [view, setView] = useState<View>(demo ? "month" : "agenda");
   const [openId, setOpenId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState<string | null>(null); // prefill date
   const [monthAnchor, setMonthAnchor] = useState(() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); });

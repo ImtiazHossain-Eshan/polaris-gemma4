@@ -26,13 +26,16 @@ type Props = {
   studentGrade: string;
   paths: PathSummary[];
   activePathId: string;
+  basePath?: string;
+  demo?: boolean;
 };
 
 export function LeftNav({
   plan, studentName, studentInitials, studentGrade, paths, activePathId,
+  basePath = "", demo = false,
 }: Props) {
   const pathname = usePathname();
-  const activeId = pathname.split("/")[1];
+  const activeId = basePath ? (pathname.split("/")[2] || "roadmap") : pathname.split("/")[1];
 
   // Mobile drawer state — below lg the nav slides over the content.
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -79,7 +82,7 @@ export function LeftNav({
     >
       {/* Logo */}
       <div className="px-4 pt-5 pb-3 flex items-center gap-2.5">
-        <Link href="/roadmap" className="flex items-center gap-2.5">
+        <Link href={basePath || "/roadmap"} className="flex items-center gap-2.5">
           <div className="h-7 w-7 rounded-full bg-paper text-ink flex items-center justify-center">
             <PolarisStar/>
           </div>
@@ -90,20 +93,20 @@ export function LeftNav({
 
       {/* Path switcher — inline, so the nav sections below flow naturally. */}
       <div className="px-3 pb-3">
-        <PathSwitcher paths={paths} activePathId={activePathId} />
+        <PathSwitcher paths={paths} activePathId={activePathId} basePath={basePath} />
       </div>
 
       {/* Main nav */}
       <nav className="flex-1 px-2.5 overflow-y-auto">
         <Section title="Workspace">
-          {NAV.map(item => <Item key={item.id} item={item} activeId={activeId} plan={plan}/>)}
+          {NAV.map(item => <Item key={item.id} item={item} activeId={activeId} plan={plan} basePath={basePath}/>)}
         </Section>
         <Section title="Account" topMargin>
-          {NAV_FOOTER.map(item => <Item key={item.id} item={item} activeId={activeId} plan={plan} small/>)}
+          {NAV_FOOTER.map(item => <Item key={item.id} item={item} activeId={activeId} plan={plan} basePath={basePath} small/>)}
         </Section>
 
         {/* Streak card — real data via /api/streak, earned by meaningful work */}
-        <StreakWidget />
+        <StreakWidget demo={demo} />
       </nav>
 
       {/* User */}
@@ -115,7 +118,7 @@ export function LeftNav({
           <div className="text-[13px] font-semibold text-paper truncate">{studentName}</div>
           <div className="text-[11px] text-paper/55 truncate">{studentGrade}</div>
         </div>
-        <Link href="/settings" className="text-paper/55 hover:text-paper p-1.5 transition-colors" aria-label="Settings">
+        <Link href={`${basePath}/settings`} className="text-paper/55 hover:text-paper p-1.5 transition-colors" aria-label="Settings">
           <Cog/>
         </Link>
       </div>
@@ -133,13 +136,13 @@ function Section({ title, children, topMargin }: { title: string; children: Reac
   );
 }
 
-function Item({ item, activeId, plan, small }: { item: NavItem; activeId: string; plan: Plan; small?: boolean }) {
+function Item({ item, activeId, plan, basePath, small }: { item: NavItem; activeId: string; plan: Plan; basePath: string; small?: boolean }) {
   const active = activeId === item.id;
   const locked = !!item.minPlan && !planMeets(plan, item.minPlan);
   return (
     <li>
       <Link
-        href={`/${item.id}`}
+        href={item.id === "roadmap" && basePath ? basePath : `${basePath}/${item.id}`}
         aria-disabled={locked}
         onClick={e => locked && e.preventDefault()}
         className={cn(

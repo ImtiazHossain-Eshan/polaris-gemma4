@@ -15,7 +15,7 @@ import { useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
-import type { RoadmapDoc, RoadmapNode } from "@/lib/roadmap/types";
+import { nodeProgressFromTasks, recomputeStatuses, type RoadmapDoc, type RoadmapNode } from "@/lib/roadmap/types";
 import { isYouTubeId } from "@/lib/roadmap/resources";
 import { roadmapStore, nodeTip } from "@/lib/roadmap/store";
 
@@ -25,12 +25,13 @@ const TYPE_LABEL: Record<RoadmapNode["type"], string> = {
 };
 
 export function RoadmapNodeModal({
-  doc, nodeId, onClose, onDocUpdated,
+  doc, nodeId, onClose, onDocUpdated, demo = false,
 }: {
   doc: RoadmapDoc;
   nodeId: string;
   onClose: () => void;
   onDocUpdated: (doc: RoadmapDoc, adaptation?: string | null) => void;
+  demo?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -62,6 +63,29 @@ export function RoadmapNodeModal({
   async function patch(body: Record<string, unknown>, key: string) {
     setBusy(key);
     try {
+      if (demo) {
+        const next = structuredClone(doc) as RoadmapDoc;
+        const nextNode = next.branches.flatMap((item) => item.nodes).find((item) => item.id === node.id);
+        if (!nextNode) return false;
+        if (typeof body.toggleTask === "string") {
+          const task = nextNode.tasks.find((item) => item.id === body.toggleTask);
+          if (task) task.done = !task.done;
+          nextNode.progress = nodeProgressFromTasks(nextNode.tasks);
+        }
+        if (typeof body.note === "string") nextNode.notes.push({ id: crypto.randomUUID(), text: body.note, at: new Date() });
+        if (body.score && typeof body.score === "object") {
+          const score = body.score as { key: string; value: number };
+          next.scores.push({ key: score.key, label: score.key, value: score.value, max: 1600, nodeId: nextNode.id, at: new Date() });
+        }
+        if (body.markDone) { nextNode.status = "done"; nextNode.progress = 100; nextNode.completedAt = new Date(); }
+        next.updatedAt = new Date();
+        recomputeStatuses(next);
+        onDocUpdated(next);
+        roadmapStore.setDoc(next);
+        if (body.markDone) roadmapStore.emit("ROADMAP_NODE_COMPLETED", `Completed "${node.title}"`, node.id);
+        else if (body.toggleTask) roadmapStore.emit("TASK_MARKED_DONE", `Updated checklist on "${node.title}"`, node.id);
+        return true;
+      }
       const r = await fetch(`/api/roadmap/v2/node/${node.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },

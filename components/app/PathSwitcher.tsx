@@ -15,9 +15,11 @@ import { cn } from "@/lib/cn";
 export function PathSwitcher({
   paths,
   activePathId,
+  basePath = "",
 }: {
   paths: PathSummary[];
   activePathId: string;
+  basePath?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [, startTransition] = useTransition();
@@ -92,7 +94,7 @@ export function PathSwitcher({
           ))}
           <div className="h-px bg-polaris-500/10 my-1.5"/>
           <Link
-            href="/roadmap"
+            href={basePath || "/roadmap"}
             className="w-full text-left rounded-lg px-2.5 py-2 hover:bg-paper-soft flex items-center gap-2 text-polaris-500 text-[13px] font-medium"
           >
             <Plus/> Create new path…

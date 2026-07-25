@@ -52,7 +52,7 @@ const STATUS_META: Record<string, { label: string; chip: string; dot: string }> 
 
 type Filter = "all" | "connected" | "available" | "coming_soon" | IntegrationCategory;
 
-export function ConnectionsClient({ initial }: { initial: HubEntryDto[] }) {
+export function ConnectionsClient({ initial, demo = false }: { initial: HubEntryDto[]; demo?: boolean }) {
   const [entries, setEntries] = useState<HubEntryDto[]>(initial);
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
@@ -76,6 +76,7 @@ export function ConnectionsClient({ initial }: { initial: HubEntryDto[] }) {
   }, []);
 
   async function refresh() {
+    if (demo) return;
     const r = await fetch("/api/integrations", { cache: "no-store" });
     if (r.ok) {
       const d = await r.json();
@@ -209,7 +210,12 @@ export function ConnectionsClient({ initial }: { initial: HubEntryDto[] }) {
             key={open.def.id}
             e={open}
             onClose={() => setOpenId(null)}
-            onChanged={async (msg) => { await refresh(); if (msg) setToast(msg); }}
+            onChanged={async (msg) => {
+              if (demo) setEntries((items) => items.map((item) => item.def.id === open.def.id ? { ...item, status: item.status === "connected" ? item.def.baseStatus : "connected", account: item.status === "connected" ? null : { displayName: "Demo connection" }, lastSyncAt: new Date().toISOString() } : item));
+              else await refresh();
+              if (msg) setToast(msg);
+            }}
+            demo={demo}
           />
         )}
       </AnimatePresence>
@@ -428,11 +434,12 @@ function timeAgo(iso: string): string {
 /* ─── unified modal (connect / manage / coming soon) ─── */
 
 function IntegrationModal({
-  e, onClose, onChanged,
+  e, onClose, onChanged, demo = false,
 }: {
   e: HubEntryDto;
   onClose: () => void;
   onChanged: (toast?: string) => Promise<void>;
+  demo?: boolean;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -443,6 +450,7 @@ function IntegrationModal({
 
   async function connect() {
     setErr(null);
+    if (demo) { await onChanged(`${def.name} connected in demo mode`); onClose(); return; }
     if (def.connectionMethod === "oauth") {
       window.location.href = `/api/integrations/oauth/${def.id}`;
       return;
@@ -469,6 +477,7 @@ function IntegrationModal({
   }
 
   async function sync() {
+    if (demo) { await onChanged(`${def.name} synced in demo mode`); return; }
     setBusy("sync");
     setErr(null);
     try {
@@ -483,6 +492,7 @@ function IntegrationModal({
   }
 
   async function revoke() {
+    if (demo) { await onChanged(`${def.name} disconnected`); onClose(); return; }
     if (!confirm(`Disconnect ${def.name} and delete its imported data?`)) return;
     setBusy("revoke");
     try {

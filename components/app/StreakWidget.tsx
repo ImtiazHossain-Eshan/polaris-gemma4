@@ -37,23 +37,28 @@ function dayKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function StreakWidget() {
-  const [data, setData] = useState<StreakDto | null>(null);
+export function StreakWidget({ demo = false }: { demo?: boolean }) {
+  const [data, setData] = useState<StreakDto | null>(demo ? {
+    current: 0, longest: 0, todayDone: false, days: [], todayActions: [],
+    nextMilestone: 3, earned: [], weekCount: 0,
+  } : null);
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     let alive = true;
-    fetch("/api/streak", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (alive && d) setData(d as StreakDto); })
-      .catch(() => {});
+    if (!demo) {
+      fetch("/api/streak", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (alive && d) setData(d as StreakDto); })
+        .catch(() => {});
+    }
     // The header account menu's "Day streak" item opens the detail overlay.
     function onOpen() { setOpen(true); }
     window.addEventListener("polaris:openStreak", onOpen);
     return () => { alive = false; window.removeEventListener("polaris:openStreak", onOpen); };
-  }, []);
+  }, [demo]);
 
   // Last 14 calendar days for the capsule strip.
   const daySet = new Set(data?.days ?? []);

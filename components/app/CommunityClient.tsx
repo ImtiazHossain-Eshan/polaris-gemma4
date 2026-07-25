@@ -37,10 +37,11 @@ const TONE_DOT: Record<Channel["tone"], string> = {
 };
 
 export function CommunityClient({
-  initialChannel, me,
+  initialChannel, me, demo = false,
 }: {
   initialChannel: string;
   me: { id: string; name: string; role: string };
+  demo?: boolean;
 }) {
   const [channelId, setChannelId] = useState(getChannel(initialChannel) ? initialChannel : "general");
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -70,6 +71,7 @@ export function CommunityClient({
 
   /* Initial load + poll every 5s for new messages. */
   useEffect(() => {
+    if (demo) { setLoading(false); setMessages([]); return; }
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
     setLoading(true);
@@ -122,7 +124,7 @@ export function CommunityClient({
       if (timer) clearTimeout(timer);
       clearInterval(sync);
     };
-  }, [channelId, scrollToEnd]);
+  }, [channelId, scrollToEnd, demo]);
 
   async function send() {
     const body = text.trim();
@@ -130,6 +132,12 @@ export function CommunityClient({
     setBusy(true);
     setSendErr(null);
     try {
+      if (demo) {
+        setMessages((items) => [...items, { id: crypto.randomUUID(), channel: channelId, userId: me.id, userName: me.name, authorRole: me.role, mine: true, text: body, createdAt: new Date().toISOString() }]);
+        setText("");
+        scrollToEnd();
+        return;
+      }
       const r = await fetch("/api/community/messages", {
         method: "POST",
         headers: { "content-type": "application/json" },

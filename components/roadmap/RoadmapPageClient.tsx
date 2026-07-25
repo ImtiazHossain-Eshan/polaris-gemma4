@@ -20,12 +20,15 @@ import { RoadmapTree } from "./RoadmapTree";
 import { RoadmapNodeModal } from "./RoadmapNodeModal";
 
 export function RoadmapPageClient({
-  defaultLevel, initialProfile = null,
+  defaultLevel, initialProfile = null, initialDoc, apiBase = "/api/roadmap/v2", demo = false,
 }: {
   defaultLevel: EducationLevel;
   initialProfile?: SetupInitialProfile;
+  initialDoc?: RoadmapDoc;
+  apiBase?: string;
+  demo?: boolean;
 }) {
-  const [doc, setDoc] = useState<RoadmapDoc | null | undefined>(undefined); // undefined = loading
+  const [doc, setDoc] = useState<RoadmapDoc | null | undefined>(initialDoc); // undefined = loading
   const [genBusy, setGenBusy] = useState(false);
   const [genErr, setGenErr] = useState<string | null>(null);
   const [openNodeId, setOpenNodeId] = useState<string | null>(null);
@@ -33,8 +36,12 @@ export function RoadmapPageClient({
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialDoc) {
+      roadmapStore.setDoc(initialDoc);
+      return;
+    }
     let cancelled = false;
-    fetch("/api/roadmap/v2", { cache: "no-store" })
+    fetch(apiBase, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : { doc: null }))
       .then((d) => {
         if (cancelled) return;
@@ -43,7 +50,7 @@ export function RoadmapPageClient({
       })
       .catch(() => { if (!cancelled) setDoc(null); });
     return () => { cancelled = true; };
-  }, []);
+  }, [apiBase, initialDoc]);
 
   // Adopt updates that arrive FROM the Strategist rail (Apply-to-roadmap):
   // the store is the shared channel; if its doc is newer, take it.
@@ -66,7 +73,7 @@ export function RoadmapPageClient({
     setGenBusy(true);
     setGenErr(null);
     try {
-      const r = await fetch("/api/roadmap/v2", {
+      const r = await fetch(apiBase, {
         method: "POST",
         headers: { "content-type": "application/json" },
         // profileSeed makes the first roadmap double as onboarding — the
@@ -84,7 +91,7 @@ export function RoadmapPageClient({
     } finally {
       setGenBusy(false);
     }
-  }, []);
+  }, [apiBase]);
 
   const onDocUpdated = useCallback((next: RoadmapDoc, adaptation?: string | null) => {
     setDoc(next);
@@ -160,7 +167,7 @@ export function RoadmapPageClient({
             <button
               onClick={async () => {
                 if (!confirm("Start over with a new setup? Your current tree will be replaced.")) return;
-                await fetch("/api/roadmap/v2", { method: "DELETE" });
+                if (!demo) await fetch(apiBase, { method: "DELETE" });
                 setDoc(null);
               }}
               className="rounded-full hairline bg-paper-card px-3.5 py-2 text-[12px] font-medium text-ink-dim hover:text-ink transition-colors"
@@ -216,11 +223,14 @@ export function RoadmapPageClient({
             nodeId={openNodeId}
             onClose={() => setOpenNodeId(null)}
             onDocUpdated={onDocUpdated}
+            demo={demo}
           />
         )}
         {adaptOpen && (
           <AdaptModal
             key="adapt"
+            apiBase={apiBase}
+            demo={demo}
             onClose={() => setAdaptOpen(false)}
             onDone={(next) => {
               setDoc(next);
@@ -251,10 +261,12 @@ export function RoadmapPageClient({
 
 /* ─── Adapt modal ─── */
 function AdaptModal({
-  onClose, onDone,
+  onClose, onDone, apiBase, demo,
 }: {
   onClose: () => void;
   onDone: (doc: RoadmapDoc) => void;
+  apiBase: string;
+  demo: boolean;
 }) {
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
@@ -264,7 +276,12 @@ function AdaptModal({
     setBusy(true);
     setErr(null);
     try {
-      const r = await fetch("/api/roadmap/v2/adapt", {
+      if (demo) {
+        const current = roadmapStore.get().doc;
+        if (current) onDone({ ...current, updatedAt: new Date(), adaptations: [...current.adaptations, { id: crypto.randomUUID(), reason: reason.trim() || "Rebalanced around the highest-leverage unfinished work", at: new Date() }] });
+        return;
+      }
+      const r = await fetch(`${apiBase}/adapt`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(reason.trim() ? { reason: reason.trim() } : {}),

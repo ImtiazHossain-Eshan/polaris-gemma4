@@ -45,6 +45,10 @@ type ProviderInfo = {
 };
 
 type ModelChoice = { providerId: string; modelId: string } | "auto";
+const DEMO_PROVIDERS: ProviderInfo[] = [{ id: "gemma", name: "Gemma 4", defaultTier: "free", configured: true, models: [
+  { id: "gemma-4-26b-a4b-it", label: "Gemma 4 26B", tier: "free" },
+  { id: "gemma-4-31b-it", label: "Gemma 4 31B", tier: "free" },
+] }];
 
 type WebSource = { label: string; uri: string; kind: "kb" | "case" | "web" | "profile" | "roadmap" };
 type Msg = {
@@ -84,7 +88,7 @@ const ACTIVE_THREAD_KEY = "polaris.chat.activeThread";
 const DRAFT_KEY = "polaris.strategist.draft";
 
 export function StrategistClient({
-  studentName, initials, grade, contextRows, gapRows, eyebrow,
+  studentName, initials, grade, contextRows, gapRows, eyebrow, demo = false,
 }: {
   studentName: string;
   initials: string;
@@ -92,6 +96,7 @@ export function StrategistClient({
   contextRows: CtxRow[];
   gapRows: GapRow[];
   eyebrow: string;
+  demo?: boolean;
 }) {
   /* ─── core chat state ─── */
   const [messages, setMessages] = useState<Msg[]>([
@@ -135,7 +140,7 @@ export function StrategistClient({
   }, []);
 
   /* ─── Chat history state ─── */
-  const [threadId, setThreadId] = useState<string | null>(null);
+  const [threadId, setThreadId] = useState<string | null>(demo ? "demo-conversation" : null);
 
   // Restore the thread shared with the right-rail chat, and pick up any
   // one-shot draft handed off from a weekly task ("Ask Strategist for help").
@@ -212,6 +217,12 @@ export function StrategistClient({
     } catch { /* ignore */ }
 
     let cancelled = false;
+    if (demo) {
+      prefLoadedRef.current = true;
+      setProviders(DEMO_PROVIDERS);
+      setModel("auto");
+      return () => { cancelled = true; };
+    }
     fetch("/api/account/model-pref", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -227,7 +238,7 @@ export function StrategistClient({
       .catch(() => { /* local state stands */ })
       .finally(() => { if (!cancelled) prefLoadedRef.current = true; });
     return () => { cancelled = true; };
-  }, []);
+  }, [demo]);
   useEffect(() => { localStorage.setItem(MODEL_KEY, model === "auto" ? "auto" : JSON.stringify(model)); }, [model]);
   useEffect(() => { localStorage.setItem(MODE_KEY, mode); }, [mode]);
   useEffect(() => { localStorage.setItem(ROUTE_MODE_KEY, routeMode); }, [routeMode]);
@@ -236,7 +247,7 @@ export function StrategistClient({
 
   // Debounced write-through to the server-saved preference.
   useEffect(() => {
-    if (!prefLoadedRef.current) return;
+    if (demo || !prefLoadedRef.current) return;
     const t = setTimeout(() => {
       void fetch("/api/account/model-pref", {
         method: "PUT",
@@ -250,17 +261,18 @@ export function StrategistClient({
       }).catch(() => { /* best-effort */ });
     }, 600);
     return () => clearTimeout(t);
-  }, [model, routeMode, allowPaid, offline]);
+  }, [model, routeMode, allowPaid, offline, demo]);
 
   // Fetch the single server-enforced Gemma 4 provider.
   const refreshProviders = useCallback(async () => {
+    if (demo) { setProviders(DEMO_PROVIDERS); return; }
     try {
       const r = await fetch("/api/providers", { cache: "no-store" });
       if (!r.ok) return;
       const data = await r.json();
       if (data?.providers) setProviders(data.providers as ProviderInfo[]);
     } catch { /* ignore */ }
-  }, []);
+  }, [demo]);
 
   useEffect(() => { void refreshProviders(); }, [refreshProviders]);
 
@@ -292,6 +304,7 @@ export function StrategistClient({
 
   // Load messages when threadId changes.
   useEffect(() => {
+    if (demo) return;
     if (!threadId) {
       // Fresh session — reset to seed.
       setMessages([{
@@ -320,10 +333,11 @@ export function StrategistClient({
       })
       .catch(() => { /* ignore */ });
     return () => { cancelled = true; };
-  }, [threadId]);
+  }, [threadId, demo]);
 
   // Create or reuse a thread for the current send.
   const ensureThread = useCallback(async (firstUserText: string): Promise<string | null> => {
+    if (demo) return null;
     if (threadId) return threadId;
     try {
       const title = firstUserText.length > 60 ? firstUserText.slice(0, 57) + "…" : firstUserText;
@@ -342,7 +356,7 @@ export function StrategistClient({
       }
     } catch { /* swallow */ }
     return null;
-  }, [threadId]);
+  }, [threadId, demo]);
 
   // Persist a user or assistant message.
   const persistMessage = useCallback(async (
@@ -351,6 +365,7 @@ export function StrategistClient({
     text: string,
     extras: Partial<{ sources: WebSource[]; providerId: string; modelId: string; mode: Mode }> = {},
   ) => {
+    if (demo) return;
     try {
       await fetch(`/api/chat/threads/${tid}/messages`, {
         method: "POST",
@@ -359,7 +374,7 @@ export function StrategistClient({
       });
       setThreadsReloadKey((k) => k + 1);
     } catch { /* best-effort */ }
-  }, []);
+  }, [demo]);
 
   function startNewChat() {
     setThreadId(null);
@@ -421,6 +436,20 @@ export function StrategistClient({
     if (tid) void persistMessage(tid, "user", text, { mode });
 
     try {
+      if (demo) {
+        setThinking("Consulting Gemma 4…");
+        const response = await fetch("/api/demo/strategist", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ message: text, section: "strategist", roadmapSummary: JSON.stringify(strategistContextPayload(roadmapStore.get())) }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data?.error || "The Strategist is temporarily unavailable.");
+        const sources: WebSource[] = (data.sources || []).map((source: { title?: string }) => ({ label: source.title || "Polaris knowledge base", uri: "#", kind: "kb" as const }));
+        setMessages((items) => patchLast(items, (message) => ({ ...message, text: data.text, sources })));
+        setRouteInfo({ provider: "Gemma 4", model: data.trace?.model || "Gemma 4", reason: "Competition demo route" });
+        return;
+      }
       const body: Record<string, unknown> = { message: text, mode, routeMode, offline, allowPaid };
       // Live roadmap context: focused node + recent roadmap events.
       body.roadmapContext = strategistContextPayload(roadmapStore.get());
@@ -515,7 +544,7 @@ export function StrategistClient({
         });
       }
     }
-  }, [input, streaming, mode, model, routeMode, offline, allowPaid, routeInfo, ensureThread, persistMessage]);
+  }, [input, streaming, mode, model, routeMode, offline, allowPaid, routeInfo, ensureThread, persistMessage, demo]);
 
   // A real exchange exists (not just the seed greeting) → collapse the hero.
   const hasConversation = messages.some((m) => m.role === "user");
@@ -549,6 +578,7 @@ export function StrategistClient({
           resizing={resizingRail}
           onResizeStart={() => setResizingRail(true)}
           onResizeEnd={() => setResizingRail(false)}
+          demo={demo}
         />
       ) : (
         <>
@@ -577,6 +607,7 @@ export function StrategistClient({
               resizing={false}
               onResizeStart={() => {}}
               onResizeEnd={() => {}}
+              demo={demo}
             />
           </div>
         </>
