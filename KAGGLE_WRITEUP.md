@@ -23,6 +23,8 @@ This output is structured data, not an unbounded chat response. Polaris renders 
 
 Judges can use the public `/demo` workspace without creating an account or entering payment details. It begins with a complete, realistic Bangladesh-student roadmap, supports live replanning, and exposes model traces and retrieved sources. Every user-facing area is available from the same workspace: the roadmap, Strategist, deadlines, university fit, resources, connections, partners, consultants, community, family, bookings, access ledger, and settings.
 
+The entire public workspace can switch between English and Bengali. Navigation, generated roadmap content, validation messages, fallback guidance, and Strategist answers follow the selected language while proper names and standard admissions acronyms remain intact.
+
 ### Why Gemma 4 is core
 
 Templates can say "improve your GPA" or "join an extracurricular." The difficult part is deciding what matters most for this student, resolving trade-offs across several admissions dimensions, and grounding recommendations in relevant evidence. Gemma 4 performs that central reasoning and synthesis.
