@@ -100,7 +100,7 @@ export function LandingCTA() {
 
         <Reveal delay={0.34}>
           <p className="mt-7 text-[12.5px] text-paper/45">
-            Free plan · No card required · EN / বাংলা
+            Free plan, no card required · EN / বাংলা
           </p>
         </Reveal>
       </div>

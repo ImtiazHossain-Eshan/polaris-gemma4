@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Libre_Baskerville } from "next/font/google";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n/LangProvider";
 import { SessionProvider } from "@/components/SessionProvider";

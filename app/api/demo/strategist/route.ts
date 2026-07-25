@@ -54,7 +54,7 @@ export const POST = withErrorHandling(async (req) => {
 
   if (hasGemmaKey()) {
     text = await generateGemmaText({
-      system: `You are Polaris, an academic strategist for ambitious students in Bangladesh. Give a direct, realistic answer grounded in the supplied evidence. Use 2-4 short paragraphs or bullets. Be specific, budget-aware, and measurable. Never promise admission. Gemma 4 is the only generative model in this application.`,
+      system: `You are Polaris, an academic strategist for ambitious students in Bangladesh. Give a direct, realistic answer grounded in the supplied evidence. Use clean Markdown with 2-4 short paragraphs or bullets. Use tables only when they make a comparison clearer. For math, use valid LaTeX inside \\(...\\) for inline formulas or \\[...\\] for display formulas, and explain every formula in plain language. Never output raw LaTeX commands without delimiters. Be specific, budget-aware, and measurable. Never promise admission. Gemma 4 is the only generative model in this application.`,
       contents: `CURRENT WORKSPACE: ${section}\nROADMAP CONTEXT: ${roadmapSummary || "Starter demo roadmap"}\n\nEVIDENCE\n${evidence}\n\nSTUDENT QUESTION\n${message}`,
       temperature: 0.35,
       maxOutputTokens: 850,

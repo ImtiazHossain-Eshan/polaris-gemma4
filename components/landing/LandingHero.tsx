@@ -131,7 +131,7 @@ export function LandingHero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <span>Free plan — no card required</span>
+              <span>Free plan, no card required</span>
               <span className="hidden sm:inline h-1 w-1 rounded-full bg-paper/30" />
               <span>EN / বাংলা</span>
               <span className="hidden sm:inline h-1 w-1 rounded-full bg-paper/30" />
