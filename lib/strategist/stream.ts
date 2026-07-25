@@ -16,6 +16,8 @@ import type { StrategistChunk } from "./schemas";
 import type { StudentProfile } from "@/lib/profile";
 import type { StrategistMode } from "./profiles";
 import type { RouteMode } from "@/lib/llm/providers/types";
+import type { Lang } from "@/lib/i18n/strings";
+import { BN_ERRORS } from "@/lib/i18n/server";
 
 type StreamInput = {
   userId: string;
@@ -23,6 +25,7 @@ type StreamInput = {
   recentMilestones: string[];
   userMessage: string;
   mode: StrategistMode;
+  language?: Lang;
   routeMode?: RouteMode;
   preferred?: { providerId: string; modelId: string };
   autoSelect?: boolean;
@@ -55,6 +58,7 @@ export function strategistStream(input: StreamInput): ReadableStream<Uint8Array>
             recentMilestones: input.recentMilestones,
             userMessage: input.userMessage,
             mode: input.mode,
+            language: input.language,
             routeMode: input.routeMode,
             preferred: input.preferred,
             autoSelect: input.autoSelect,
@@ -100,12 +104,16 @@ export function strategistStream(input: StreamInput): ReadableStream<Uint8Array>
                 kind: "error",
                 code: "AI_QUOTA",
                 message:
-                  "The Strategist's AI is temporarily over capacity. Please try again.",
+                  input.language === "bn"
+                    ? BN_ERRORS.capacity
+                    : "The Strategist's AI is temporarily over capacity. Please try again.",
               }
             : {
                 kind: "error",
                 code: "STREAM_FAILED",
-                message: "The Strategist hit an error. Try again in a moment.",
+                message: input.language === "bn"
+                  ? BN_ERRORS.stream
+                  : "The Strategist hit an error. Try again in a moment.",
               },
         );
       } finally {

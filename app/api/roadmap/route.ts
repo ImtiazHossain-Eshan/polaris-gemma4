@@ -11,6 +11,8 @@ import {
   getLatestRoadmap,
   toDbMilestones,
 } from "@/lib/db/collections";
+import type { Lang } from "@/lib/i18n/strings";
+import { generationLanguageInstruction, requestLanguage } from "@/lib/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,12 +32,15 @@ function buildUserPrompt(
   profile: StudentProfile,
   retrieved: Array<{ title: string; source: string; text: string }>,
   completedTitles?: string[],
+  language: Lang = "en",
 ): string {
   const kb = retrieved
     .map((r, i) => `[${i + 1}] (${r.source}) ${r.title}\n${r.text}`)
     .join("\n\n");
 
-  let prompt = `STUDENT PROFILE:
+  let prompt = `${generationLanguageInstruction(language)}
+
+STUDENT PROFILE:
 ${summarizeProfile(profile)}
 
 RETRIEVED KNOWLEDGE BASE (top matches by deterministic BM25 relevance):
@@ -63,6 +68,7 @@ export const GET = withErrorHandling(async () => {
 export const POST = withErrorHandling(async (req) => {
   // Roadmap generation is part of the Free plan (matches the catalog +
   // the v2 engine, which is session-gated and rate-limited).
+  const language = requestLanguage(req);
   const user = await requireSession();
   const { profile } = roadmapBodySchema.parse(await parseJson(req));
 
@@ -93,6 +99,7 @@ export const POST = withErrorHandling(async (req) => {
     const roadmap = buildFallbackRoadmap(
       profile,
       hits.map((h) => h.title),
+      language,
     );
     const result = {
       roadmap: { ...roadmap, milestones: toDbMilestones(roadmap.milestones) },
@@ -103,10 +110,13 @@ export const POST = withErrorHandling(async (req) => {
     return ok(result);
   }
 
-  const userPrompt = buildUserPrompt(profile, hits, completedTitles);
+  const userPrompt = buildUserPrompt(profile, hits, completedTitles, language);
   let roadmap;
   try {
-    roadmap = await generateRoadmap(SYSTEM_PROMPT, userPrompt);
+    roadmap = await generateRoadmap(
+      `${SYSTEM_PROMPT}\n\n${generationLanguageInstruction(language)}`,
+      userPrompt,
+    );
   } catch {
     roadmap = null;
   }
@@ -115,6 +125,7 @@ export const POST = withErrorHandling(async (req) => {
     const deterministic = buildFallbackRoadmap(
       profile,
       hits.map((hit) => hit.title),
+      language,
     );
     roadmap = {
       ...roadmap,
@@ -132,6 +143,7 @@ export const POST = withErrorHandling(async (req) => {
     const fb = buildFallbackRoadmap(
       profile,
       hits.map((h) => h.title),
+      language,
     );
     const result = {
       roadmap: { ...fb, milestones: toDbMilestones(fb.milestones) },

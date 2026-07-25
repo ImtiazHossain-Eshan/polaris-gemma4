@@ -10,6 +10,8 @@ import { searchDocs } from "@/lib/rag/search";
 import { rateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { fail, parseJson, withErrorHandling } from "@/lib/api/respond";
 import { studentProfileSchema } from "@/lib/validation/schemas";
+import type { Lang } from "@/lib/i18n/strings";
+import { BN_ERRORS, generationLanguageInstruction, requestLanguage } from "@/lib/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,6 +23,7 @@ Create a realistic 6-18 month plan. Be specific, measurable, and sensitive to li
 function promptFor(
   profile: StudentProfile,
   evidence: Array<{ title: string; source: string; text: string }>,
+  language: Lang,
 ): string {
   const context = evidence
     .map((item, index) =>
@@ -28,7 +31,7 @@ function promptFor(
     )
     .join("\n\n");
 
-  return `STUDENT PROFILE\n${summarizeProfile(profile)}\n\nRETRIEVED EVIDENCE\n${context}\n\nReturn a structured roadmap with 8-12 milestones, 3-5 honest profile gaps, measurable success criteria, and source-aware rationales.`;
+  return `${generationLanguageInstruction(language)}\n\nSTUDENT PROFILE\n${summarizeProfile(profile)}\n\nRETRIEVED EVIDENCE\n${context}\n\nReturn a structured roadmap with 8-12 milestones, 3-5 honest profile gaps, measurable success criteria, and source-aware rationales. Keep JSON keys and enum values exactly as required, but write all human-readable content in the selected language.`;
 }
 
 function clientId(req: NextRequest): string {
@@ -37,9 +40,10 @@ function clientId(req: NextRequest): string {
 }
 
 export const POST = withErrorHandling(async (req) => {
+  const language = requestLanguage(req);
   const limit = await rateLimit(clientId(req), "free", "public-gemma4-demo");
   if (!limit.allowed) {
-    const response = fail(429, "Demo limit reached. Please retry in a few minutes.");
+    const response = fail(429, language === "bn" ? BN_ERRORS.demoLimit : "Demo limit reached. Please retry in a few minutes.");
     for (const [key, value] of Object.entries(rateLimitHeaders(limit))) {
       response.headers.set(key, value);
     }
@@ -58,13 +62,16 @@ export const POST = withErrorHandling(async (req) => {
   let roadmap = null;
   if (hasGemmaKey()) {
     try {
-      roadmap = await generateRoadmap(SYSTEM_PROMPT, promptFor(profile, hits));
+      roadmap = await generateRoadmap(
+        `${SYSTEM_PROMPT}\n\n${generationLanguageInstruction(language)}`,
+        promptFor(profile, hits, language),
+      );
     } catch (error) {
       console.error("[public-demo] Gemma 4 request failed", error);
     }
   }
 
-  const fallback = buildFallbackRoadmap(profile, hits.map((hit) => hit.title));
+  const fallback = buildFallbackRoadmap(profile, hits.map((hit) => hit.title), language);
   const generatedMilestones = roadmap?.milestones.length ?? 0;
   const finalRoadmap = roadmap
     ? {

@@ -21,11 +21,13 @@ import { roadmapContextLines } from "@/lib/roadmap/generate";
 import { integrationContextLines } from "@/lib/integrations/service";
 import { getAiPref, prefToRoute } from "@/lib/llm/prefs";
 import { planMeets, upgradeMessage } from "@/lib/features";
+import { BN_ERRORS, requestLanguage } from "@/lib/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const language = requestLanguage(req);
   try {
     const user = await requireSession();
 
@@ -44,7 +46,7 @@ export async function POST(req: Request) {
     const rl = await rateLimit(user.id, user.plan, "strategist");
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: "Rate limit reached. Slow down for a few minutes." },
+        { error: language === "bn" ? BN_ERRORS.rateLimit : "Rate limit reached. Slow down for a few minutes." },
         { status: 429, headers: rateLimitHeaders(rl) },
       );
     }
@@ -58,7 +60,10 @@ export async function POST(req: Request) {
       integrationContextLines(user.id).catch(() => []),
     ]);
     if (!profile) {
-      return NextResponse.json({ error: "Complete the intake first." }, { status: 412 });
+      return NextResponse.json(
+        { error: language === "bn" ? BN_ERRORS.completeIntake : "Complete the intake first." },
+        { status: 412 },
+      );
     }
 
     // The SAME roadmap doc that renders the tree feeds the Strategist:
@@ -102,6 +107,7 @@ export async function POST(req: Request) {
       recentMilestones,
       userMessage: body.message,
       mode: body.mode,
+      language,
       routeMode: body.routeMode ?? saved.mode,
       preferred: body.model ?? saved.preferred,
       autoSelect: body.autoSelect ?? (body.model ? undefined : saved.autoSelect),
@@ -113,12 +119,18 @@ export async function POST(req: Request) {
     return new Response(stream, { headers: { ...sseHeaders(), ...rateLimitHeaders(rl) } });
   } catch (err) {
     if (err instanceof ZodError) {
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      return NextResponse.json(
+        { error: language === "bn" ? BN_ERRORS.invalidRequest : "Invalid request body" },
+        { status: 400 },
+      );
     }
     if (err instanceof HttpError) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
     console.error("[strategist] route error:", err);
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    return NextResponse.json(
+      { error: language === "bn" ? BN_ERRORS.generic : "Something went wrong" },
+      { status: 500 },
+    );
   }
 }

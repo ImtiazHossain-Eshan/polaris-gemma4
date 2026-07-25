@@ -2,6 +2,8 @@ import type { StudentProfile } from "@/lib/profile";
 import { summarizeProfile } from "@/lib/profile";
 import type { UserMemoryFact } from "@/lib/db/collections";
 import { renderMemoryBlock } from "./memory";
+import type { Lang } from "@/lib/i18n/strings";
+import { generationLanguageInstruction } from "@/lib/i18n/server";
 
 /**
  * System prompt for the *legacy* Strategist agent (pre-research). Kept for
@@ -13,9 +15,14 @@ import { renderMemoryBlock } from "./memory";
  * - Cites every factual claim with a label + uri tag.
  * - Closes with one concrete next action.
  */
-export function buildSystemPrompt(profile: StudentProfile, recentMilestones: string[]): string {
+export function buildSystemPrompt(
+  profile: StudentProfile,
+  recentMilestones: string[],
+  lang: Lang = "en",
+): string {
   return [
     `You are Polaris, a long-horizon AI academic strategist for a single student.`,
+    generationLanguageInstruction(lang),
     ``,
     `STUDENT PROFILE`,
     summarizeProfile(profile),
@@ -45,6 +52,12 @@ export function buildSystemPrompt(profile: StudentProfile, recentMilestones: str
 export const REFUSAL_FALLBACK =
   "I don't have grounded sources to answer that confidently. Try asking me about your roadmap, your target universities, or the resources in your library — I'll cite what I find.";
 
+export function refusalFallback(lang: Lang): string {
+  return lang === "bn"
+    ? "বিশ্বস্ত উৎসের ভিত্তিতে এই প্রশ্নের নিশ্চিত উত্তর দেওয়ার মতো যথেষ্ট তথ্য আমার কাছে নেই। আপনার রোডম্যাপ, লক্ষ্য বিশ্ববিদ্যালয় বা রিসোর্স লাইব্রেরি সম্পর্কে জিজ্ঞেস করুন—প্রাসঙ্গিক উৎস উল্লেখ করে উত্তর দেব।"
+    : REFUSAL_FALLBACK;
+}
+
 /**
  * System prompt for the **deep-research** Strategist mode. Includes long-term
  * memory and instructs the model to use the Google Search grounding tool
@@ -58,9 +71,11 @@ export function buildResearchSystemPrompt(
   profile: StudentProfile,
   recentMilestones: string[],
   memory: UserMemoryFact[],
+  lang: Lang = "en",
 ): string {
   return [
     `You are Polaris, a long-horizon AI academic strategist for a single student. You combine three sources of grounding:`,
+    generationLanguageInstruction(lang),
     `  (a) the student's own profile + roadmap + saved memories,`,
     `  (b) a curated KB the platform supplies as <kb> tags,`,
     `  (c) the live web, via your Google Search tool — use it for current authoritative info (deadlines, scholarship rules, program requirements, recent admissions data, news).`,

@@ -20,6 +20,7 @@ import { getProfile, upsertProfile, getRoadmapV2, saveRoadmapV2, deleteRoadmapV2
 import { RoadmapConfigSchema, type RoadmapConfig, type EducationLevel } from "@/lib/roadmap/types";
 import { generateRoadmap } from "@/lib/roadmap/generate";
 import type { StudentProfile, GradeLevel } from "@/lib/profile";
+import { BN_ERRORS, requestLanguage } from "@/lib/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,12 +58,13 @@ function seedTestScores(config: RoadmapConfig): Record<string, number> | undefin
 }
 
 export const POST = withErrorHandling(async (req) => {
+  const language = requestLanguage(req);
   const session = await requireSession();
 
   const rl = await rateLimit(session.id, session.plan, "strategist");
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: "Rate limit reached — try again in a few minutes." },
+      { error: language === "bn" ? BN_ERRORS.rateLimit : "Rate limit reached — try again in a few minutes." },
       { status: 429, headers: rateLimitHeaders(rl) },
     );
   }
@@ -97,7 +99,7 @@ export const POST = withErrorHandling(async (req) => {
 
   await upsertProfile(session.id, profile);
 
-  const doc = await generateRoadmap(profile, config, { userId: session.id });
+  const doc = await generateRoadmap(profile, config, { userId: session.id, language });
   await saveRoadmapV2(session.id, doc);
   return ok({ doc });
 });

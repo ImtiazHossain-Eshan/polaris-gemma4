@@ -11,7 +11,7 @@ import {
 } from "./memory";
 import {
   buildResearchSystemPrompt,
-  REFUSAL_FALLBACK,
+  refusalFallback,
 } from "./prompt";
 import {
   modeInstructions,
@@ -24,6 +24,8 @@ import { recordUsage } from "@/lib/db/collections";
 import type { StrategistChunk } from "./schemas";
 import type { StudentProfile } from "@/lib/profile";
 import type { UserMemoryFact } from "@/lib/db/collections";
+import type { Lang } from "@/lib/i18n/strings";
+import { BN_ERRORS } from "@/lib/i18n/server";
 
 export type ResearchInput = {
   userId: string;
@@ -32,6 +34,7 @@ export type ResearchInput = {
   recentMilestones: string[];
   userMessage: string;
   mode: StrategistMode;
+  language?: Lang;
   routeMode?: RouteMode;
   preferred?: { providerId: string; modelId: string };
   autoSelect?: boolean;
@@ -75,9 +78,10 @@ export async function* deepResearch(
   });
 
   if (!route) {
+    const fallback = refusalFallback(input.language ?? "en");
     yield* deterministicFallback(input);
     outcome.current = {
-      answerText: REFUSAL_FALLBACK,
+      answerText: fallback,
       webSources: [],
       kbHits,
       providerId: "none",
@@ -85,7 +89,7 @@ export async function* deepResearch(
       tier: "free",
       fallbackUsed: false,
       tokensIn: 0,
-      tokensOut: REFUSAL_FALLBACK.split(" ").length,
+      tokensOut: fallback.split(/\s+/).length,
       latencyMs: 0,
       outcome: "ok",
     };
@@ -116,6 +120,7 @@ export async function* deepResearch(
     input.profile,
     input.recentMilestones,
     relevantMemory,
+    input.language,
   );
   const fullSystem = baseSystem + modeInstructions(input.mode);
 
@@ -266,8 +271,8 @@ export async function* deepResearch(
       kind: "error",
       code: isQuota ? "AI_QUOTA" : "STREAM_FAILED",
       message: isQuota
-        ? "Gemma 4 is over capacity right now. Try again in a minute."
-        : "The Gemma 4 Strategist hit an error. Please retry.",
+        ? (input.language === "bn" ? BN_ERRORS.capacity : "Gemma 4 is over capacity right now. Try again in a minute.")
+        : (input.language === "bn" ? BN_ERRORS.stream : "The Gemma 4 Strategist hit an error. Please retry."),
     };
     outcome.current = {
       answerText: "",
@@ -337,7 +342,7 @@ export async function* deepResearch(
 async function* deterministicFallback(
   input: ResearchInput,
 ): AsyncGenerator<StrategistChunk> {
-  const reply = REFUSAL_FALLBACK;
+  const reply = refusalFallback(input.language ?? "en");
   for (const word of reply.split(" ")) {
     if (input.abortSignal?.aborted) return;
     yield { kind: "text", delta: word + " " };

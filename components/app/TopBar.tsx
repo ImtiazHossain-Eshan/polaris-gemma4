@@ -23,6 +23,7 @@ import { useTheme } from "./ThemeProvider";
 import { useRoadmapStrategist } from "@/lib/roadmap/store";
 import { getMissingFields } from "@/lib/profile";
 import { cn } from "@/lib/cn";
+import { useLang } from "@/lib/i18n/LangProvider";
 
 const TITLES: Record<string, { eyebrow: string; title: string }> = {
   roadmap:      { eyebrow: "Workspace", title: "Roadmap" },
@@ -53,6 +54,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
   const { data: session } = useSession();
   const { theme, toggle: toggleTheme } = useTheme();
   const { events } = useRoadmapStrategist();
+  const { lang, setLang } = useLang();
 
   const name = demoUser?.name ?? session?.user?.name ?? "";
   const email = demoUser?.email ?? session?.user?.email ?? "";
@@ -169,6 +171,17 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
             Replan
           </Link>
           <div className="hidden md:block h-6 w-px bg-white/[0.10] mx-1" />
+
+          <button
+            type="button"
+            data-no-translate
+            onClick={() => setLang(lang === "bn" ? "en" : "bn")}
+            aria-label={lang === "bn" ? "Switch to English" : "Switch to Bengali"}
+            title={lang === "bn" ? "Switch to English" : "Switch to Bengali"}
+            className="h-9 min-w-9 rounded-lg px-2 inline-flex items-center justify-center bg-white/[0.06] ring-1 ring-inset ring-white/[0.10] text-paper text-[11px] font-semibold hover:bg-white/[0.10] transition-all"
+          >
+            {lang === "bn" ? "EN" : "বাংলা"}
+          </button>
 
           {/* theme toggle */}
           <button

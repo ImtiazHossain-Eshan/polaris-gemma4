@@ -27,6 +27,8 @@ import { resourcesForTopics, KNOWN_TOPICS } from "./resources";
 import { templateFor, LEVEL_GUIDANCE, SCORE_DEFS, type TplBranch } from "./templates";
 import { completeText, extractJson } from "@/lib/llm/complete";
 import { summarizeProfile, type StudentProfile } from "@/lib/profile";
+import type { Lang } from "@/lib/i18n/strings";
+import { generationLanguageInstruction } from "@/lib/i18n/server";
 
 /* ─── helpers ─── */
 
@@ -115,11 +117,20 @@ function fromTemplates(config: RoadmapConfig, phases: number): RoadmapBranch[] {
 
 /* ─── LLM generation ─── */
 
-function generationPrompt(profile: StudentProfile, config: RoadmapConfig, phases: number): string {
+function generationPrompt(
+  profile: StudentProfile,
+  config: RoadmapConfig,
+  phases: number,
+  language: Lang = "en",
+): string {
   const scoreLines = Object.entries(config.currentScores ?? {})
     .map(([k, v]) => `${k}: ${v}`).join(", ") || "(none reported)";
   return [
     `You are Polaris, an elite admissions strategist. Design a personalized roadmap TREE for one student.`,
+    generationLanguageInstruction(language),
+    language === "bn"
+      ? `Translate every human-readable title, description, reason, instruction, task, completion criterion, and impact line into Bengali. Keep JSON keys and the allowed category, type, priority, and topic enum values exactly in English so the data remains valid.`
+      : ``,
     ``,
     `STUDENT PROFILE`,
     summarizeProfile(profile),
@@ -177,7 +188,7 @@ function fromGenPlan(plan: GenPlan, phases: number): RoadmapBranch[] {
 export async function generateRoadmap(
   profile: StudentProfile,
   config: RoadmapConfig,
-  opts: { userId?: string } = {},
+  opts: { userId?: string; language?: Lang } = {},
 ): Promise<RoadmapDoc> {
   const phases = phaseCount(config.durationDays, config.timelineMode);
 
@@ -188,7 +199,7 @@ export async function generateRoadmap(
     task: "general",
     userId: opts.userId,
     feature: "roadmap-generate",
-    system: generationPrompt(profile, config, phases),
+    system: generationPrompt(profile, config, phases, opts.language),
     messages: [{ role: "user", content: "Generate the roadmap tree now." }],
     temperature: 0.5,
     maxOutputTokens: 8192,
@@ -292,7 +303,7 @@ export async function adaptRoadmap(
   profile: StudentProfile,
   doc: RoadmapDoc,
   reason?: string,
-  opts: { userId?: string } = {},
+  opts: { userId?: string; language?: Lang } = {},
 ): Promise<RoadmapDoc | null> {
   const phases = doc.phases.length;
   const done = doc.branches.flatMap((b) => b.nodes.filter((n) => n.status === "done"));
@@ -302,7 +313,7 @@ export async function adaptRoadmap(
     .slice(-8);
 
   const system = [
-    generationPrompt(profile, doc.config, phases),
+    generationPrompt(profile, doc.config, phases, opts.language),
     ``,
     `THIS IS AN ADAPTIVE REPLAN of an existing roadmap, not a fresh start.`,
     `COMPLETED (do not repeat these — build on them):`,
