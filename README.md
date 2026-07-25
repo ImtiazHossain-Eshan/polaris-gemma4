@@ -2,7 +2,7 @@
 
 > An evidence-grounded, Bangladesh-aware university admissions copilot powered exclusively by Google DeepMind's open Gemma 4 model.
 
-[Live application](https://polaris-gemma4.vercel.app/) / [Public judge demo](https://polaris-gemma4.vercel.app/demo) / [Public repository](https://github.com/ImtiazHossain-Eshan/polaris-gemma4) / [Kaggle writeup](./KAGGLE_WRITEUP.md) / [Demo script](./DEMO_SCRIPT.md)
+[Live application](https://polaris-gemma4.vercel.app/) / [Public judge demo](https://polaris-gemma4.vercel.app/demo) / [Public repository](https://github.com/ImtiazHossain-Eshan/polaris-gemma4) / [Kaggle writeup](./KAGGLE_WRITEUP.md)
 
 ## The problem
 
@@ -103,7 +103,6 @@ lib/ml/probability.ts        Transparent non-generative scoring
 data/                        Curated admissions evidence
 docs/ARCHITECTURE.md         Technical design and compliance boundary
 KAGGLE_WRITEUP.md            Submission-ready report
-DEMO_SCRIPT.md               2-3 minute judging walkthrough
 ```
 
 ## Responsible design

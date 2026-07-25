@@ -57,7 +57,7 @@
 - [x] Working prototype has a zero-friction judge flow
 - [x] Real-world impact and limitations are explained
 - [x] UI exposes evidence, model ID, and measurable outputs
-- [ ] Record a clean pitch using `PITCH.md` and `DEMO_SCRIPT.md`
+- [ ] Record a clean pitch using `PITCH.md`
 
 ## Final submission
 
