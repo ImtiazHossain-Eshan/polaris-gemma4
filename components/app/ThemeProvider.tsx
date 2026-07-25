@@ -17,7 +17,7 @@ const STORAGE_KEY = "polaris.theme";
 // Everything else (landing, /pricing, /case-studies, /signin, /onboard, etc.)
 // stays light regardless of user preference.
 const APP_PREFIX_RE =
-  /^\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor)(\/|$)/;
+  /^\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor|demo)(\/|$)/;
 
 const ThemeCtx = createContext<{ theme: Theme; toggle: () => void; set: (t: Theme) => void }>({
   theme: "light",
@@ -28,6 +28,7 @@ const ThemeCtx = createContext<{ theme: Theme; toggle: () => void; set: (t: Them
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? "/";
   const isAppRoute = APP_PREFIX_RE.test(pathname);
+  const isDemoRoute = pathname === "/demo" || pathname.startsWith("/demo/");
   const [theme, setTheme] = useState<Theme>("light");
 
   // Hydrate from localStorage / system preference on mount (client only).
@@ -36,6 +37,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!isAppRoute) {
       apply("light");
       setTheme("light");
+      return;
+    }
+    if (isDemoRoute) {
+      apply("dark");
+      setTheme("dark");
       return;
     }
     const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
@@ -48,7 +54,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const initial: Theme = prefersDark ? "dark" : "light";
     apply(initial);
     setTheme(initial);
-  }, [isAppRoute]);
+  }, [isAppRoute, isDemoRoute]);
 
   const set = useCallback(
     (t: Theme) => {
@@ -86,9 +92,9 @@ export const THEME_PREFLIGHT_SCRIPT = `
 (function(){
   try {
     var p = location.pathname || '/';
-    var isApp = /^\\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor)(\\/|$)/.test(p);
-    var t = 'light';
-    if (isApp) {
+    var isApp = /^\\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor|demo)(\\/|$)/.test(p);
+    var t = p === '/demo' || p.indexOf('/demo/') === 0 ? 'dark' : 'light';
+    if (isApp && t !== 'dark') {
       var s = localStorage.getItem('${STORAGE_KEY}');
       t = s === 'dark' || s === 'light' ? s :
         (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');

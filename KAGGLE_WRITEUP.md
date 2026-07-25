@@ -21,7 +21,7 @@ Polaris is an AI academic strategist powered exclusively by Gemma 4. A student p
 
 This output is structured data, not an unbounded chat response. Polaris renders it as an interactive plan that can later be tracked, adapted, and discussed with the streaming Strategist.
 
-Judges can use the public `/demo` route without creating an account. It begins with a realistic Bangladesh student profile, generates a plan, and exposes the model trace and retrieved sources alongside the result.
+Judges can use the public `/demo` workspace without creating an account or entering payment details. It begins with a complete, realistic Bangladesh-student roadmap, supports live replanning, and exposes model traces and retrieved sources. Every user-facing area is available from the same workspace: the roadmap, Strategist, deadlines, university fit, resources, connections, partners, consultants, community, family, bookings, access ledger, and settings.
 
 ### Why Gemma 4 is core
 
@@ -50,7 +50,7 @@ Gemma 4 receives a Bangladesh-context system instruction, the normalized profile
 
 The public API is server-side, schema-validated, rate-limited, and keeps credentials out of the browser. If the model API is temporarily unavailable, a deterministic heuristic roadmap preserves the demo flow and is visibly labeled "Offline fallback"; it is never represented as Gemma output.
 
-The broader product includes authenticated profiles, roadmap progress, deadlines, university comparison, a transparent probability simulator, English/Bangla localization, family monitoring, and a streaming Strategist.
+The same repository also contains the account-backed product. The public workspace safely isolates judge interactions in browser-local state while reusing real university data, the transparent probability engine, resource hub, partner matching logic, and public Gemma 4 endpoints.
 
 ### What is innovative
 
@@ -70,7 +70,7 @@ The broader product includes authenticated profiles, roadmap progress, deadlines
 
 **Retrieval without another foundation model.** To avoid a separate embedding model and improve reproducibility, we implemented BM25 with length normalization and title weighting. It produces useful, inspectable source rankings with no extra AI dependency.
 
-**A demo that survives hackathon conditions.** The no-login route avoids database setup, includes a realistic prefilled profile, rate-limits requests, and has an honest deterministic fallback. The prototype remains demonstrable even if network capacity fluctuates.
+**A demo that survives hackathon conditions.** The all-access workspace avoids database and checkout setup, starts with a complete plan, persists interactions locally, rate-limits model requests, and has an honest deterministic fallback. The prototype remains useful even if network capacity fluctuates.
 
 ### Potential impact
 

@@ -53,3 +53,17 @@ desktop.ini
 # ---- Local recordings / large media ----
 *.mkv
 *.mp4
+# ---- Local tooling / generated judge artifacts ----
+/.cache/
+/.turbo/
+/.history/
+/playwright-report/
+/test-results/
+/artifacts/
+/tmp/
+/scripts/
+*.webm
+*.mov
+*.zip
+*.bak
+*.tmp

@@ -24,6 +24,12 @@ sequenceDiagram
   UI-->>Student: Gaps, actions, metrics, sources
 ```
 
+
+## Public judge workspace
+
+`/demo` is a separate, account-free product shell. It does not weaken authenticated route guards or paid-plan enforcement. Instead, it provides seeded browser-local state and public, rate-limited Gemma 4 endpoints. The university directory, transparent probability engine, resource hub, and partner matcher reuse the same real datasets and deterministic code as the signed-in product; account-specific writes, real connection grants, invitations, bookings, and payments are simulated locally and clearly labeled.
+
+Public routes include roadmap, Strategist, deadlines, universities, resources, connections, partners, consultants, community, family, bookings, billing, transactions, and settings. The roadmap has useful starter content, so a network interruption never leaves a judge facing an empty screen.
 ## Single-model enforcement
 
 The competition policy is enforced on the server at three layers:

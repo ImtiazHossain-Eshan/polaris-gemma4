@@ -47,13 +47,13 @@ The competition boundary lives in [`lib/llm/gemma.ts`](./lib/llm/gemma.ts), the 
 
 ## What works
 
-1. **Public no-login demo** - judges can generate a roadmap at `/demo` without authentication or paid access.
+1. **Public all-access workspace** - `/demo` exposes every user-facing area without authentication, subscription gates, or checkout.
 2. **Structured roadmap generation** - 8-12 milestones, honest gaps, priorities, rationales, and measurable outcomes.
 3. **Evidence grounding** - deterministic BM25 retrieval over curated university, scholarship, admissions, and case-study documents.
-4. **Streaming Strategist** - profile-aware chat with Fast, Balanced, and Deep thinking modes, all mapped to Gemma 4.
+4. **Grounded Strategist** - public roadmap-aware advice plus the full authenticated streaming experience, both powered by Gemma 4.
 5. **Inspectable model trace** - the demo exposes the exact model ID, thinking level, retrieval method, and source policy.
 6. **Offline resilience** - if the API is unavailable, a clearly labeled deterministic planner keeps the prototype demonstrable; it is never presented as model output.
-7. **Full workspace** - authentication, progress tracking, deadlines, university comparisons, probability scenarios, English/Bangla UI, and family monitoring.
+7. **Interactive product breadth** - progress, deadlines, university fit and comparison, resources, connections, partners, consultants, community, family, bookings, access ledger, and settings.
 
 ## Run locally
 
@@ -66,7 +66,7 @@ cp .env.local.example .env.local
 pnpm dev
 ```
 
-Open `http://localhost:3000/demo` for the public competition flow.
+Open `http://localhost:3000/demo` for the public competition workspace. It begins with a complete plan; live generation is optional. Every navigation destination under `/demo/*` is usable without an account.
 
 The authenticated workspace additionally requires `MONGODB_URI` and `NEXTAUTH_SECRET`. See `.env.local.example` for the complete list.
 
@@ -87,13 +87,13 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
-Both commands pass in the competition branch. The production build includes `/demo` and `/api/demo` as public routes.
+Both commands pass in the competition branch. The production build includes the full `/demo/*` workspace plus public, rate-limited roadmap and Strategist endpoints.
 
 ## Repository map
 
 ```text
-app/demo/                    Public judge experience
-app/api/demo/                Rate-limited public generation API
+app/demo/                    Public all-access judge workspace
+app/api/demo/                Rate-limited roadmap + Strategist APIs
 app/api/roadmap/             Authenticated roadmap API
 lib/llm/gemma.ts             Gemma 4 allowlist + structured generation
 lib/llm/providers/gemma.ts   Sole streaming model adapter
