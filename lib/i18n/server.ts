@@ -21,6 +21,51 @@ export function generationLanguageInstruction(lang: Lang): string {
   ].join(" ");
 }
 
+const BENGALI_GENERATION_TERMS: Array<[RegExp, string]> = [
+  [/\bComputer Science\b/gi, "কম্পিউটার বিজ্ঞান"],
+  [/\bHigher Secondary\b/gi, "উচ্চমাধ্যমিক"],
+  [/\bAction Plan\b/gi, "কর্মপরিকল্পনা"],
+  [/\bNext Steps?\b/gi, "পরবর্তী পদক্ষেপ"],
+  [/\bFocus Areas?\b/gi, "অগ্রাধিকারের ক্ষেত্র"],
+  [/\bLeadership\b/gi, "নেতৃত্ব"],
+  [/\bImpact\b/gi, "প্রভাব"],
+  [/\bPriorities\b/gi, "অগ্রাধিকারগুলো"],
+  [/\bPriority\b/gi, "অগ্রাধিকার"],
+];
+
+function isProtectedEnglishParenthetical(value: string): boolean {
+  return /^(?:[A-Z0-9][A-Z0-9.+/-]*)(?:\s*(?:&|\/|,)\s*[A-Z0-9][A-Z0-9.+/-]*)*$/.test(
+    value.trim(),
+  );
+}
+
+function polishBengaliProse(value: string): string {
+  let polished = value.replace(
+    /\s*\(([A-Za-z][A-Za-z .,&/+'’-]{2,60})\)/g,
+    (match, english: string) =>
+      isProtectedEnglishParenthetical(english) ? match : "",
+  );
+  for (const [pattern, replacement] of BENGALI_GENERATION_TERMS) {
+    polished = polished.replace(pattern, replacement);
+  }
+  return polished;
+}
+
+/**
+ * Final deterministic guard for generated Bengali copy.
+ *
+ * The model is instructed to write natural Bengali, while this pass removes
+ * occasional bilingual glosses without touching code fences, inline code,
+ * URLs, citations, or mathematical notation.
+ */
+export function finalizeGeneratedLanguage(value: string, lang: Lang): string {
+  if (lang !== "bn" || !value) return value;
+  return value
+    .split(/(```[\s\S]*?```|`[^`\n]+`|\\\[[\s\S]*?\\\]|\\\([^)\n]*\\\))/g)
+    .map((part, index) => (index % 2 === 0 ? polishBengaliProse(part) : part))
+    .join("");
+}
+
 export const BN_ERRORS = {
   rateLimit: "অনুরোধের সীমা পূর্ণ হয়েছে। কয়েক মিনিট পর আবার চেষ্টা করুন।",
   completeIntake: "প্রথমে ইনটেক সম্পন্ন করুন।",

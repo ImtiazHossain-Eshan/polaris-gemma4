@@ -4,7 +4,12 @@ import { searchDocs } from "@/lib/rag/search";
 import { rateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { fail, parseJson, withErrorHandling } from "@/lib/api/respond";
 import type { Lang } from "@/lib/i18n/strings";
-import { BN_ERRORS, generationLanguageInstruction, requestLanguage } from "@/lib/i18n/server";
+import {
+  BN_ERRORS,
+  finalizeGeneratedLanguage,
+  generationLanguageInstruction,
+  requestLanguage,
+} from "@/lib/i18n/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -80,7 +85,10 @@ export const POST = withErrorHandling(async (req) => {
   }
 
   const response = Response.json({
-    text: text || fallbackReply(message, section, language),
+    text: finalizeGeneratedLanguage(
+      text || fallbackReply(message, section, language),
+      language,
+    ),
     sources: hits.map(({ id, title, source }) => ({ id, title, source })),
     trace: {
       source: text ? "gemma4" : "deterministic-fallback",
