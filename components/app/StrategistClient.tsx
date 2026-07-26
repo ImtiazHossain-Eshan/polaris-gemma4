@@ -622,9 +622,12 @@ export function StrategistClient({
             slim strip once the user starts chatting so messages get the room. */}
         <div className={cn(
           "px-4 sm:px-6 lg:px-10 border-b border-polaris-500/10 bg-gradient-to-b from-paper-soft/40 to-paper",
-          hasConversation ? "pt-3 pb-3" : "pt-5 lg:pt-8 pb-4",
+          hasConversation ? "py-2" : "pt-5 lg:pt-8 pb-4",
         )}>
-          <div className={cn("flex items-center gap-2", hasConversation ? "mb-0" : "mb-2")}>
+          <div className={cn(
+            "flex items-center gap-2",
+            hasConversation ? "flex-wrap lg:flex-nowrap" : "mb-2",
+          )}>
             {bp === "mobile" && (
               <button
                 onClick={() => setMobileChatsOpen(true)}
@@ -635,9 +638,47 @@ export function StrategistClient({
               </button>
             )}
             {hasConversation ? (
-              <span className="font-serif text-[15px] font-bold tracking-tight text-ink truncate">Strategist</span>
+              <span className="mr-1 shrink-0 font-serif text-[15px] font-bold tracking-tight text-ink">Strategist</span>
             ) : (
               <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium">{eyebrow}</div>
+            )}
+            {hasConversation && (
+              <>
+                <div className="flex min-w-0 items-center gap-1 overflow-x-auto py-0.5">
+                  {MODES.map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => setMode(m.id)}
+                      title={m.desc}
+                      className={cn(
+                        "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ring-inset transition-colors",
+                        mode === m.id
+                          ? "bg-polaris-100 text-polaris-700 ring-polaris-300 dark:bg-polaris-400/25 dark:text-polaris-100 dark:ring-polaris-400/50"
+                          : "bg-paper-card text-ink-dim ring-polaris-200 hover:text-ink hover:ring-polaris-300 dark:bg-white/[0.06] dark:ring-white/[0.18] dark:hover:bg-white/[0.12]",
+                      )}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="ml-auto w-full sm:w-[300px] lg:w-[340px]">
+                  <CompactModelPicker
+                    theme="light"
+                    model={model}
+                    setModel={setModel}
+                    availableModels={availableModels}
+                    providers={providers}
+                    allowPaid={allowPaid}
+                    setAllowPaid={setAllowPaid}
+                    offline={offline}
+                    setOffline={setOffline}
+                    onRefresh={refreshProviders}
+                    modeChip={mode[0].toUpperCase() + mode.slice(1)}
+                    routeMode={routeMode}
+                    setRouteMode={setRouteMode}
+                  />
+                </div>
+              </>
             )}
           </div>
           {!hasConversation && (
@@ -653,7 +694,8 @@ export function StrategistClient({
           )}
 
           {/* Mode + model picker row */}
-          <div className={cn("flex flex-col sm:flex-row sm:items-center gap-3 max-w-3xl", hasConversation ? "mt-2" : "mt-5")}>
+          {!hasConversation && (
+          <div className="mt-5 flex max-w-3xl flex-col gap-3 sm:flex-row sm:items-center">
             <div className="flex items-center gap-1.5">
               {MODES.map((m) => (
                 <button
@@ -691,6 +733,7 @@ export function StrategistClient({
               />
             </div>
           </div>
+          )}
         </div>
 
         {/* Messages */}

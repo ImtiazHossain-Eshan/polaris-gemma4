@@ -14,8 +14,10 @@ export function generationLanguageInstruction(lang: Lang): string {
   return [
     "Respond entirely in natural, fluent Bengali (বাংলা).",
     "Keep official names, university names, URLs, citation tags, exam abbreviations such as SAT/IELTS/GPA, code, and mathematical notation unchanged.",
-    "Use Bengali headings, explanations, labels, and action steps. Use Bengali numerals in prose, but keep JSON numeric values as numbers.",
-    "Do not mix English sentences into the answer when a natural Bengali expression is available.",
+    "Translate every ordinary heading, explanation, label, table heading, and action step into Bengali. Use Bengali numerals in prose, but keep JSON numeric values as numbers.",
+    "Do not write bilingual headings, parenthetical English glosses, or mixed Bengali-English sentences when a natural Bengali expression is available.",
+    "Translate ordinary terms such as Steps, Impact, Leadership, Action Plan, Focus Area, and Next Steps; preserve only genuine proper names, established acronyms, code, URLs, and mathematical notation.",
+    "Before sending the answer, silently review every sentence and replace any unnecessary English word with natural Bengali.",
   ].join(" ");
 }
 

@@ -6,13 +6,35 @@
  * every route follows the selected language without duplicating page logic.
  */
 
+import { BN_PRETRANSLATED } from "./bengali.pretranslated";
+import { BN_REVIEWED_OVERRIDES } from "./bengali.reviewed";
+
 const BN_DIGITS: Record<string, string> = {
   "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪",
   "5": "৫", "6": "৬", "7": "৭", "8": "৮", "9": "৯",
 };
 
+const NUMERIC_NAMES = [
+  "Gemma 4 26B",
+  "Gemma 4",
+  "Microsoft 365",
+  "Scholarships360",
+  "F-1",
+  "OUAC 105",
+] as const;
+
 export function toBengaliDigits(value: string | number): string {
-  return String(value).replace(/\d/g, (digit) => BN_DIGITS[digit]);
+  let localized = String(value);
+  const placeholders = NUMERIC_NAMES.map((name, index) => {
+    const placeholder = String.fromCharCode(0xe000 + index);
+    localized = localized.replaceAll(name, placeholder);
+    return [placeholder, name] as const;
+  });
+  localized = localized.replace(/\d/g, (digit) => BN_DIGITS[digit]);
+  for (const [placeholder, name] of placeholders) {
+    localized = localized.replaceAll(placeholder, name);
+  }
+  return localized;
 }
 
 export const BN_UI: Record<string, string> = {
@@ -1146,34 +1168,37 @@ export function translateUiText(value: string): string {
   const trailing = value.match(/\s*$/)?.[0] ?? "";
   const text = value.trim();
   if (!text) return value;
+  const calendarWord = MONTHS[text] ?? DAYS[text];
+  if (calendarWord) {
+    return `${leading}${calendarWord}${trailing}`;
+  }
   if (PROTECTED.test(text) || /^(?:https?:\/\/|mailto:|[\w.+-]+@[\w.-]+\.)/i.test(text)) {
     return value;
   }
 
-  const exact = BN_UI[text] ?? BN_UI_SECONDARY[text];
+  const exact = BN_UI[text] ?? BN_UI_SECONDARY[text] ?? BN_REVIEWED_OVERRIDES[text];
   if (exact) return `${leading}${toBengaliDigits(exact)}${trailing}`;
 
-  let translated = dynamicBengali(text);
+  const translated = dynamicBengali(text);
   if (translated !== text) return `${leading}${translated}${trailing}`;
 
-  for (const [month, bengali] of Object.entries(MONTHS)) {
-    translated = translated.replace(new RegExp(`\\b${month}\\b`, "g"), bengali);
-  }
-  for (const [day, bengali] of Object.entries(DAYS)) {
-    translated = translated.replace(new RegExp(`\\b${day}\\b`, "g"), bengali);
-  }
-  for (const [pattern, replacement] of PHRASE_RULES) {
-    translated = translated.replace(pattern, replacement);
+  const generated = BN_PRETRANSLATED[text];
+  if (generated) {
+    return `${leading}${toBengaliDigits(generated)}${trailing}`;
   }
 
-  // Static and dynamically loaded interface copy use the same lexical
-  // fallback. Generated Strategist and roadmap narratives are instructed to
-  // arrive in Bengali at the API boundary.
-  for (const [pattern, replacement] of WORD_RULES) {
-    translated = translated.replace(pattern, replacement);
+  // Legacy lexical rules are safe only when they translate the complete
+  // value. Applying them inside a sentence creates broken hybrid copy.
+  for (const [pattern, replacement] of [...PHRASE_RULES, ...WORD_RULES]) {
+    const candidate = text.replace(pattern, replacement);
+    if (candidate !== text && !/[A-Za-z]/.test(candidate)) {
+      return `${leading}${toBengaliDigits(candidate)}${trailing}`;
+    }
   }
 
-  return `${leading}${toBengaliDigits(translated)}${trailing}`;
+  // Keep new, uncatalogued copy intact instead of producing a partial,
+  // ungrammatical Bengali-English sentence.
+  return value;
 }
 
 export function formatLocaleNumber(

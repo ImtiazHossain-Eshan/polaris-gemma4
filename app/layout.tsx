@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Libre_Baskerville } from "next/font/google";
+import {
+  Hind_Siliguri,
+  Inter,
+  Libre_Baskerville,
+  Noto_Serif_Bengali,
+} from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n/LangProvider";
@@ -17,6 +22,20 @@ const libre = Libre_Baskerville({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-libre",
+  display: "swap",
+});
+
+const bangla = Hind_Siliguri({
+  subsets: ["bengali", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-bangla",
+  display: "swap",
+});
+
+const banglaSerif = Noto_Serif_Bengali({
+  subsets: ["bengali", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-bangla-serif",
   display: "swap",
 });
 
@@ -44,7 +63,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`starfield antialiased ${inter.variable} ${libre.variable} font-sans`}
+        className={`starfield antialiased ${inter.variable} ${libre.variable} ${bangla.variable} ${banglaSerif.variable} font-sans`}
       >
         <SessionProvider>
           <ThemeProvider>

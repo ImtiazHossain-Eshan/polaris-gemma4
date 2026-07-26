@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/cn";
+import { useLang } from "@/lib/i18n/LangProvider";
 
 type Tier = "free" | "paid" | "local";
 
@@ -38,10 +39,10 @@ type Props = {
   setRouteMode?: (m: CmpRouteMode) => void;
 };
 
-const PRESETS: Array<{ id: CmpRouteMode; label: string }> = [
-  { id: "fast", label: "Fast" },
-  { id: "balanced", label: "Balanced" },
-  { id: "reasoning", label: "Deep" },
+const PRESETS: Array<{ id: CmpRouteMode; en: string; bn: string }> = [
+  { id: "fast", en: "Fast", bn: "দ্রুত" },
+  { id: "balanced", en: "Balanced", bn: "ভারসাম্যপূর্ণ" },
+  { id: "reasoning", en: "Deep", bn: "গভীর" },
 ];
 
 /**
@@ -55,6 +56,8 @@ export function CompactModelPicker({
   setRouteMode,
 }: Props) {
   const dark = theme === "dark";
+  const { lang, translate } = useLang();
+  const localizedMode = modeChip ? translate(modeChip) : "";
   return (
     <div
       className={cn(
@@ -63,7 +66,7 @@ export function CompactModelPicker({
           ? "border-white/15 bg-white/[0.05] text-paper"
           : "border-polaris-200 bg-paper-card text-ink",
       )}
-      aria-label="Gemma 4 model controls"
+      aria-label={lang === "bn" ? "Gemma 4 মডেল নিয়ন্ত্রণ" : "Gemma 4 model controls"}
     >
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">
@@ -71,13 +74,14 @@ export function CompactModelPicker({
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-aurora-400 opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-aurora-500" />
           </span>
-          <span className="truncate text-[12px] font-semibold">Gemma 4 26B</span>
+          <span className="truncate text-[12px] font-semibold" data-no-translate>Gemma 4 26B</span>
           <span className="rounded-full bg-aurora-500/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-aurora-500">
-            Only LLM
+            {lang === "bn" ? "একমাত্র ভাষা মডেল" : "Only LLM"}
           </span>
         </div>
         <div className={cn("mt-0.5 text-[10px]", dark ? "text-paper/50" : "text-ink-muted")}>
-          {modeChip ? `${modeChip} ? ` : ""}Google-hosted open model
+          {localizedMode ? `${localizedMode} · ` : ""}
+          {lang === "bn" ? "Google-এ হোস্ট করা উন্মুক্ত মডেল" : "Google-hosted open model"}
         </div>
       </div>
       <div className="flex shrink-0 items-center rounded-lg bg-black/[0.04] p-0.5 dark:bg-white/[0.06]">
@@ -95,7 +99,7 @@ export function CompactModelPicker({
                   : "text-ink-muted hover:text-ink",
             )}
           >
-            {preset.label}
+            {lang === "bn" ? preset.bn : preset.en}
           </button>
         ))}
       </div>
