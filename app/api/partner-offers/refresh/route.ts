@@ -79,6 +79,65 @@ function dedupeResults(results: WebSearchResult[]): WebSearchResult[] {
   });
 }
 
+const OFFICIAL_OFFER_SOURCES = [
+  { title: "GitHub Student Developer Pack", url: "https://education.github.com/pack" },
+  { title: "JetBrains student licenses", url: "https://www.jetbrains.com/community/education/#students" },
+  { title: "Microsoft student offers", url: "https://www.microsoft.com/en-us/education/students" },
+  { title: "Autodesk Education access", url: "https://www.autodesk.com/education/edu-software/overview" },
+  { title: "AWS Educate", url: "https://aws.amazon.com/education/awseducate/" },
+  { title: "Foreign Fulbright Program", url: "https://foreign.fulbrightonline.org/apply" },
+  { title: "BRAC University scholarship and financial aid", url: "https://www.bracu.ac.bd/admissions/international-applicants/scholarship-financial-aid" },
+  { title: "Coursera financial aid", url: "https://www.coursera.support/s/article/learner-000001046" },
+] as const;
+
+function readablePageText(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, "\"")
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function readOfficialSource(source: typeof OFFICIAL_OFFER_SOURCES[number]): Promise<WebSearchResult | null> {
+  try {
+    const response = await fetch(source.url, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (compatible; PolarisStudentResearch/1.0)",
+        "accept-language": "en-US,en;q=0.8",
+      },
+      redirect: "follow",
+      cache: "no-store",
+      signal: AbortSignal.timeout(9_000),
+    });
+    if (!response.ok) return null;
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.includes("text/html")) return null;
+    const html = await response.text();
+    const description =
+      html.match(/<meta[^>]+(?:name|property)=["'](?:description|og:description)["'][^>]+content=["']([^"']+)["']/i)?.[1]
+      ?? html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["'](?:description|og:description)["']/i)?.[1]
+      ?? "";
+    const pageText = readablePageText(html);
+    const snippet = readablePageText(`${description} ${pageText}`).slice(0, 1800);
+    if (snippet.length < 80) return null;
+    return { title: source.title, url: source.url, snippet };
+  } catch {
+    return null;
+  }
+}
+
+async function officialOfferEvidence(): Promise<WebSearchResult[]> {
+  const results = await Promise.all(OFFICIAL_OFFER_SOURCES.map(readOfficialSource));
+  return results.filter((result): result is WebSearchResult => result !== null);
+}
+
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const lang = requestLanguage(req);
   const limit = await rateLimit(clientId(req), "free", "public-partner-refresh");
@@ -104,7 +163,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   ].filter(Boolean);
   const context = contextTerms.join(" ") || "university application IELTS SAT coding scholarships";
 
-  const [officialBenefits, learningOffers] = await Promise.all([
+  const [officialBenefits, learningOffers, officialSources] = await Promise.all([
     tavilySearch(
       `official current student benefit free education offer Bangladesh international students ${context}`,
       { maxResults: 7, depth: "advanced" },
@@ -113,8 +172,13 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
       `official IELTS SAT scholarship developer student program offer 2026 ${context}`,
       { maxResults: 7, depth: "advanced" },
     ),
+    officialOfferEvidence(),
   ]);
-  const evidence = dedupeResults([...officialBenefits, ...learningOffers]).slice(0, 12);
+  const evidence = dedupeResults([
+    ...officialBenefits,
+    ...learningOffers,
+    ...officialSources,
+  ]).slice(0, 16);
 
   if (evidence.length === 0) {
     const response = Response.json({
