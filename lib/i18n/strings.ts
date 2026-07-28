@@ -212,7 +212,7 @@ export const strings: Record<Lang, AnyDict> = {
     },
     footer: {
       tagline: "Polaris - your AI North Star.",
-      built: "Built for The Infinity AI BuildFest 2026.",
+      built: "Powered by Gemma 4.",
     },
     lang: { en: "EN", bn: "বাংলা" },
   },
@@ -328,7 +328,7 @@ export const strings: Record<Lang, AnyDict> = {
     },
     footer: {
       tagline: "Polaris - আপনার এআই নর্থ স্টার।",
-      built: "The Infinity AI BuildFest 2026-এর জন্য নির্মিত।",
+      built: "Gemma 4 দ্বারা চালিত।",
     },
     lang: { en: "EN", bn: "বাংলা" },
   },

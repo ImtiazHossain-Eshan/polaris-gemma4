@@ -38,9 +38,9 @@ const ROUTE_MODE_KEY = "polaris.strategist.routeMode";
 /** Shared with StrategistClient - both surfaces read/write the same thread. */
 const ACTIVE_THREAD_KEY = "polaris.chat.activeThread";
 const WIDTH_KEY = "polaris.strategist.railWidth";
-const DEFAULT_RAIL_WIDTH = 400;
-const MIN_RAIL_WIDTH = 340; // wide enough for 4 mode tabs + model picker in one row
-const MAX_RAIL_WIDTH = 720;
+const DEFAULT_RAIL_WIDTH = 416;
+const MIN_RAIL_WIDTH = 360;
+const MAX_RAIL_WIDTH = 520;
 
 type Mode = "general" | "research" | "study" | "coding";
 type Tier = "free" | "paid" | "local";
@@ -310,7 +310,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
     if (Number.isFinite(v) && v >= MIN_RAIL_WIDTH && v <= MAX_RAIL_WIDTH) {
       setRailWidth(v);
     } else if (Number.isFinite(v)) {
-      // Outdated saved value (older minimum) - drop it and use the default.
+      // Drop legacy widths that can overwhelm the main workspace.
       try { localStorage.removeItem(WIDTH_KEY); } catch {}
       setRailWidth(DEFAULT_RAIL_WIDTH);
     }

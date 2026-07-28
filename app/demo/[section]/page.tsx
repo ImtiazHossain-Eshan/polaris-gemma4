@@ -15,9 +15,8 @@ import { ActionLabClient } from "@/components/app/ActionLabClient";
 import { BookingsClient } from "@/components/app/BookingsClient";
 import { BillingClient } from "@/components/app/BillingClient";
 import { TransactionsClient } from "@/components/app/TransactionsClient";
-import { SettingsShell, type SettingsSectionId } from "@/components/app/SettingsShell";
-import { Card } from "@/components/app/ui";
 import { DemoFamily } from "@/components/demo/DemoFamily";
+import { DemoSettingsClient } from "@/components/demo/DemoSettingsClient";
 import { toUniProfile } from "@/lib/admissions";
 import type { UniversityForModel } from "@/lib/ml/probability";
 import {
@@ -49,7 +48,7 @@ export default async function DemoSectionPage({ params }: { params: Promise<{ se
   if (section === "strategist") return <StrategistClient studentName={DEMO_USER.name} initials={DEMO_USER.initials} grade={DEMO_USER.grade} contextRows={[{ k: "GPA", v: "3.80" }, { k: "Target", v: "Elite-tier" }, { k: "Probability", v: "41%" }, { k: "Country", v: "Bangladesh" }]} gapRows={GAPS} eyebrow="Strategist · grounded · Elite-tier target" demo />;
   if (section === "transactions") return <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-7 max-w-[1000px] mx-auto"><Header eyebrow="Account" title="Transactions" blurb="Every payment with its live status, reference id, and printable receipt."/><TransactionsClient rows={DEMO_TRANSACTIONS} userName={DEMO_USER.name} userEmail={DEMO_USER.email}/></div>;
   if (section === "billing") return <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-7 max-w-[1080px] mx-auto"><Header eyebrow="Account" title="Billing & plan" blurb="The public demonstration has full Elite access and never asks judges for payment."/><BillingClient plan="elite" subscription={{ status: "active", planId: "elite", billingCycle: "yearly", startedAt: "2026-07-25", renewsAt: "2027-07-25", priceMinor: 0, currency: "BDT" }} methods={[]} lifetimeSpend={[]} succeededCount={0}/></div>;
-  if (section === "settings") return <DemoSettings />;
+  if (section === "settings") return <Suspense fallback={<div className="p-8 text-[13px] text-ink-muted">Loading settings...</div>}><DemoSettingsClient /></Suspense>;
   notFound();
 }
 
@@ -61,21 +60,3 @@ const GAPS: GapRow[] = [
 ];
 
 function Header({ eyebrow, title, blurb }: { eyebrow: string; title: string; blurb: string }) { return <header className="mb-6"><div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-1.5">{eyebrow}</div><h1 className="font-serif text-[28px] sm:text-[34px] leading-[1.05] font-bold tracking-tight text-ink"><span className="grad-text">{title}</span></h1><p className="text-[12.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">{blurb}</p></header>; }
-
-function DemoSettings() {
-  const section = (title: string, text: string) => <Card className="p-5"><h2 className="font-serif text-[18px] font-bold text-ink">{title}</h2><p className="mt-2 text-[13px] text-ink-dim">{text}</p></Card>;
-  const sections: Partial<Record<SettingsSectionId, React.ReactNode>> = {
-    profile: section("Profile", `${DEMO_USER.name} · ${DEMO_USER.email} · Bangladesh`),
-    security: section("Password & security", "Public demo mode does not create an account or store a password."),
-    memory: section("Strategist memory", "Demo conversations remain in this browser session."),
-    usage: section("Gemma 4 usage", "All generative AI responses in this submission are powered only by Gemma 4."),
-    notifications: section("Notifications", "Deadline and roadmap reminder preferences."),
-    appearance: section("Appearance", "The original Polaris light and dark themes remain available."),
-    connected: section("Connected accounts", "Explore every integration safely from Connections."),
-    family: section("Family & viewers", "Invite-scoped read-only progress sharing."),
-    billing: section("Billing & plan", "Elite demonstration access · no payment required."),
-    marketplace: section("Marketplace", "Free student benefits are always shown first."),
-    data: section("Privacy & data", "Public demo state is isolated from real accounts."),
-  };
-  return <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-7 max-w-[1120px] mx-auto"><Header eyebrow="Account" title="Settings" blurb="Control your Polaris profile, access, appearance, and data."/><Suspense fallback={section("Settings", "Loading settings…")}><SettingsShell sections={sections} snapshot={section("Demo account", "Elite · profile complete · no authentication required")} basePath="/demo"/></Suspense></div>;
-}

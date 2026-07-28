@@ -557,7 +557,7 @@ export function StrategistClient({
   const gridCols =
     bp === "mobile" ? "1fr" :
     bp === "tablet" ? `${railCol} 1fr` :
-    `${railCol} 1fr 320px`;
+    `${railCol} minmax(0, 1fr) 264px`;
 
   return (
     <div
@@ -625,8 +625,8 @@ export function StrategistClient({
         {/* Hero - full only while the conversation is fresh; collapses to a
             slim strip once the user starts chatting so messages get the room. */}
         <div className={cn(
-          "px-4 sm:px-6 lg:px-10 border-b border-polaris-500/10 bg-gradient-to-b from-paper-soft/40 to-paper",
-          hasConversation ? "py-2" : "pt-5 lg:pt-8 pb-4",
+          "px-4 sm:px-6 lg:px-8 border-b border-polaris-500/10 bg-gradient-to-b from-paper-soft/55 to-paper",
+          hasConversation ? "py-2" : "pt-4 lg:pt-5 pb-3",
         )}>
           <div className={cn(
             "flex items-center gap-2",
@@ -687,10 +687,10 @@ export function StrategistClient({
           </div>
           {!hasConversation && (
             <>
-              <h1 className="font-serif text-[22px] sm:text-[26px] lg:text-[30px] leading-tight font-bold tracking-tight text-ink">
+              <h1 className="font-serif text-[21px] sm:text-[24px] lg:text-[27px] leading-tight font-bold tracking-tight text-ink">
                 Your <span className="grad-text">long-horizon</span> AI academic strategist.
               </h1>
-              <p className="hidden sm:block text-[13px] text-ink-dim mt-2 max-w-2xl leading-relaxed">
+              <p className="hidden sm:block text-[12px] text-ink-dim mt-1.5 max-w-3xl leading-relaxed">
                 Grounded in global admit patterns, your profile, your notes, your saved memories, and the live web.
                 Every answer cites its sources and proposes the next concrete action.
               </p>
@@ -699,7 +699,7 @@ export function StrategistClient({
 
           {/* Mode + model picker row */}
           {!hasConversation && (
-          <div className="mt-5 flex max-w-3xl flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-3 flex max-w-4xl flex-col gap-2 sm:flex-row sm:items-center">
             <div className="flex items-center gap-1.5">
               {MODES.map((m) => (
                 <button
@@ -719,7 +719,7 @@ export function StrategistClient({
                 </button>
               ))}
             </div>
-            <div className="sm:ml-auto sm:w-[280px]">
+            <div className="sm:ml-auto sm:w-[292px]">
               <CompactModelPicker
                 theme="light"
                 model={model}
@@ -791,31 +791,40 @@ export function StrategistClient({
       </div>
 
       {/* ─── Right context strip (desktop only - grid drops it below xl) ─── */}
-      <div className={cn("border-l border-polaris-500/10 bg-paper-soft/40 p-5 min-h-0 overflow-y-auto overscroll-contain scroll-y", bp !== "desktop" && "hidden")}>
-        <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-3">Context</div>
-        <Card className="p-4 mb-3">
-          <div className="flex items-center gap-2 mb-2">
+      <div className={cn("border-l border-polaris-500/10 bg-paper-soft/50 p-3 min-h-0 overflow-y-auto overscroll-contain scroll-y", bp !== "desktop" && "hidden")}>
+        <div className="flex items-center justify-between mb-2 px-1">
+          <div className="text-[9.5px] uppercase tracking-[0.2em] text-ink-muted font-medium">Live context</div>
+          <span className="inline-flex items-center gap-1 text-[9.5px] text-aurora-700 dark:text-aurora-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-aurora-500" /> Synced
+          </span>
+        </div>
+        <Card className="p-3 mb-2">
+          <div className="flex items-center gap-2 mb-2.5">
             <Avatar initials={initials} size={28} />
             <div className="min-w-0">
               <div className="text-[13px] font-semibold text-ink leading-none truncate">{studentName}</div>
               <div className="text-[10.5px] text-ink-dim mt-0.5">{grade}</div>
             </div>
           </div>
-          <dl className="text-[12px] space-y-1 mt-2">
+          <dl className="grid grid-cols-2 gap-1.5 text-[11px]">
             {contextRows.map((r) => (
-              <div key={r.k} className="flex justify-between"><dt className="text-ink-muted">{r.k}</dt><dd className="font-mono text-ink">{r.v}</dd></div>
+              <div key={r.k} className="rounded-lg bg-paper-soft px-2 py-1.5">
+                <dt className="text-[9.5px] text-ink-muted truncate">{r.k}</dt>
+                <dd className="font-mono font-semibold text-ink mt-0.5 truncate">{r.v}</dd>
+              </div>
             ))}
           </dl>
         </Card>
 
-        <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-2 mt-6">Tools the Strategist can use</div>
-        <ul className="text-[12px] text-ink-dim space-y-1.5">
+        <div className="text-[9.5px] uppercase tracking-[0.2em] text-ink-muted font-medium mb-2 mt-3 px-1">Available tools</div>
+        <ul className="grid gap-1.5 text-[10.5px] text-ink-dim">
           {["Search KB + cite sources", "Search the live web", "Re-prioritize your roadmap", "Read a milestone in full", "Re-run the probability engine"].map((t) => (
-            <li key={t} className="flex items-center gap-2"><span className="text-aurora-600"><Icon.check size={12} /></span><span>{t}</span></li>
+            <li key={t} className="flex items-center gap-2 rounded-lg bg-paper-card px-2.5 py-2 ring-1 ring-inset ring-polaris-500/10">
+              <span className="text-aurora-600"><Icon.check size={11} /></span><span className="leading-tight">{t}</span>
+            </li>
           ))}
         </ul>
       </div>
-
       {quota && <QuotaModal quota={quota} onClose={() => setQuota(null)} />}
     </div>
   );

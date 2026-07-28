@@ -1,230 +1,152 @@
 "use client";
 
-/**
- * Footer - light/paper themed (back to brand-warm), three layers:
- *   1. Pre-footer CTA strip - big italic-accent headline + animated CTA button
- *   2. Brand block (animated logo) + multi-column link groups with hover arrows
- *   3. Bottom bar with copyright, language, and a "live" status pill
- *
- * Animations: framer-motion. The Polaris logo hovers with a subtle scale,
- * the compass mark slow-rotates on hover, and the primary CTA button lifts +
- * deepens its shadow with a shimmer pass on the right arrow.
- */
-
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLang } from "@/lib/i18n/LangProvider";
 import { CompassLogo } from "@/components/Nav";
 
-export function Footer() {
-  const { t } = useLang();
+const orbitDots = [
+  { size: 9, x: "18%", y: "20%", delay: 0 },
+  { size: 6, x: "74%", y: "18%", delay: 0.8 },
+  { size: 8, x: "86%", y: "72%", delay: 1.4 },
+  { size: 5, x: "42%", y: "82%", delay: 2.1 },
+];
 
-  const groups: { title: string; links: { href: string; label: string }[] }[] = [
-    {
-      title: "Product",
-      links: [
-        { href: "/#how", label: "How it works" },
-        { href: "/#pricing", label: "Pricing" },
-        { href: "/case-studies", label: "Case studies" },
-        { href: "/roadmap", label: "Build your roadmap" },
-      ],
+export function Footer() {
+  const { t, lang } = useLang();
+  const bn = lang === "bn";
+  const copy = bn ? {
+    kicker: "পরবর্তী পদক্ষেপটি এখনই নিন",
+    title: "পরিকল্পনাকে অগ্রগতিতে পরিণত করুন।",
+    body: "Gemma 4 দিয়ে আপনার লক্ষ্য, প্রমাণ, সময়সীমা ও দৈনিক কাজকে একই জীবন্ত পরিকল্পনায় আনুন।",
+    primary: "বিনামূল্যে ডেমো চালান",
+    secondary: "অ্যাকশন ল্যাব দেখুন",
+    product: "প্রোডাক্ট",
+    workspace: "ওয়ার্কস্পেস",
+    account: "অ্যাকাউন্ট",
+    status: "সিস্টেম সচল",
+    gemma: "Gemma 4 দ্বারা চালিত",
+    note: "শিক্ষার্থীর সিদ্ধান্ত সহায়তার জন্য তৈরি",
+    links: {
+      how: "কীভাবে কাজ করে", pricing: "মূল্য", stories: "সাফল্যের গল্প", roadmap: "রোডম্যাপ",
+      strategist: "স্ট্র্যাটেজিস্ট", deadlines: "সময়সীমা", universities: "বিশ্ববিদ্যালয়", action: "অ্যাকশন ল্যাব",
+      demo: "পাবলিক ডেমো", family: "পরিবার", settings: "সেটিংস", github: "সোর্স কোড",
     },
-    {
-      title: "Workspace",
-      links: [
-        { href: "/roadmap", label: "Roadmap" },
-        { href: "/strategist", label: "Strategist" },
-        { href: "/deadlines", label: "Deadlines" },
-        { href: "/universities", label: "Universities" },
-      ],
+  } : {
+    kicker: "Your next move starts here",
+    title: "Turn planning into momentum.",
+    body: "Bring goals, evidence, deadlines, and daily work into one living plan powered by Gemma 4.",
+    primary: "Try the free demo",
+    secondary: "Explore Action Lab",
+    product: "Product",
+    workspace: "Workspace",
+    account: "Access",
+    status: "All systems operational",
+    gemma: "Powered by Gemma 4",
+    note: "Built for student decision support",
+    links: {
+      how: "How it works", pricing: "Pricing", stories: "Success stories", roadmap: "Roadmap",
+      strategist: "Strategist", deadlines: "Deadlines", universities: "Universities", action: "Action Lab",
+      demo: "Public demo", family: "Family", settings: "Settings", github: "Source code",
     },
-    {
-      title: "Account",
-      links: [
-        { href: "/signin", label: "Sign in" },
-        { href: "/signup", label: "Sign up" },
-        { href: "/family", label: "Family" },
-        { href: "/billing", label: "Billing" },
-      ],
-    },
-  ];
+  };
+
+  const groups = [
+    { title: copy.product, links: [
+      ["/#how", copy.links.how], ["/#pricing", copy.links.pricing], ["/case-studies", copy.links.stories], ["/demo", copy.links.roadmap],
+    ] },
+    { title: copy.workspace, links: [
+      ["/demo/strategist", copy.links.strategist], ["/demo/deadlines", copy.links.deadlines], ["/demo/universities", copy.links.universities], ["/demo/action-lab", copy.links.action],
+    ] },
+    { title: copy.account, links: [
+      ["/demo", copy.links.demo], ["/demo/family", copy.links.family], ["/demo/settings", copy.links.settings], ["https://github.com/ImtiazHossain-Eshan/polaris-gemma4", copy.links.github],
+    ] },
+  ] as const;
 
   return (
-    <footer data-section-theme="light" className="relative overflow-hidden bg-paper text-ink">
-      {/* Soft warm mood from the top */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,125,78,0.08), transparent 60%)",
-        }}
-      />
+    <footer id="footer" data-section-theme="light" className="relative overflow-hidden bg-paper text-ink border-t border-ink/10">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-10 sm:pt-14">
+        <div className="relative overflow-hidden rounded-[28px] bg-ink text-paper shadow-[0_30px_80px_-38px_rgba(34,18,12,0.75)] ring-1 ring-white/10">
+          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(196,125,78,0.28),transparent_36%),radial-gradient(circle_at_82%_70%,rgba(87,145,111,0.20),transparent_34%)]" />
+          <motion.div aria-hidden className="absolute -right-24 -top-28 h-80 w-80 rounded-full border border-white/10" animate={{ rotate: 360 }} transition={{ duration: 42, repeat: Infinity, ease: "linear" }} />
+          <motion.div aria-hidden className="absolute -right-8 -top-12 h-48 w-48 rounded-full border border-polaris-300/20" animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} />
+          {orbitDots.map((dot, index) => (
+            <motion.span key={index} aria-hidden className="absolute rounded-full bg-polaris-300 shadow-[0_0_18px_rgba(221,166,124,0.8)]" style={{ width: dot.size, height: dot.size, left: dot.x, top: dot.y }} animate={{ y: [0, -8, 0], opacity: [0.45, 1, 0.45] }} transition={{ duration: 3.5, repeat: Infinity, delay: dot.delay, ease: "easeInOut" }} />
+          ))}
 
-      {/* ─── Pre-footer CTA strip ──────────────────────────────────────── */}
-      <div className="relative border-b border-ink/10">
-        <div className="mx-auto max-w-6xl px-6 py-16 sm:py-20 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.28em] text-ink-muted font-medium mb-3 flex items-center gap-2">
-              <span aria-hidden className="h-px w-8 bg-ink/30" />
-              Ready when you are
+          <div className="relative grid gap-8 px-6 py-8 sm:px-10 sm:py-11 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-paper/75">
+                <span className="h-1.5 w-1.5 rounded-full bg-aurora-400 shadow-[0_0_10px_rgba(105,183,134,0.9)]" />
+                {copy.kicker}
+              </div>
+              <h2 className="mt-4 font-serif text-[32px] font-bold leading-[1.02] tracking-tight sm:text-[44px] lg:text-[52px]">
+                {copy.title}
+              </h2>
+              <p className="mt-4 max-w-xl text-[13.5px] leading-relaxed text-paper/68 sm:text-[15px]">{copy.body}</p>
+              <div className="mt-5 flex flex-wrap gap-2 text-[10.5px] text-paper/65">
+                {[copy.gemma, copy.status, bn ? "বাংলা ও English" : "English and Bengali"].map((item, index) => (
+                  <span key={item} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1.5">
+                    <span className={index === 1 ? "h-1.5 w-1.5 rounded-full bg-aurora-400" : "text-polaris-300"}>{index === 1 ? "" : "✦"}</span>{item}
+                  </span>
+                ))}
+              </div>
             </div>
-            <h3 className="font-sans text-3xl sm:text-4xl md:text-5xl font-bold leading-[1.1] tracking-tight max-w-2xl text-ink">
-              Start your AI roadmap to{" "}
-              <em className="font-serif font-normal italic text-signal-rose">elite admissions</em>
-              <span className="text-signal-rose">.</span>
-            </h3>
-          </div>
-          <CtaButton />
-        </div>
-      </div>
-
-      {/* ─── Brand + Link columns ──────────────────────────────────────── */}
-      <div className="relative mx-auto max-w-6xl px-6 py-16 grid grid-cols-2 md:grid-cols-5 gap-y-10 gap-x-8">
-        {/* Animated brand block */}
-        <div className="col-span-2 max-w-sm">
-          <AnimatedLogo />
-          <p className="mt-4 text-sm text-ink-dim leading-relaxed">{t.footer.tagline}</p>
-
-          {/* Live status pill */}
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-paper-card ring-1 ring-inset ring-ink/10 px-3 py-1.5 text-[11px] text-ink-dim shadow-sm">
-            <span className="relative inline-flex">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-aurora-500 opacity-75 animate-ping" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-aurora-500" />
-            </span>
-            All systems operational
+            <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
+              <FooterButton href="/demo" primary>{copy.primary}</FooterButton>
+              <FooterButton href="/demo/action-lab">{copy.secondary}</FooterButton>
+            </div>
           </div>
         </div>
 
-        {/* Link groups */}
-        {groups.map((g) => (
-          <div key={g.title}>
-            <div className="text-[11px] uppercase tracking-[0.24em] text-ink-muted font-medium">
-              {g.title}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-9 py-10 sm:py-12 md:grid-cols-5">
+          <div className="col-span-2 max-w-sm">
+            <AnimatedLogo />
+            <p className="mt-3 text-[13px] leading-relaxed text-ink-dim">{t.footer.tagline}</p>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-paper-card px-3 py-1.5 text-[10.5px] text-ink-dim ring-1 ring-inset ring-ink/10">
+              <span className="relative flex h-1.5 w-1.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-aurora-500 opacity-70" /><span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-aurora-500" /></span>
+              {copy.status}
             </div>
-            <ul className="mt-4 space-y-2.5">
-              {g.links.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className="group inline-flex items-center text-sm text-ink-dim hover:text-ink transition-colors"
-                  >
-                    {l.label}
-                    <span
-                      aria-hidden
-                      className="ml-1 inline-block opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 text-signal-rose"
-                    >
-                      →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
-        ))}
+          {groups.map((group) => (
+            <div key={group.title}>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink-muted">{group.title}</div>
+              <ul className="mt-3 space-y-2.5">
+                {group.links.map(([href, label]) => (
+                  <li key={href}><Link href={href} className="group inline-flex items-center gap-1 text-[13px] text-ink-dim transition-colors hover:text-ink">{label}<span className="translate-x-0 text-signal-rose opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100">→</span></Link></li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* ─── Bottom bar ────────────────────────────────────────────────── */}
-      <div className="relative border-t border-ink/10">
-        <div className="mx-auto max-w-6xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-muted">
-          <div className="flex items-center gap-3">
-            <span>© {new Date().getFullYear()} Polaris</span>
-            <span aria-hidden className="h-3 w-px bg-ink/15" />
-            <span>{t.footer.built}</span>
-          </div>
-          <div className="flex items-center gap-3 font-mono">
-            <span>EN / বাংলা</span>
-            <span aria-hidden className="h-3 w-px bg-ink/15" />
-            <span>v0.1</span>
-          </div>
+      <div className="border-t border-ink/10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-center text-[11px] text-ink-muted sm:flex-row sm:text-left">
+          <span>© {new Date().getFullYear()} Polaris. {copy.note}.</span>
+          <span className="font-mono">EN / বাংলা · Gemma 4 · v1.0</span>
         </div>
       </div>
     </footer>
   );
 }
 
-/* ─── Animated brand logo ────────────────────────────────────────────────
-   Subtle hover-scale on the whole brand, plus a slow continuous rotation on
-   the compass mark that speeds up on hover, and a faint glow ring that fades
-   in. The text-content stays still so the wordmark reads clearly. */
 function AnimatedLogo() {
   return (
     <Link href="/" className="inline-flex">
-      <motion.div
-        className="relative flex items-center gap-2.5"
-        initial="rest"
-        whileHover="hover"
-      >
-        {/* Glow ring */}
-        <motion.span
-          aria-hidden
-          className="absolute -inset-2 -left-1 rounded-full bg-polaris-400/20 blur-xl"
-          variants={{ rest: { opacity: 0 }, hover: { opacity: 1 } }}
-          transition={{ duration: 0.3 }}
-        />
-        {/* Compass - slow rotate always, faster on hover */}
-        <motion.span
-          className="relative inline-flex"
-          variants={{
-            rest: { rotate: 0 },
-            hover: { rotate: 360 },
-          }}
-          transition={{ duration: 1.6, ease: "easeInOut" }}
-        >
-          <CompassLogo />
-        </motion.span>
-        {/* Wordmark */}
-        <motion.span
-          className="relative font-serif text-[17px] font-bold tracking-tight text-ink"
-          variants={{
-            rest: { letterSpacing: "-0.01em" },
-            hover: { letterSpacing: "0.01em" },
-          }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-        >
-          Polaris
-        </motion.span>
-      </motion.div>
+      <motion.span className="relative flex items-center gap-2.5" whileHover="hover" initial="rest">
+        <motion.span aria-hidden className="absolute -inset-2 rounded-full bg-polaris-400/15 blur-xl" variants={{ rest: { opacity: 0 }, hover: { opacity: 1 } }} />
+        <motion.span className="relative inline-flex" variants={{ rest: { rotate: 0 }, hover: { rotate: 360 } }} transition={{ duration: 1.2, ease: "easeInOut" }}><CompassLogo /></motion.span>
+        <span className="relative font-serif text-[18px] font-bold tracking-tight text-ink">Polaris</span>
+      </motion.span>
     </Link>
   );
 }
 
-/* ─── Animated primary CTA ──────────────────────────────────────────────
-   Lifts + deepens shadow on hover, arrow slides + a faint shimmer sweeps
-   across left-to-right. */
-function CtaButton() {
+function FooterButton({ href, primary, children }: { href: string; primary?: boolean; children: React.ReactNode }) {
   return (
-    <Link href="/roadmap" className="inline-flex shrink-0">
-      <motion.span
-        className="group relative inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[14px] font-semibold text-paper shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] overflow-hidden"
-        whileHover={{ y: -3, boxShadow: "0 22px 50px -16px rgba(0,0,0,0.45)" }}
-        whileTap={{ y: -1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      >
-        {/* Shimmer sweep across the button on hover */}
-        <motion.span
-          aria-hidden
-          className="absolute inset-y-0 -inset-x-12 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%)",
-          }}
-          initial={{ x: "-100%" }}
-          whileHover={{ x: "100%" }}
-          transition={{ duration: 0.9, ease: "easeInOut" }}
-        />
-        <span className="relative">Start free - no card</span>
-        <motion.span
-          aria-hidden
-          className="relative inline-block"
-          variants={{ rest: { x: 0 }, hover: { x: 4 } }}
-          initial="rest"
-          whileHover="hover"
-          transition={{ type: "spring", stiffness: 300, damping: 18 }}
-        >
-          →
-        </motion.span>
-      </motion.span>
+    <Link href={href} className={primary ? "group inline-flex min-w-[190px] items-center justify-between rounded-full bg-paper px-5 py-3 text-[13px] font-semibold text-ink shadow-lg transition-transform hover:-translate-y-0.5" : "group inline-flex min-w-[190px] items-center justify-between rounded-full border border-white/15 bg-white/[0.06] px-5 py-3 text-[13px] font-semibold text-paper transition-colors hover:bg-white/[0.11]"}>
+      <span>{children}</span><span className="transition-transform group-hover:translate-x-1">→</span>
     </Link>
   );
 }
