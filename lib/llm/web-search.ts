@@ -79,6 +79,44 @@ async function publicHtmlSearch(query: string, maxResults: number): Promise<WebS
   }
 }
 
+async function publicRssSearch(query: string, maxResults: number): Promise<WebSearchResult[]> {
+  try {
+    const endpoint = new URL("https://www.bing.com/search");
+    endpoint.searchParams.set("format", "rss");
+    endpoint.searchParams.set("q", query);
+    const response = await fetch(endpoint, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (compatible; PolarisStudentResearch/1.0)",
+        "accept-language": "en-US,en;q=0.8",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) return [];
+    const xml = await response.text();
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)];
+    const results: WebSearchResult[] = [];
+    const seen = new Set<string>();
+    for (const item of items) {
+      if (results.length >= maxResults) break;
+      const title = item[1].match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "";
+      const rawUrl = item[1].match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? "";
+      const snippet = item[1].match(/<description>([\s\S]*?)<\/description>/i)?.[1] ?? "";
+      const url = directResultUrl(rawUrl);
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      results.push({
+        title: decodeHtml(title),
+        url,
+        snippet: decodeHtml(snippet),
+      });
+    }
+    return results;
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Best-effort retrieval. Tavily is preferred when configured; the public
  * HTML fallback keeps live evidence available in a zero-setup judge demo.
@@ -114,7 +152,11 @@ export async function tavilySearch(
       // Fall through to the no-key public retrieval path.
     }
   }
-  return publicHtmlSearch(query, opts.maxResults ?? 5);
+  const maxResults = opts.maxResults ?? 5;
+  const publicResults = await publicHtmlSearch(query, maxResults);
+  return publicResults.length > 0
+    ? publicResults
+    : publicRssSearch(query, maxResults);
 }
 
 /** Returns a short, citation-friendly label for a URL (just the bare host). */
