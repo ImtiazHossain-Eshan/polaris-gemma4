@@ -83,7 +83,7 @@ The interface, roadmap content, error states, fallback guidance, navigation, and
 | Evidence-to-Action Graph | Converts an application claim into proof, a readable signal, a gap, and the next verification step | Audits evidence without treating unsupported claims as facts |
 | IELTS and SAT Mock Exams | Runs original English practice questions with immediate scoring | Produces a focused review from the student's answers |
 | Smart Routine | Adds, edits, and removes weekly study blocks manually or from natural language | Parses requests such as “Add math practice Monday from 9 to 10 pm” into validated schedule data |
-| Video Learning | Embeds official IELTS and SAT lessons and recommends the next lesson by goal | Connects learning intent to a focused video sequence |
+| Video Learning | Embeds official IELTS and SAT lessons and groups related lessons by exam and skill | Deterministic official-source curation avoids inventing resources |
 
 The executed [`polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) reproduces the Decision Twin and Evidence Graph pipeline with visible model outputs, retrieval results, Bengali generation, and automated engineering checks. No credential value is stored in the notebook.
 
