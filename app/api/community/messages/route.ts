@@ -1,10 +1,10 @@
 /**
  * /api/community/messages
  *
- * GET  ?channel=visa&after=ISO — messages in a channel (oldest→newest),
+ * GET  ?channel=visa&after=ISO - messages in a channel (oldest→newest),
  *       hidden + blocked-author rows filtered server-side. `after` enables
  *       cheap polling.
- * POST — { channel, text } — post a message. Safety guard (no links, no
+ * POST - { channel, text } - post a message. Safety guard (no links, no
  *       payment numbers) + per-plan rate limit run server-side.
  *
  * Open to every signed-in user regardless of plan.
@@ -55,7 +55,7 @@ export const POST = withErrorHandling(async (req) => {
   const rl = await rateLimit(session.id, session.plan, "community");
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: "Slow down a little — try again in a few minutes." },
+      { error: "Slow down a little - try again in a few minutes." },
       { status: 429, headers: rateLimitHeaders(rl) },
     );
   }

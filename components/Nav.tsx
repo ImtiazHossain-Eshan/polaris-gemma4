@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Nav — floating glass pill in the rrad.ltd style.
+ * Nav - floating glass pill in the rrad.ltd style.
  *
  * - Sticky rounded pill that floats above the content with backdrop blur.
  * - Adapts to the current section's theme: reads `data-section-theme` on the
@@ -94,7 +94,7 @@ export function Nav() {
 
   const onDark = theme === "dark";
 
-  // Liquid-glass pill chrome — accurate to rrad.ltd: very dark glass with a
+  // Liquid-glass pill chrome - accurate to rrad.ltd: very dark glass with a
   // subtle inner top highlight (the glass reflection), faint hairline ring,
   // and a soft outer shadow.
   const pillBg = onDark
@@ -110,12 +110,12 @@ export function Nav() {
     : "bg-paper-card text-ink ring-1 ring-inset ring-ink/10";
 
   function isActive(href: string) {
-    // Off-homepage routes (e.g. /case-studies, /signin) — pathname match only.
+    // Off-homepage routes (e.g. /case-studies, /signin) - pathname match only.
     if (pathname !== "/") {
       if (href === "/" || href.startsWith("/#")) return false;
       return pathname === href || pathname.startsWith(href + "/");
     }
-    // On the homepage — drive active state from the section currently in view.
+    // On the homepage - drive active state from the section currently in view.
     // `activeAnchor` comes from data-section-theme sections' `id` attribute
     // (hero="home", how="how", pricing="pricing"; other sections have no id
     // and therefore highlight nothing).
@@ -201,7 +201,7 @@ export function Nav() {
             })}
           </nav>
 
-          {/* Right: lang toggle + auth — each its own floating element */}
+          {/* Right: lang toggle + auth - each its own floating element */}
           <div className="hidden xl:flex items-center gap-2 shrink-0">
             {LangToggle}
             {status === "loading" ? (

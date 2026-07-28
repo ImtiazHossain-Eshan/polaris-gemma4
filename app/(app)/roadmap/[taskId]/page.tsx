@@ -1,5 +1,5 @@
 /**
- * /roadmap/[taskId] — task detail panel rendered as a Next.js route.
+ * /roadmap/[taskId] - task detail panel rendered as a Next.js route.
  * Using a sibling route (not @modal) keeps deep-links shareable.
  */
 

@@ -1,4 +1,4 @@
-/** /community/[channel] — deep link into a specific channel. */
+/** /community/[channel] - deep link into a specific channel. */
 import { redirect } from "next/navigation";
 
 export default async function CommunityChannelDeepLink({

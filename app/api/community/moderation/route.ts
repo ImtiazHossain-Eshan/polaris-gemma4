@@ -1,12 +1,12 @@
 /**
  * POST /api/community/moderation
  *
- * { action: "report", messageId, reason? }  — file a report; 3+ distinct
+ * { action: "report", messageId, reason? }  - file a report; 3+ distinct
  *   reports auto-hide the message into the moderation queue.
- * { action: "block", userId }               — hide that user's messages
+ * { action: "block", userId }               - hide that user's messages
  *   from your feed everywhere.
  *
- * GET — admins only: the open moderation queue.
+ * GET - admins only: the open moderation queue.
  */
 
 import { z } from "zod";

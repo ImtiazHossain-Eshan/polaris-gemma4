@@ -1,5 +1,5 @@
 /**
- * Integration registry — the honest catalog.
+ * Integration registry - the honest catalog.
  *
  * Statuses are real:
  *   - "available"      → working connect flow exists right now
@@ -43,7 +43,7 @@ export type IntegrationDef = {
   syncDirection: "import" | "export" | "two_way";
   scopes: IntegrationScope[];
   features: string[];
-  /** What Polaris will NOT do — shown in the connect modal. */
+  /** What Polaris will NOT do - shown in the connect modal. */
   wontDo: string[];
   /** Base availability before per-user state is applied. */
   baseStatus: "available" | "requires_setup" | "coming_soon";
@@ -66,7 +66,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     scopes: [
       { id: "profile", label: "Public profile", description: "Username, name, bio, follower count", required: true },
       { id: "repos", label: "Public repositories", description: "Names, descriptions, languages, stars", required: true },
-      { id: "pat", label: "Personal access token (optional)", description: "Used once for this import to raise rate limits / include private repos — never stored", required: false },
+      { id: "pat", label: "Personal access token (optional)", description: "Used once for this import to raise rate limits / include private repos - never stored", required: false },
     ],
     features: ["Portfolio project import", "Language strengths", "Documentation health check", "Roadmap project milestones"],
     wontDo: ["Modify or publish anything", "Store your access token", "Access private repos without a token you provide"],
@@ -79,7 +79,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     brand: "codeforces",
     color: "#1F8ACB",
     officialUrl: "https://codeforces.com",
-    description: "Import your public competitive-programming profile by handle — rating, rank, solved problems, and weak topic tags feed your Olympiad branch.",
+    description: "Import your public competitive-programming profile by handle - rating, rank, solved problems, and weak topic tags feed your Olympiad branch.",
     connectionMethod: "public_handle",
     syncDirection: "import",
     scopes: [
@@ -116,7 +116,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     brand: "gdrive",
     color: "#1FA463",
     officialUrl: "https://drive.google.com",
-    description: "Index selected folders only — essay drafts, transcripts, CVs — so the Strategist can cite your actual documents in its advice.",
+    description: "Index selected folders only - essay drafts, transcripts, CVs - so the Strategist can cite your actual documents in its advice.",
     connectionMethod: "oauth",
     syncDirection: "import",
     scopes: [
@@ -151,7 +151,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     brand: "notion",
     color: "#111111",
     officialUrl: "https://notion.so",
-    description: "Select pages and databases for the Strategist to search and cite — your study notes become part of its grounding.",
+    description: "Select pages and databases for the Strategist to search and cite - your study notes become part of its grounding.",
     connectionMethod: "coming_soon",
     syncDirection: "import",
     scopes: [],
@@ -214,7 +214,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     category: "coding",
     color: "#FFA116",
     officialUrl: "https://leetcode.com",
-    description: "Public profile import — solved counts and contest rating for your technical-prep track.",
+    description: "Public profile import - solved counts and contest rating for your technical-prep track.",
     connectionMethod: "coming_soon",
     syncDirection: "import",
     scopes: [],
@@ -251,7 +251,7 @@ export const INTEGRATIONS: IntegrationDef[] = [
     features: ["Selected-folder indexing", "Document citations"],
     wontDo: [],
     baseStatus: "coming_soon",
-    comingSoonReason: "Planned after Google Drive — same selected-folders-only privacy model.",
+    comingSoonReason: "Planned after Google Drive - same selected-folders-only privacy model.",
   },
   {
     id: "classroom",

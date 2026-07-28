@@ -87,7 +87,7 @@
       "differentiators": "Strong PIQs, sustained EC depth, demonstrated initiative"
     },
     "tags": ["STEM", "public-ivy", "elite-global"],
-    "summary": "Berkeley uses 4 Personal Insight Questions instead of recs. EECS is hyper-competitive — depth and demonstrated CS impact carry the application."
+    "summary": "Berkeley uses 4 Personal Insight Questions instead of recs. EECS is hyper-competitive - depth and demonstrated CS impact carry the application."
   },
   {
     "id": "uchicago",
@@ -100,7 +100,7 @@
     "requirements": {
       "gpa": "3.9+ typical",
       "tests": "Test-optional. 1520+ if submitting.",
-      "essays": "Famous 'UChicago essays' — quirky prompts",
+      "essays": "Famous 'UChicago essays' - quirky prompts",
       "recs": "2 teacher + counselor",
       "differentiators": "Intellectual curiosity demonstrated through unconventional thinking and academic depth"
     },
@@ -120,7 +120,7 @@
       "tests": "SAT 1500+ recommended. TOEFL 100+.",
       "essays": "Princeton-specific supplements + graded paper",
       "recs": "2 teacher + counselor",
-      "differentiators": "Senior thesis culture — independent research signal valued highly"
+      "differentiators": "Senior thesis culture - independent research signal valued highly"
     },
     "tags": ["liberal-arts", "research", "elite-global", "need-blind-intl"],
     "summary": "Princeton is need-blind for internationals and values research aptitude. The graded paper requirement is unique."
@@ -138,7 +138,7 @@
       "tests": "SAT 1510+ or ACT 34+. TOEFL 100+.",
       "essays": "Why Yale + several short responses",
       "recs": "2 teacher + counselor",
-      "differentiators": "Residential college culture — applicants who'll thrive in collaborative communities"
+      "differentiators": "Residential college culture - applicants who'll thrive in collaborative communities"
     },
     "tags": ["liberal-arts", "elite-global", "need-blind-intl"],
     "summary": "Yale is need-blind for internationals. Strong fit signal: collaborative, community-oriented leaders."
@@ -174,7 +174,7 @@
       "tests": "STEP for Maths, ENGAA for Engineering, etc. IELTS 7.5+.",
       "essays": "Personal Statement + Cambridge supplement (SAQ)",
       "recs": "1 academic reference",
-      "differentiators": "Tripos system — extreme subject depth expected from day one"
+      "differentiators": "Tripos system - extreme subject depth expected from day one"
     },
     "tags": ["UK", "subject-specific", "elite-global"],
     "summary": "Cambridge expects subject mastery from application day. STEP-level math problem-solving is the deepest filter."
@@ -192,7 +192,7 @@
       "tests": "MAT for Maths, occasional interview. IELTS 6.5–7+.",
       "essays": "UCAS personal statement",
       "recs": "1 academic reference",
-      "differentiators": "STEM-only focus — pure subject excellence wins"
+      "differentiators": "STEM-only focus - pure subject excellence wins"
     },
     "tags": ["UK", "STEM", "elite-global"],
     "summary": "Imperial is a STEM-only university. Pure subject excellence and grade ceilings carry the application."
@@ -228,7 +228,7 @@
       "tests": "SAT optional; IELTS 6.5+.",
       "essays": "Program-specific supplemental applications",
       "recs": "Not required for most programs",
-      "differentiators": "Engineering Science and CS supplemental apps are the bar — strong math and coding background"
+      "differentiators": "Engineering Science and CS supplemental apps are the bar - strong math and coding background"
     },
     "tags": ["Canada", "STEM", "international-friendly"],
     "summary": "U of T's CS and Engineering Science programs are extremely competitive; the supplemental application is decisive."
@@ -303,7 +303,7 @@
       "differentiators": "Low tuition for internationals (~€150/sem). Strong industry pipeline."
     },
     "tags": ["Germany", "low-cost", "STEM"],
-    "summary": "TUM offers world-class STEM education at near-zero tuition — a huge ROI play for South Asian families."
+    "summary": "TUM offers world-class STEM education at near-zero tuition - a huge ROI play for South Asian families."
   },
   {
     "id": "iit-bombay",

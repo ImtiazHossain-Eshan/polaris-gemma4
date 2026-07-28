@@ -1,7 +1,7 @@
 /**
  * Per-user rate limit. Backed by Upstash Redis if configured, else a
  * per-process LRU. Suitable for serverless because the in-memory fallback
- * is intentionally lossy — Upstash should be used in production.
+ * is intentionally lossy - Upstash should be used in production.
  *
  * Limits are plan-aware: free / pro / elite map to different budgets.
  */

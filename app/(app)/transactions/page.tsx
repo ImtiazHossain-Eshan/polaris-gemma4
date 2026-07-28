@@ -1,5 +1,5 @@
 /**
- * /transactions — payment ledger. Server loads the user's real transaction
+ * /transactions - payment ledger. Server loads the user's real transaction
  * records; the client renders the overview, filters, and receipt modals.
  */
 

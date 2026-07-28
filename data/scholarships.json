@@ -17,7 +17,7 @@
     "value": "Full tuition + stipend + flights",
     "eligibility": "2+ years work experience, leadership potential, UK master's offer",
     "tags": ["UK", "master's", "leadership", "Bangladesh-friendly"],
-    "summary": "UK government scholarship. Bangladesh has a strong Chevening pipeline — leadership essays carry the application."
+    "summary": "UK government scholarship. Bangladesh has a strong Chevening pipeline - leadership essays carry the application."
   },
   {
     "id": "commonwealth",
@@ -127,7 +127,7 @@
     "value": "Full tuition + €1.4k/mo stipend + travel",
     "eligibility": "Bachelor's, strong academics, English/EU lang proficiency",
     "tags": ["EU", "research", "master's"],
-    "summary": "Two-country EU master's with full funding. Highly competitive — research fit and motivation letter matter most."
+    "summary": "Two-country EU master's with full funding. Highly competitive - research fit and motivation letter matter most."
   },
   {
     "id": "kgsp",
@@ -177,6 +177,6 @@
     "value": "Full demonstrated need",
     "eligibility": "MIT admission + financial need (need-blind for internationals)",
     "tags": ["USA", "need-blind", "undergraduate"],
-    "summary": "MIT is need-blind for international applicants — financial need does not affect admission decision."
+    "summary": "MIT is need-blind for international applicants - financial need does not affect admission decision."
   }
 ]

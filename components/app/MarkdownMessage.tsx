@@ -275,7 +275,7 @@ function CitationChip({
       ? "bg-polaris-500/15 text-polaris-200 ring-polaris-400/30 hover:bg-polaris-500/25"
       : "bg-polaris-100 text-polaris-700 ring-polaris-300/50 hover:bg-polaris-200",
   );
-  const title = `${citation.label} — ${citation.uri}`;
+  const title = `${citation.label} - ${citation.uri}`;
 
   if (citation.kind === "web" && /^https?:\/\//.test(citation.uri)) {
     return (

@@ -3,7 +3,7 @@
  *
  * Logistic regression with hand-tuned coefficients calibrated against
  * the patterns in data/case-studies.json + public acceptance-rate data.
- * Inference is a pure dot product — runs anywhere, no Python runtime needed.
+ * Inference is a pure dot product - runs anywhere, no Python runtime needed.
  *
  * Features are intentionally transparent (no demographic proxies):
  *   - GPA (0–4 normalized)
@@ -42,7 +42,7 @@ export type ProbabilityResult = {
 };
 
 // Coefficients (tuned by hand against case-studies + acceptance rates).
-// Normalizations are shifted so 50th-percentile inputs map to ~0 — preventing
+// Normalizations are shifted so 50th-percentile inputs map to ~0 - preventing
 // weak profiles from getting an unearned boost.
 const W = {
   gpa: 3.2,       // gpa: (gpa - 3.4) / 0.6, clamped to [-1, 1]

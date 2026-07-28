@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * CheckoutModal — fake-money payment UI with bKash + Card + Nagad + Rocket.
+ * CheckoutModal - fake-money payment UI with bKash + Card + Nagad + Rocket.
  *
  * Real-looking flows backed by /api/transactions:
  *   1. Open modal with plan + price.
@@ -23,7 +23,7 @@ type Method = "card" | "bkash" | "nagad" | "rocket";
 
 type PlanChoice = {
   id: "pro" | "elite";
-  /** Display name, e.g. "Polaris Pro (annual)" — matches transactions.description prefix. */
+  /** Display name, e.g. "Polaris Pro (annual)" - matches transactions.description prefix. */
   name: string;
   /** Amount in minor units (cents for USD, paisa for BDT). */
   amountUSDcents: number;
@@ -179,7 +179,7 @@ export function CheckoutModal({ open, onClose, plan, onSuccess }: Props) {
         reason: tx.failureReason,
       });
       if (tx.status === "succeeded") {
-        // Persist the (display-safe) payment method if asked — fire & forget.
+        // Persist the (display-safe) payment method if asked - fire & forget.
         if (saveMethod) {
           const last4 = method === "card"
             ? cardNumber.replace(/\s+/g, "").slice(-4)
@@ -269,7 +269,7 @@ export function CheckoutModal({ open, onClose, plan, onSuccess }: Props) {
               </button>
               <div className="mt-3 text-[10.5px] text-ink-muted text-center leading-relaxed">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="inline -mt-0.5 mr-1"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-                Sandbox checkout — no real money moves. Use card <span className="font-mono">4242 4242 4242 4242</span> for a guaranteed pass.
+                Sandbox checkout - no real money moves. Use card <span className="font-mono">4242 4242 4242 4242</span> for a guaranteed pass.
               </div>
             </>
           )}
@@ -441,7 +441,7 @@ function WalletFields({ method, phone, setPhone }: { method: Method; phone: stri
           inputMode="numeric"
           className={inputCls}
         />
-        <div className="mt-1.5 text-[10.5px] text-ink-muted">Use any valid-looking BD mobile (01[3-9]XXXXXXXX) — sandbox.</div>
+        <div className="mt-1.5 text-[10.5px] text-ink-muted">Use any valid-looking BD mobile (01[3-9]XXXXXXXX) - sandbox.</div>
       </div>
     </div>
   );
@@ -661,7 +661,7 @@ function XBig() {
   return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>;
 }
 
-/* Plan presets — used by /billing. */
+/* Plan presets - used by /billing. */
 export const PLAN_CHOICES: Record<"pro" | "elite", PlanChoice> = {
   pro: {
     id: "pro",

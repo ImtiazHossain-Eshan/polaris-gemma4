@@ -1,10 +1,10 @@
 /**
- * /partners — the Partner Marketplace. Plan-gated to Pro+.
+ * /partners - the Partner Marketplace. Plan-gated to Pro+.
  *
- * Server derives the matching context from live data — education level +
+ * Server derives the matching context from live data - education level +
  * roadmap topics + weak scores from the roadmap doc, deadline types due in
  * the next 30 days, and the elite-tier university ids (the client combines
- * those with the localStorage shortlist) — then hands off to the client
+ * those with the localStorage shortlist) - then hands off to the client
  * marketplace. The offer registry itself contains only real, source-backed
  * offers; matching + rendering happen client-side.
  */

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Final CTA — cinematic close: deep ink, a breathing north-star burst with
+ * Final CTA - cinematic close: deep ink, a breathing north-star burst with
  * slow-rotating compass rays, star field, and the strongest buttons on the
  * page.
  */
@@ -75,7 +75,7 @@ export function LandingCTA() {
 
         <Reveal delay={0.18}>
           <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg text-paper/65 leading-relaxed">
-            Your level, your timeline, your universities — turned into a plan
+            Your level, your timeline, your universities - turned into a plan
             that knows what you should do next.
           </p>
         </Reveal>
@@ -86,7 +86,7 @@ export function LandingCTA() {
               href={session ? "/roadmap" : "/signup"}
               className="group inline-flex items-center gap-2 rounded-full bg-paper px-7 py-4 text-[15px] font-semibold text-ink hover:bg-paper-soft transition-colors shadow-[0_16px_50px_-12px_rgba(250,246,240,0.5)]"
             >
-              Get started — free
+              Get started - free
               <span className="transition-transform duration-200 group-hover:translate-x-1"><GArrow /></span>
             </Link>
             <Link

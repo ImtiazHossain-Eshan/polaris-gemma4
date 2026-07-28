@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Product ecosystem — Polaris core with orbiting module nodes.
+ * Product ecosystem - Polaris core with orbiting module nodes.
  *
  * Reuses the app's .orbit-ring / .orbit-item CSS (GPU rotation, counter-
  * rotated children stay upright). Hovering or tapping a node reveals a
- * detail card under the orbit — every module shown actually exists in the
+ * detail card under the orbit - every module shown actually exists in the
  * product, with its real route.
  */
 
@@ -32,7 +32,7 @@ type Module = {
 
 const MODULES: Module[] = [
   { key: "roadmap",    name: "Roadmap",     ring: "inner", angle: 0,   tone: "from-polaris-300 to-polaris-500", icon: <GRoute />,    href: "/roadmap",
-    blurb: "A living skill tree built from your level, timeline, and target universities — tasks adapt as your scores move." },
+    blurb: "A living skill tree built from your level, timeline, and target universities - tasks adapt as your scores move." },
   { key: "strategist", name: "Strategist",  ring: "inner", angle: 120, tone: "from-nova-400 to-nova-600",       icon: <GChat />,     href: "/strategist",
     blurb: "The AI brain. It reads your roadmap, scores, and deadlines, then tells you exactly what to do next." },
   { key: "profile",    name: "Profile",     ring: "inner", angle: 240, tone: "from-[#A8836B] to-[#7C5A42]",     icon: <GUser />,     href: "/account",
@@ -40,13 +40,13 @@ const MODULES: Module[] = [
   { key: "universities", name: "Universities", ring: "outer", angle: 0,   tone: "from-aurora-400 to-aurora-600", icon: <GBuilding />, href: "/universities",
     blurb: "Discover real universities, see fit and reach analysis, compare shortlists, and import their deadlines." },
   { key: "deadlines",  name: "Deadlines",   ring: "outer", angle: 72,  tone: "from-[#C36F89] to-signal-rose",   icon: <GCalendar />, href: "/deadlines",
-    blurb: "A smart calendar with urgency scoring, countdowns, and checklists — synced with your roadmap." },
+    blurb: "A smart calendar with urgency scoring, countdowns, and checklists - synced with your roadmap." },
   { key: "resources",  name: "Resources",   ring: "outer", angle: 144, tone: "from-[#D2A24C] to-[#A87B2E]",     icon: <GBook />,     href: "/resources",
     blurb: "Student stories, scholarships, real cost breakdowns, and SAT/IELTS material in one knowledge hub." },
   { key: "connections", name: "Connections", ring: "outer", angle: 216, tone: "from-[#5E8CA8] to-[#3E647D]",    icon: <GLink />,     href: "/connections",
-    blurb: "GitHub, Codeforces, Google Calendar and Drive — connected with explicit permission only." },
+    blurb: "GitHub, Codeforces, Google Calendar and Drive - connected with explicit permission only." },
   { key: "partners",   name: "Partners",    ring: "outer", angle: 288, tone: "from-[#9C7BB8] to-[#6E548A]",     icon: <GGift />,     href: "/partners",
-    blurb: "Free student tools and verified offers, matched to your roadmap — free resources always rank first." },
+    blurb: "Free student tools and verified offers, matched to your roadmap - free resources always rank first." },
 ];
 
 export function EcosystemOrbit() {
@@ -96,14 +96,14 @@ export function EcosystemOrbit() {
                 </div>
               </div>
 
-              {/* Inner ring — 3 nodes */}
+              {/* Inner ring - 3 nodes */}
               <OrbitRing duration={34} reverse={false}>
                 {MODULES.filter((m) => m.ring === "inner").map((m) => (
                   <OrbitNode key={m.key} module={m} active={active.key === m.key} onActivate={setActive} duration={34} />
                 ))}
               </OrbitRing>
 
-              {/* Outer ring — 5 nodes, opposite direction */}
+              {/* Outer ring - 5 nodes, opposite direction */}
               <OrbitRing duration={52} reverse>
                 {MODULES.filter((m) => m.ring === "outer").map((m) => (
                   <OrbitNode key={m.key} module={m} active={active.key === m.key} onActivate={setActive} duration={52} reverse />
@@ -174,7 +174,7 @@ function OrbitRing({
   );
 }
 
-/** Ring radii as % of the square container — match the dashed SVG guides. */
+/** Ring radii as % of the square container - match the dashed SVG guides. */
 const RING_RADIUS = { inner: 27.4, outer: 43.3 } as const;
 
 function OrbitNode({
@@ -186,7 +186,7 @@ function OrbitNode({
 }) {
   const rad = (m.angle * Math.PI) / 180;
   const r = RING_RADIUS[m.ring];
-  // toFixed keeps the server- and client-rendered style strings identical —
+  // toFixed keeps the server- and client-rendered style strings identical -
   // raw trig floats serialize at different precisions and break hydration.
   const left = (50 + r * Math.sin(rad)).toFixed(3);
   const top = (50 - r * Math.cos(rad)).toFixed(3);

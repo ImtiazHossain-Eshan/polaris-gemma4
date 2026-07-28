@@ -1,7 +1,7 @@
 /**
  * /api/billing/methods/[id]
- *   PUT    — make this the default method
- *   DELETE — remove the method (default falls to the next newest)
+ *   PUT    - make this the default method
+ *   DELETE - remove the method (default falls to the next newest)
  */
 
 import { ok, withErrorHandling, HttpError } from "@/lib/api/respond";

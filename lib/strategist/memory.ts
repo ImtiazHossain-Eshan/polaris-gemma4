@@ -2,13 +2,13 @@
  * Long-term per-user memory for the Strategist.
  *
  * Two responsibilities:
- *   1. *Retrieval* — given an incoming question, pick the most relevant
+ *   1. *Retrieval* - given an incoming question, pick the most relevant
  *      facts already on file and inline them into the model's context.
- *   2. *Extraction* — after each user/assistant exchange, ask Gemma 4 to
+ *   2. *Extraction* - after each user/assistant exchange, ask Gemma 4 to
  *      identify any durable new facts worth remembering and persist them.
  *
  * The store is intentionally simple: a single document per user with an
- * inline `facts` array. No vectors yet — keyword overlap is plenty until a
+ * inline `facts` array. No vectors yet - keyword overlap is plenty until a
  * user has hundreds of memories.
  */
 
@@ -32,7 +32,7 @@ function factId(): string {
 
 /**
  * Cheap keyword-overlap relevance score. We tokenize text into lowercased
- * words of 3+ chars and count Jaccard-style overlap against the query —
+ * words of 3+ chars and count Jaccard-style overlap against the query -
  * fast and good enough for <500 facts per user.
  */
 function relevanceScore(query: string, factText: string): number {
@@ -56,7 +56,7 @@ function relevanceScore(query: string, factText: string): number {
 /**
  * Picks the top-K most relevant facts to include in the model's prompt.
  * Always includes the most recent 3 facts as a "what we just learned"
- * floor — keeps memory feeling fresh across turns.
+ * floor - keeps memory feeling fresh across turns.
  */
 export function selectRelevantFacts(
   facts: UserMemoryFact[],
@@ -72,7 +72,7 @@ export function selectRelevantFacts(
   const relevant = scored.filter((s) => s.score > 0).map((s) => s.fact);
 
   // Always blend in the 3 most-recent facts even if they aren't keyword
-  // matches — they're the closest thing we have to short-term context.
+  // matches - they're the closest thing we have to short-term context.
   const recent = [...facts]
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
     .slice(0, 3);
@@ -139,11 +139,11 @@ const EXTRACT_SYSTEM = [
   "  • not already in the existing facts list",
   "",
   "Categories:",
-  "  • goal — a target the student is working toward (university, score, deadline)",
-  "  • preference — how they like to study, communicate, or be planned for",
-  "  • constraint — limits on time, money, family situation, health",
-  "  • background — academic history, current school, scores already achieved",
-  "  • interest — subject or activity they care about",
+  "  • goal - a target the student is working toward (university, score, deadline)",
+  "  • preference - how they like to study, communicate, or be planned for",
+  "  • constraint - limits on time, money, family situation, health",
+  "  • background - academic history, current school, scores already achieved",
+  "  • interest - subject or activity they care about",
   "",
   "Return at most 5 new facts. Return an empty array if nothing is worth remembering.",
   "Write each fact as a short third-person statement in plain English (under 140 chars).",
@@ -157,7 +157,7 @@ type ExtractedRaw = {
 
 /**
  * Runs an LLM pass over the user/assistant exchange to identify new durable
- * facts. Returns an empty array on failure / no key / nothing new — the
+ * facts. Returns an empty array on failure / no key / nothing new - the
  * caller should treat this as best-effort enrichment, not core path.
  */
 export async function extractFactsFromExchange(

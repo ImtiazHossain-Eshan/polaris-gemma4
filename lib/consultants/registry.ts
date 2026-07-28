@@ -1,15 +1,15 @@
 /**
- * Consultants & Community — registry layer.
+ * Consultants & Community - registry layer.
  *
  * Service taxonomy + the founding-cohort consultant seed. Profiles here are
  * upserted into the `consultants` collection on first access; verification
  * status is real data (only Polaris admins flip `verified`/`featured`), and
- * ratings are NEVER seeded — they aggregate from real reviews only, so a
+ * ratings are NEVER seeded - they aggregate from real reviews only, so a
  * new consultant honestly shows "New on Polaris" instead of invented stars.
  *
  * Marketplace independence: this feature is available to every plan
  * (free/pro/elite). Polaris adds a transparent 10% platform fee on paid
- * bookings — disclosed everywhere a price is shown.
+ * bookings - disclosed everywhere a price is shown.
  */
 
 export type ConsultationType = "video" | "voice" | "chat" | "document";
@@ -59,7 +59,7 @@ export type ConsultantSeed = {
   bio: string;
   /** Countries they know first-hand. */
   countries: string[];
-  /** Study/работа background line, e.g. "MSc CS — TU Munich". */
+  /** Study/работа background line, e.g. "MSc CS - TU Munich". */
   background: string;
   services: ServiceKey[];
   languages: string[];
@@ -80,7 +80,7 @@ export type ConsultantSeed = {
 
 /**
  * Founding cohort. These are illustrative onboarding profiles for the
- * marketplace launch — each row's verification status is what gates badges,
+ * marketplace launch - each row's verification status is what gates badges,
  * and `pending` profiles render with an explicit "verification in progress"
  * state and cannot be booked.
  */
@@ -91,7 +91,7 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
     headline: "F-1 visa mock interviews that feel like the real window",
     bio: "Former education-USA adviser. Runs structured mock interviews with the exact question patterns Dhaka and Chattogram applicants face, then drills the weak answers until they hold.",
     countries: ["USA"],
-    background: "Ex-EducationUSA adviser — 6 years",
+    background: "Ex-EducationUSA adviser - 6 years",
     services: ["visa-interview", "offer-guidance"],
     languages: ["Bangla", "English"],
     types: ["video", "voice"],
@@ -110,10 +110,10 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
   {
     id: "nadia-sop",
     name: "Nadia Islam",
-    headline: "SOPs that sound like you — not a template",
+    headline: "SOPs that sound like you - not a template",
     bio: "Fulbright alum and writing-center tutor. Document-first reviews: you get tracked edits, a voice-preservation pass, and one live call to walk the changes.",
     countries: ["USA", "Canada"],
-    background: "Fulbright scholar — MA, NYU",
+    background: "Fulbright scholar - MA, NYU",
     services: ["sop-review", "admission-strategy", "scholarship-decision"],
     languages: ["Bangla", "English"],
     types: ["document", "video"],
@@ -131,10 +131,10 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
   {
     id: "tanvir-germany",
     name: "Tanvir Ahmed",
-    headline: "Germany without an agency — uni-assist to Anmeldung",
-    bio: "MSc at TU Munich, now working in Berlin. Walks you through uni-assist, blocked accounts, APS, and the first month on the ground — the parts agencies overcharge for.",
+    headline: "Germany without an agency - uni-assist to Anmeldung",
+    bio: "MSc at TU Munich, now working in Berlin. Walks you through uni-assist, blocked accounts, APS, and the first month on the ground - the parts agencies overcharge for.",
     countries: ["Germany"],
-    background: "MSc CS — TU Munich",
+    background: "MSc CS - TU Munich",
     services: ["country-guidance", "university-selection", "pre-departure", "housing"],
     languages: ["Bangla", "English", "German (basic)"],
     types: ["video", "chat"],
@@ -177,7 +177,7 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
     headline: "Canada study permits, SDS, and the offer-to-arrival pipeline",
     bio: "Toronto-based engineer who came through the SDS route. Helps with permit files, GIC setup, college vs university trade-offs, and honest cost expectations.",
     countries: ["Canada"],
-    background: "BSc — University of Toronto",
+    background: "BSc - University of Toronto",
     services: ["country-guidance", "offer-guidance", "visa-interview", "housing"],
     languages: ["Bangla", "English"],
     types: ["video", "voice", "chat"],
@@ -195,10 +195,10 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
   {
     id: "farhana-parents",
     name: "Farhana Rahman",
-    headline: "Parent sessions — what studying abroad really involves",
+    headline: "Parent sessions - what studying abroad really involves",
     bio: "Counselor specializing in guardian conversations: costs, safety, timelines, and how to support without pressuring. Sessions run in Bangla.",
     countries: ["USA", "UK", "Canada", "Australia"],
-    background: "Student counselor — 9 years",
+    background: "Student counselor - 9 years",
     services: ["parent-consultation", "admission-strategy", "scholarship-decision"],
     languages: ["Bangla"],
     types: ["video", "voice"],
@@ -219,7 +219,7 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
     headline: "Scholarship stacking and aid-letter negotiation",
     bio: "Won four external scholarships for his own MS. Reads your aid letters, finds the gaps, and drafts the negotiation emails with you on a call.",
     countries: ["USA"],
-    background: "MS — Arizona State, full funding",
+    background: "MS - Arizona State, full funding",
     services: ["scholarship-decision", "offer-guidance", "university-selection"],
     languages: ["Bangla", "English"],
     types: ["video", "document"],
@@ -240,7 +240,7 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
     headline: "UK CAS, accommodation, and first-month survival",
     bio: "Manchester graduate. Covers CAS timelines, deposit decisions, student halls vs private housing, and the pre-departure checklist nobody sends you.",
     countries: ["UK", "Ireland"],
-    background: "MSc — University of Manchester",
+    background: "MSc - University of Manchester",
     services: ["country-guidance", "pre-departure", "housing", "offer-guidance"],
     languages: ["Bangla", "English"],
     types: ["video", "chat"],
@@ -257,10 +257,10 @@ export const CONSULTANT_SEED: ConsultantSeed[] = [
   },
 ];
 
-/** Transparent platform economics — shown wherever a price appears. */
+/** Transparent platform economics - shown wherever a price appears. */
 export const PLATFORM_FEE_PCT = 10;
 
 export const CONSULTANT_DISCLOSURE =
-  `Polaris adds a transparent ${PLATFORM_FEE_PCT}% platform fee to paid bookings — it's included in the price you see, never added at checkout. ` +
+  `Polaris adds a transparent ${PLATFORM_FEE_PCT}% platform fee to paid bookings - it's included in the price you see, never added at checkout. ` +
   `Consultants set their own rates and receive the rest. Free first sessions are verified consultant commitments, not marketing. ` +
   `Community and consultant advice is guidance, not official legal or visa counsel unless the consultant is verified for that service.`;

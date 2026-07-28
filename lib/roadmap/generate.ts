@@ -1,5 +1,5 @@
 /**
- * Roadmap v2 generator — dynamic, education-level aware, duration aware.
+ * Roadmap v2 generator - dynamic, education-level aware, duration aware.
  *
  *   generateRoadmap(profile, config)
  *     → LLM plan (level guidance + duration + hours budget + weak areas +
@@ -136,12 +136,12 @@ function generationPrompt(
     summarizeProfile(profile),
     ``,
     `SETUP`,
-    `Education level: ${config.educationLevel} — ${LEVEL_GUIDANCE[config.educationLevel]}`,
+    `Education level: ${config.educationLevel} - ${LEVEL_GUIDANCE[config.educationLevel]}`,
     `Current year: ${config.currentYear ?? "(unspecified)"}`,
     `Main goal: ${config.targetGoal}`,
     `Academic target: ${config.academicTarget ?? "(unspecified)"}`,
     `Plan duration: ${config.durationDays} days, organized as ${phases} ${config.timelineMode} phases (phase indexes 0..${phases - 1}).`,
-    `Available time: ${config.availableHoursPerWeek} hours/week TOTAL across everything — the sum of estimatedHoursPerWeek of concurrently-active nodes must respect this.`,
+    `Available time: ${config.availableHoursPerWeek} hours/week TOTAL across everything - the sum of estimatedHoursPerWeek of concurrently-active nodes must respect this.`,
     `Exams in scope: ${config.exams.join(", ") || "none"}`,
     `Self-reported weak areas: ${config.weakAreas ?? "(none)"}`,
     `Current scores: ${scoreLines}`,
@@ -150,12 +150,12 @@ function generationPrompt(
     `1. Branches are categories (use only: Academics, SAT, IELTS, Olympiads, ECAs, Projects, Research, Leadership, Hackathons, Applications, Scholarships, Portfolio, Wellness, Foundations). Only include branches appropriate to the level + exams. NEVER give SAT/Applications branches to early-school or middle-school.`,
     `2. 3–6 branches, 2–5 nodes each. Each node is one concrete mission completable within 1–2 phases.`,
     `3. Every node must teach HOW to finish within the timeframe: "how" is concrete steps; tasks are 2–6 checkable actions; completionCriteria is objectively verifiable; estimatedHoursPerWeek is honest.`,
-    `4. Spread nodes across phases 0..${phases - 1}: early = foundations/diagnostics, middle = build, late = consolidate/apply. Short plans (${config.durationDays} days) mean urgent essentials only — cut nice-to-haves.`,
+    `4. Spread nodes across phases 0..${phases - 1}: early = foundations/diagnostics, middle = build, late = consolidate/apply. Short plans (${config.durationDays} days) mean urgent essentials only - cut nice-to-haves.`,
     `5. topics: pick 1–4 tags ONLY from: ${KNOWN_TOPICS.join(", ")}.`,
     `6. Personalize ruthlessly: reference the student's weak areas, scores, and timeline in descriptions. Generic advice is failure.`,
     `7. "impact" is a short profile-impact line like "+ Testing strength".`,
     ``,
-    `OUTPUT — ONLY JSON, no prose:`,
+    `OUTPUT - ONLY JSON, no prose:`,
     `{ "title": "...", "branches": [ { "title": "...", "category": "...", "priority": "high|medium|low", "nodes": [ { "title","description","why","how","type":"study|practice|project|test|activity|application","priority","difficulty":1-5,"phase":0-${phases - 1},"estimatedHoursPerWeek":n,"tasks":["..."],"topics":["..."],"completionCriteria":"...","impact":"..." } ] } ] }`,
   ].join("\n");
 }
@@ -193,7 +193,7 @@ export async function generateRoadmap(
   const phases = phaseCount(config.durationDays, config.timelineMode);
 
   let branches: RoadmapBranch[] | null = null;
-  let title = `${config.targetGoal} — ${config.durationDays}-day plan`;
+  let title = `${config.targetGoal} - ${config.durationDays}-day plan`;
 
   const raw = await completeText({
     task: "general",
@@ -287,7 +287,7 @@ export function applyScoreAdaptation(doc: RoadmapDoc, entry: ScoreEntry): string
       }
     }
   } else if (ratio >= 0.85) {
-    changes.push(`Strong ${entry.label} (${entry.value}/${entry.max}) — keep momentum`);
+    changes.push(`Strong ${entry.label} (${entry.value}/${entry.max}) - keep momentum`);
   }
 
   if (!changes.length) return null;
@@ -316,7 +316,7 @@ export async function adaptRoadmap(
     generationPrompt(profile, doc.config, phases, opts.language),
     ``,
     `THIS IS AN ADAPTIVE REPLAN of an existing roadmap, not a fresh start.`,
-    `COMPLETED (do not repeat these — build on them):`,
+    `COMPLETED (do not repeat these - build on them):`,
     done.length ? done.map((n) => `- ${n.title}`).join("\n") : "(nothing yet)",
     `RECENT SCORES: ${scoreLines}`,
     noteLines.length ? `STUDENT NOTES:\n${noteLines.join("\n")}` : ``,
@@ -368,13 +368,13 @@ export function roadmapContextLines(doc: RoadmapDoc, maxLines = 16): string[] {
   const nodes = doc.branches.flatMap((b) => b.nodes);
   const doneN = nodes.filter((n) => n.status === "done").length;
   lines.push(
-    `ROADMAP "${doc.title}" — level ${doc.config.educationLevel}, ${doc.config.durationDays} days (${doc.phases.length} ${doc.config.timelineMode} phases), goal: ${doc.config.targetGoal}. Progress ${doneN}/${nodes.length} nodes done.`,
+    `ROADMAP "${doc.title}" - level ${doc.config.educationLevel}, ${doc.config.durationDays} days (${doc.phases.length} ${doc.config.timelineMode} phases), goal: ${doc.config.targetGoal}. Progress ${doneN}/${nodes.length} nodes done.`,
   );
   for (const b of doc.branches) {
     if (lines.length >= maxLines) break;
     const current = b.nodes.find((n) => n.status === "current");
     if (current) {
-      lines.push(`[${b.category}] CURRENT: ${current.title} (${current.progress}%, ${doc.phases[current.phase] ?? `phase ${current.phase}`}) — ${current.completionCriteria}`);
+      lines.push(`[${b.category}] CURRENT: ${current.title} (${current.progress}%, ${doc.phases[current.phase] ?? `phase ${current.phase}`}) - ${current.completionCriteria}`);
     }
   }
   const recentScores = doc.scores.slice(-4);

@@ -1,4 +1,4 @@
-/** GET /api/billing — plan, subscription state, saved methods, lifetime spend. */
+/** GET /api/billing - plan, subscription state, saved methods, lifetime spend. */
 
 import { ok, withErrorHandling } from "@/lib/api/respond";
 import { requireSession } from "@/lib/authz";

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * RoadmapTree — the skill-tree / growth-map visual.
+ * RoadmapTree - the skill-tree / growth-map visual.
  *
  *        ◎  crown = the goal (overall progress ring, glow)
  *        │
@@ -56,7 +56,7 @@ export function RoadmapTree({
         />
       </div>
 
-      {/* Crown — the goal */}
+      {/* Crown - the goal */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -234,7 +234,7 @@ function Leaf({
         {node.status === "current" && !selected && (
           <span className="absolute -inset-2 rounded-full bg-polaris-400/30 blur-md animate-pulse" aria-hidden />
         )}
-        {/* Strategist-focus glow — mirrors the rail's focus card */}
+        {/* Strategist-focus glow - mirrors the rail's focus card */}
         {selected && (
           <>
             <span className="absolute -inset-3 rounded-full bg-gradient-to-tr from-polaris-400/40 via-nova-400/30 to-aurora-400/40 blur-lg animate-pulse" aria-hidden />

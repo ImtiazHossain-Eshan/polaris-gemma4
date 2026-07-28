@@ -32,7 +32,7 @@ export type TaskKind = "general" | "research" | "study" | "coding";
 
 /**
  * User-facing speed/quality preset. Orthogonal to TaskKind: the task says
- * WHAT the request is, the mode says HOW the user wants it served —
+ * WHAT the request is, the mode says HOW the user wants it served -
  * fast (low latency), balanced (default), advanced (strongest model),
  * reasoning (multi-step thinking).
  */
@@ -44,7 +44,7 @@ export type ModelDescriptor = {
   id: string;
   /** Human label for the dropdown. */
   label: string;
-  /** "free" / "paid" / "local" — drives the cost optimizer + UI tag. */
+  /** "free" / "paid" / "local" - drives the cost optimizer + UI tag. */
   tier: ProviderTier;
   /** Optional approximate cost per 1K output tokens (USD). 0 for free/local. */
   costPer1k?: number;

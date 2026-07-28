@@ -10,7 +10,7 @@
  *
  * Theme: "light" / "dark" / "auto". Writes `data-theme` on <html> and
  * stores the choice in localStorage. The dark-mode CSS variables for the
- * workspace are still being filled in — the toggle is functional, the
+ * workspace are still being filled in - the toggle is functional, the
  * visual coverage is a follow-up pass (see MIGRATION_NOTES).
  */
 

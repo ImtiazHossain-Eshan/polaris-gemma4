@@ -18,7 +18,7 @@ export function DemoFamily() {
       <div className="mb-6">
         <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-1.5">Ecosystem</div>
         <h1 className="font-serif text-[34px] leading-[1.05] font-bold tracking-tight text-ink">Your <span className="grad-text">support circle</span>, in the loop.</h1>
-        <p className="text-[13.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">Parents, counselors, and partners can monitor your roadmap with read-only access. You pick what they see — and they get a weekly digest from the Strategist, not a firehose.</p>
+        <p className="text-[13.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">Parents, counselors, and partners can monitor your roadmap with read-only access. You pick what they see - and they get a weekly digest from the Strategist, not a firehose.</p>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6">
         <div className="space-y-4">
@@ -26,13 +26,13 @@ export function DemoFamily() {
           <Card className="p-5 border-dashed border border-polaris-300 shadow-none bg-transparent">
             <div className="text-[10.5px] uppercase tracking-wider text-ink-muted font-medium">Invite</div>
             <div className="font-serif text-[16px] font-bold text-ink mt-1">Add a parent, counselor, or peer reviewer</div>
-            <div className="text-[12.5px] text-ink-dim mt-1">Send a scoped invite. They never sign your roadmap — only you do.</div>
+            <div className="text-[12.5px] text-ink-dim mt-1">Send a scoped invite. They never sign your roadmap - only you do.</div>
             <form onSubmit={submit} className="mt-3 flex items-center gap-2"><input name="email" type="email" required placeholder="email@example.com" className="flex-1 h-9 px-3 rounded-lg bg-paper-card hairline text-[13px] outline-none placeholder-ink-muted"/><RelationshipSelect/><Btn size="md" variant="primary" type="submit">Send invite</Btn></form>
           </Card>
           <Card className="p-5 bg-paper-soft shadow-none">
             <div className="flex items-center gap-2 mb-3"><span className="text-polaris-500"><Icon.spark size={14}/></span><div className="text-[10.5px] uppercase tracking-wider text-ink-muted font-medium">This week&apos;s digest (preview)</div><Pill tone="aurora" className="ml-auto">Auto-send · Sundays</Pill></div>
             <div className="font-serif text-[18px] font-bold text-ink leading-tight">Pro has closed 1 of 9 milestones · Elite probability 45%.</div>
-            <div className="text-[12.5px] text-ink-dim mt-2 leading-relaxed">The Strategist composes a single readable paragraph each Sunday. Parents get the signal, not the noise — and a link to the live roadmap if they want depth.</div>
+            <div className="text-[12.5px] text-ink-dim mt-2 leading-relaxed">The Strategist composes a single readable paragraph each Sunday. Parents get the signal, not the noise - and a link to the live roadmap if they want depth.</div>
             <div className="mt-3 grid grid-cols-3 gap-3">{[["45%","Elite prob"],["1 / 9","closed"],[String(invited.length),"in the loop"]].map(([v,l])=><div key={l} className="bg-paper-card rounded-lg p-3 hairline"><div className="font-serif text-[20px] font-bold text-ink">{v}</div><div className="text-[10px] text-ink-muted">{l}</div></div>)}</div>
           </Card>
         </div>

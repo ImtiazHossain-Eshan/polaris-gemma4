@@ -1,20 +1,20 @@
 "use client";
 
 /**
- * Connections — the Integration Hub.
+ * Connections - the Integration Hub.
  *
- *   Status dashboard  — animated rings: connected / available / coming soon
- *   Integration Orbit — Polaris hub center; connected apps orbit close and
+ *   Status dashboard  - animated rings: connected / available / coming soon
+ *   Integration Orbit - Polaris hub center; connected apps orbit close and
  *                       bright, available apps farther + dimmer, coming-soon
  *                       frosted on the outer ring
- *   Filter + search   — status & category chips, free-text search
- *   3D card grid      — tilt hover, status ring, real brand marks
- *   Connect modal     — honest privacy contract (will / won't), then the
+ *   Filter + search   - status & category chips, free-text search
+ *   3D card grid      - tilt hover, status ring, real brand marks
+ *   Connect modal     - honest privacy contract (will / won't), then the
  *                       REAL flow: Codeforces handle, GitHub username
  *                       (+ optional transient PAT), OAuth redirect when the
  *                       server has credentials, "requires setup" otherwise
- *   Manage modal      — account, imported data, insights, Sync now, Revoke
- *   Coming soon       — honest reason + notify-me (event-tracked)
+ *   Manage modal      - account, imported data, insights, Sync now, Revoke
+ *   Coming soon       - honest reason + notify-me (event-tracked)
  *
  * Every state change emits shared-store events the Strategist sees.
  */
@@ -70,7 +70,7 @@ export function ConnectionsClient({ initial, demo = false }: { initial: HubEntry
     const p = new URLSearchParams(window.location.search);
     const flag = p.get("oauth");
     if (flag === "connected") { setToast("OAuth connection established"); void refresh(); }
-    if (flag === "failed") setToast("OAuth flow didn't complete — try again");
+    if (flag === "failed") setToast("OAuth flow didn't complete - try again");
     if (flag) window.history.replaceState(null, "", "/connections");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -197,7 +197,7 @@ export function ConnectionsClient({ initial, demo = false }: { initial: HubEntry
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4"/></svg>
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-2 text-[12px] text-ink-dim leading-relaxed flex-1">
-          <div><span className="font-semibold text-ink block">Explicit scopes only.</span> Every connection lists exactly what&apos;s read — nothing more is touched.</div>
+          <div><span className="font-semibold text-ink block">Explicit scopes only.</span> Every connection lists exactly what&apos;s read - nothing more is touched.</div>
           <div><span className="font-semibold text-ink block">Read-only by default.</span> Write access (like calendar events) is separate, optional, and always confirmed.</div>
           <div><span className="font-semibold text-ink block">Revoke anytime.</span> One click deletes the connection and its imported summaries.</div>
         </div>
@@ -321,7 +321,7 @@ function Orbit({ entries, onOpen }: { entries: HubEntryDto[]; onOpen: (id: strin
         <span className="mt-2 text-[10px] uppercase tracking-[0.25em] font-bold text-paper/50">Polaris</span>
       </div>
 
-      {/* orbiting items — rotating wrapper + counter-rotating icon keeps logos upright */}
+      {/* orbiting items - rotating wrapper + counter-rotating icon keeps logos upright */}
       <OrbitItems rings={rings} onOpen={onOpen} />
 
       <div className="absolute bottom-3 left-5 right-5 flex items-center justify-between text-[9.5px] text-paper/40 pointer-events-none">
@@ -354,7 +354,7 @@ function OrbitItems({
                 <div className="orbit-item pointer-events-auto" style={{ "--orbit-duration": ring.duration, rotate: `${-startAngle}deg` } as React.CSSProperties}>
                   <button
                     onClick={() => onOpen(e.def.id)}
-                    title={`${e.def.name} — ${STATUS_META[e.status]?.label}`}
+                    title={`${e.def.name} - ${STATUS_META[e.status]?.label}`}
                     className={cn(
                       "relative block rounded-xl transition-transform hover:scale-125",
                       e.status === "coming_soon" && "grayscale-[0.4]",
@@ -469,7 +469,7 @@ function IntegrationModal({
       const d = await r.json().catch(() => ({}));
       if (!r.ok) { setErr(d?.error ?? "Connection failed"); return; }
       roadmapStore.emit("INTEGRATION_CONNECTED", `Connected ${def.name} (@${handle.trim()})`);
-      await onChanged(`${def.name} connected — data imported`);
+      await onChanged(`${def.name} connected - data imported`);
       onClose();
     } finally {
       setBusy(null);
@@ -507,7 +507,7 @@ function IntegrationModal({
 
   function notifyMe() {
     roadmapStore.emit("INTEGRATION_COMING_SOON_REQUESTED", `Requested ${def.name} integration`);
-    void onChanged(`Noted — we'll prioritize ${def.name}`);
+    void onChanged(`Noted - we'll prioritize ${def.name}`);
     onClose();
   }
 
@@ -616,7 +616,7 @@ function IntegrationModal({
               {e.status === "requires_setup" ? (
                 <div className="rounded-xl bg-nova-100/60 dark:bg-nova-400/10 ring-1 ring-inset ring-nova-400/40 px-4 py-3 text-[12px] text-ink leading-relaxed">
                   <span className="font-bold text-nova-600 dark:text-nova-200">Requires server setup:</span>{" "}
-                  the OAuth flow is built, but {(def.envVars ?? []).join(" + ")} must be configured before connecting. No fake connect button — it&apos;ll light up the moment credentials exist.
+                  the OAuth flow is built, but {(def.envVars ?? []).join(" + ")} must be configured before connecting. No fake connect button - it&apos;ll light up the moment credentials exist.
                 </div>
               ) : def.connectionMethod === "public_handle" ? (
                 <section className="space-y-2">
@@ -631,7 +631,7 @@ function IntegrationModal({
                     <input
                       value={token}
                       onChange={(ev) => setToken(ev.target.value)}
-                      placeholder="Personal access token (optional — used once, never stored)"
+                      placeholder="Personal access token (optional - used once, never stored)"
                       type="password"
                       maxLength={200}
                       className="w-full rounded-xl border border-polaris-200 bg-paper-card px-3 py-2.5 text-[12px] text-ink placeholder:text-ink-muted/60 focus:border-polaris-400 focus:outline-none dark:border-white/[0.14] dark:bg-paper-deep"

@@ -1,5 +1,5 @@
 /**
- * /family — support-circle monitoring, ported to prototype parity. Members
+ * /family - support-circle monitoring, ported to prototype parity. Members
  * come from the real `links` collection; the weekly digest preview is computed
  * from the student's real milestones + the probability engine; the invite form
  * posts (form-encoded) to the wired /api/links route. Parents/partners accept
@@ -54,7 +54,7 @@ export default async function FamilyPage() {
             Your <span className="grad-text">support circle</span>, in the loop.
           </h1>
           <p className="text-[13.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">
-            Parents, counselors, and partners can monitor your roadmap with read-only access. You pick what they see —
+            Parents, counselors, and partners can monitor your roadmap with read-only access. You pick what they see -
             and they get a weekly digest from the Strategist, not a firehose. They accept invites and view progress from /monitor.
           </p>
         </div>
@@ -88,7 +88,7 @@ export default async function FamilyPage() {
           <Card className="p-5 border-dashed border border-polaris-300 shadow-none bg-transparent">
             <div className="text-[10.5px] uppercase tracking-wider text-ink-muted font-medium">Invite</div>
             <div className="font-serif text-[16px] font-bold text-ink mt-1">Add a parent, counselor, or peer reviewer</div>
-            <div className="text-[12.5px] text-ink-dim mt-1">Send a scoped invite. They never sign your roadmap — only you do.</div>
+            <div className="text-[12.5px] text-ink-dim mt-1">Send a scoped invite. They never sign your roadmap - only you do.</div>
             <form action="/api/links" method="POST" className="mt-3 flex items-center gap-2">
               <input name="email" type="email" required placeholder="email@example.com" className="flex-1 h-9 px-3 rounded-lg bg-paper-card hairline text-[13px] outline-none placeholder-ink-muted" />
               <RelationshipSelect />
@@ -107,7 +107,7 @@ export default async function FamilyPage() {
               {firstName} has closed {done} of {total} milestones · {target.label} probability {probPct}%.
             </div>
             <div className="text-[12.5px] text-ink-dim mt-2 leading-relaxed">
-              The Strategist composes a single readable paragraph each Sunday. Parents get the signal, not the noise — and a link to the live roadmap if they want depth.
+              The Strategist composes a single readable paragraph each Sunday. Parents get the signal, not the noise - and a link to the live roadmap if they want depth.
             </div>
             <div className="mt-3 grid grid-cols-3 gap-3">
               {[

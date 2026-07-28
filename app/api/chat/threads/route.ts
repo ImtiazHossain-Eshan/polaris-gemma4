@@ -1,8 +1,8 @@
 /**
  * /api/chat/threads
  *
- * GET   — list the user's threads, newest first.
- * POST  — create a new thread.  Body: { title? }
+ * GET   - list the user's threads, newest first.
+ * POST  - create a new thread.  Body: { title? }
  */
 
 import { z } from "zod";

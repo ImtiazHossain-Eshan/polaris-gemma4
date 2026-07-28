@@ -2,7 +2,7 @@
 
 /**
  * Expanded task panel. Slides in from the right (rendered as a route
- * modal — Next.js parallel routes / @modal slot in the future).
+ * modal - Next.js parallel routes / @modal slot in the future).
  *
  * The status toggle and deadline edit call PATCH /api/tasks/[id]; the
  * server revalidates /roadmap so the underlying list updates.
@@ -118,7 +118,7 @@ export function TaskPanel({ task }: { task: DbMilestone }) {
             <>
               <Block label="Rationale">{task.rationale}</Block>
               <Block label="Grounded in">
-                <span className="text-ink-muted text-[12px]">Sources resolved from your live KB on render — see /strategist for the full citation graph.</span>
+                <span className="text-ink-muted text-[12px]">Sources resolved from your live KB on render - see /strategist for the full citation graph.</span>
               </Block>
             </>
           )}

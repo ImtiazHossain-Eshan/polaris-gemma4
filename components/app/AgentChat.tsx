@@ -35,7 +35,7 @@ const MODE_KEY = "polaris.strategist.mode";
 const PAID_KEY = "polaris.strategist.allowPaid";
 const OFFLINE_KEY = "polaris.strategist.offline";
 const ROUTE_MODE_KEY = "polaris.strategist.routeMode";
-/** Shared with StrategistClient — both surfaces read/write the same thread. */
+/** Shared with StrategistClient - both surfaces read/write the same thread. */
 const ACTIVE_THREAD_KEY = "polaris.chat.activeThread";
 const WIDTH_KEY = "polaris.strategist.railWidth";
 const DEFAULT_RAIL_WIDTH = 400;
@@ -74,7 +74,7 @@ const MODES: Array<{ id: Mode; label: string }> = [
 ];
 
 export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo = false }: Props) {
-  // Start empty on both server and client — sessionStorage can't be read
+  // Start empty on both server and client - sessionStorage can't be read
   // during SSR, so initializing from it desyncs hydration. The cached thread
   // is restored in the effect just below (declared before the persist effect
   // so it reads the cache before anything rewrites it).
@@ -138,7 +138,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
   }, []);
 
   // Hydrate persisted picker state: localStorage first (instant), then the
-  // server-saved preference (source of truth — follows the user across
+  // server-saved preference (source of truth - follows the user across
   // devices). Only after the server answer do we start writing back.
   useEffect(() => {
     try {
@@ -172,7 +172,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
           setOffline(!!pref.offline);
         }
       })
-      .catch(() => { /* offline/unauthenticated — local state stands */ })
+      .catch(() => { /* offline/unauthenticated - local state stands */ })
       .finally(() => { if (!cancelled) prefLoadedRef.current = true; });
     return () => { cancelled = true; };
   }, [demo]);
@@ -310,7 +310,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
     if (Number.isFinite(v) && v >= MIN_RAIL_WIDTH && v <= MAX_RAIL_WIDTH) {
       setRailWidth(v);
     } else if (Number.isFinite(v)) {
-      // Outdated saved value (older minimum) — drop it and use the default.
+      // Outdated saved value (older minimum) - drop it and use the default.
       try { localStorage.removeItem(WIDTH_KEY); } catch {}
       setRailWidth(DEFAULT_RAIL_WIDTH);
     }
@@ -331,7 +331,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
 
   /* ─── Thread sync with the /strategist page ───
    * Both surfaces share one active thread (id in localStorage). The rail
-   * reloads that thread's messages whenever the route changes — so a
+   * reloads that thread's messages whenever the route changes - so a
    * conversation started on /strategist continues here, and vice versa. */
   const pathnameForSync = usePathname();
   const threadIdRef = useRef<string | null>(null);
@@ -359,7 +359,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
         );
         if (loaded.length) setMessages(loaded);
       })
-      .catch(() => { /* thread may have been deleted — keep local cache */ });
+      .catch(() => { /* thread may have been deleted - keep local cache */ });
     return () => { cancelled = true; };
   }, [pathnameForSync, demo]);
 
@@ -472,7 +472,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
         signal: ctrl.signal,
       });
       if (res.status === 429) {
-        // Plan message budget exhausted — drop the empty placeholder, pop the modal.
+        // Plan message budget exhausted - drop the empty placeholder, pop the modal.
         setMessages(m => m.slice(0, -1));
         setQuota({ kind: "plan", resetHint: resetHintFrom(res.headers.get("X-RateLimit-Reset")) });
         return;
@@ -505,7 +505,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
             const r = chunk.result as { sources?: number; queries?: string[] } | undefined;
             setThinking(
               r?.sources
-                ? `Read ${r.sources} source${r.sources === 1 ? "" : "s"} — synthesizing…`
+                ? `Read ${r.sources} source${r.sources === 1 ? "" : "s"} - synthesizing…`
                 : null,
             );
           } else if (chunk.status === "error") {
@@ -552,7 +552,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
   function stop() { abortRef.current?.abort(); }
 
   // The /strategist page already hosts the full-feature chat in the main
-  // canvas — don't duplicate it as a right rail there.
+  // canvas - don't duplicate it as a right rail there.
   const pathname = usePathname();
   if (pathname === "/strategist" || pathname === "/demo/strategist") return null;
 
@@ -560,7 +560,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
 
   return (
     <>
-    {/* Floating chat trigger — below xl only */}
+    {/* Floating chat trigger - below xl only */}
     {!mobileOpen && (
       <button
         onClick={() => setMobileOpen(true)}
@@ -571,7 +571,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
       </button>
     )}
 
-    {/* Backdrop — overlay mode */}
+    {/* Backdrop - overlay mode */}
     {mobileOpen && (
       <button
         aria-label="Close Strategist chat"
@@ -616,7 +616,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
       />
 
       {/* Mode + model controls */}
-      <div className="px-3 py-3 border-b border-white/10 flex flex-col gap-2.5 bg-white/[0.02]">
+      <div className="px-3 py-2 border-b border-white/10 flex flex-col gap-1.5 bg-white/[0.02]">
         <div className="flex flex-wrap items-center gap-1.5">
           {MODES.map((m) => (
             <button
@@ -652,22 +652,33 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
 
       {/* ─── Mission control: sync status + focus + insight ─── */}
       {roadmapState.doc ? (
-        <div className="px-3 py-2.5 border-b border-white/[0.06] space-y-2 bg-white/[0.015]">
+        <div className="px-3 py-2 border-b border-white/[0.06] space-y-1.5 bg-white/[0.015]">
           {/* Sync status */}
           <SyncStatusRow lastSyncAt={roadmapState.lastSyncAt} eventCount={roadmapState.events.length} />
 
-          {/* Focus card — selected node beats current mission */}
-          {focusNode && (
-            <FocusCard
-              node={focusNode}
-              isSelected={!!selectedNode}
-              phaseLabel={roadmapState.doc.phases[focusNode.phase] ?? `Phase ${focusNode.phase + 1}`}
-              onClear={selectedNode ? () => roadmapStore.selectNode(null, { silent: true }) : undefined}
-            />
-          )}
+          <details className="group rounded-xl bg-white/[0.025] ring-1 ring-inset ring-white/[0.08]">
+            <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-[11px] text-paper/75 marker:hidden">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-md bg-polaris-400/15 text-polaris-200">✦</span>
+              <span className="min-w-0 flex-1 truncate">
+                <span className="font-semibold text-paper">{focusNode?.title ?? "Roadmap context"}</span>
+                {focusNode ? ` · ${focusNode.progress}%` : ""}
+              </span>
+              <span className="text-[9px] uppercase tracking-wider text-paper/45">Details</span>
+              <svg className="transition-transform group-open:rotate-180" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </summary>
+            <div className="space-y-1.5 border-t border-white/[0.06] p-1.5">
+              {focusNode && (
+                <FocusCard
+                  node={focusNode}
+                  isSelected={!!selectedNode}
+                  phaseLabel={roadmapState.doc.phases[focusNode.phase] ?? `Phase ${focusNode.phase + 1}`}
+                  onClear={selectedNode ? () => roadmapStore.selectNode(null, { silent: true }) : undefined}
+                />
+              )}
 
-          {/* Insight card */}
-          {applied ? (
+              {applied ? (
             <div className="rounded-xl px-3 py-2 bg-aurora-400/15 ring-1 ring-inset ring-aurora-400/40 text-[11.5px] text-paper leading-snug">
               <span className="font-bold text-aurora-200">Roadmap updated:</span> {applied}
             </div>
@@ -696,7 +707,9 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
                 </button>
               )}
             </div>
-          )}
+              )}
+            </div>
+          </details>
         </div>
       ) : contextChips.length > 0 && (
         <div className="px-4 py-2 border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto">
@@ -715,7 +728,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
         )}
       </div>
 
-      {/* Roadmap-aware quick prompts — change with selection, scores, level */}
+      {/* Roadmap-aware quick prompts - change with selection, scores, level */}
       <div className="px-4 py-2 border-t border-white/[0.06] flex flex-wrap gap-1.5">
         {quickPrompts.map(q => (
           <button key={q} onClick={() => send(q)} disabled={streaming}
@@ -832,7 +845,7 @@ function FocusCard({
 
 function Header({ pathLabel, onClose }: { pathLabel: string; onClose: () => void }) {
   return (
-    <div className="relative px-4 py-3.5 border-b border-white/10 flex items-center gap-2.5 bg-gradient-to-b from-white/[0.05] to-transparent">
+    <div className="relative px-3 py-2.5 border-b border-white/10 flex items-center gap-2.5 bg-gradient-to-b from-white/[0.05] to-transparent">
       {/* Top gradient accent so the rail always has a visible top edge */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-polaris-500 via-nova-400 to-aurora-400 opacity-80" />
       <Avatar initials="P" tone="polaris" size={30} />

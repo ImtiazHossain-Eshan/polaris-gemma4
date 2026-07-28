@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Pricing — rendered straight from the central plan catalog
+ * Pricing - rendered straight from the central plan catalog
  * (lib/billing/plans.ts), the same source /billing and the feature gates
  * use, so prices and promises can never drift between surfaces. Bengali
  * feature lists come from the catalog too. Unbuilt promises render with a
@@ -29,10 +29,10 @@ export function PricingSection() {
         <SectionIntro
           eyebrow={t.pricing.eyebrow}
           title={<>{t.pricing.title.replace(/[.।]\s*$/, "")}<Dot /></>}
-          sub={<>Start free — upgrade when the roadmap <Accent>earns it</Accent>.</>}
+          sub={<>Start free - upgrade when the roadmap <Accent>earns it</Accent>.</>}
         />
 
-        {/* Monthly / yearly toggle — mirrors /billing */}
+        {/* Monthly / yearly toggle - mirrors /billing */}
         <Reveal delay={0.1}>
           <div className="mt-10 flex items-center justify-center">
             <div className="relative inline-flex items-center rounded-full bg-paper-soft ring-1 ring-inset ring-ink/[0.07] p-1">
@@ -79,7 +79,7 @@ export function PricingSection() {
 
         <Reveal delay={0.3}>
           <p className="mt-8 text-center text-[12.5px] text-ink-muted">
-            Plans, payment methods, and receipts live in your account —{" "}
+            Plans, payment methods, and receipts live in your account -{" "}
             <Link href="/billing" className="font-semibold text-polaris-500 hover:text-polaris-600 transition-colors">
               see billing
             </Link>

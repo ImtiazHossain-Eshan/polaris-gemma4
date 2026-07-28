@@ -1,11 +1,11 @@
 /**
  * /api/account/avatar
- *   POST   — { dataUrl } image/jpeg|png|webp data URL, ≤ ~400KB after the
+ *   POST   - { dataUrl } image/jpeg|png|webp data URL, ≤ ~400KB after the
  *            client's 256px canvas downscale. Stored on the user record.
  *            (Storage abstraction: swapping this body for an S3/Supabase
- *            upload only changes where `avatarUrl` points — callers and the
+ *            upload only changes where `avatarUrl` points - callers and the
  *            sync event stay identical.)
- *   DELETE — remove the avatar.
+ *   DELETE - remove the avatar.
  */
 
 import { z } from "zod";
@@ -16,7 +16,7 @@ import { updateUser } from "@/lib/db/collections";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_DATA_URL_CHARS = 600_000; // ~440KB binary — far above a 256px webp
+const MAX_DATA_URL_CHARS = 600_000; // ~440KB binary - far above a 256px webp
 
 const schema = z.object({
   dataUrl: z.string()

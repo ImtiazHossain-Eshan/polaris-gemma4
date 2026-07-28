@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Consultants marketplace — floating tilt cards, explainable "matched for
+ * Consultants marketplace - floating tilt cards, explainable "matched for
  * you" rail, profile modal with an interactive availability timeline and
  * the full booking flow (free verified first sessions, transparent fee
  * breakdown, sandbox payment via the existing transactions ledger).
@@ -100,14 +100,14 @@ export function ConsultantsClient({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-1.5">
-              Consultants &amp; community — open to every plan
+              Consultants &amp; community - open to every plan
             </div>
             <h1 className="font-serif text-[30px] leading-[1.05] font-bold tracking-tight text-ink">
               Verified people, <span className="grad-text">personal guidance</span>
             </h1>
             <p className="text-[13.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">
               Hire a verified consultant for visa prep, SOP review, scholarships,
-              or country guidance — less hassle than an agency, transparent pricing,
+              or country guidance - less hassle than an agency, transparent pricing,
               and no subscription required.
             </p>
           </div>
@@ -133,7 +133,7 @@ export function ConsultantsClient({
         <section className="mt-8">
           <h2 className="text-[13px] font-bold text-ink uppercase tracking-[0.14em]">Matched for you</h2>
           <p className="text-[12px] text-ink-muted mt-0.5">
-            Based on your roadmap and deadlines — never random advertising.
+            Based on your roadmap and deadlines - never random advertising.
           </p>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
             {matched.map((c, i) => (
@@ -205,7 +205,7 @@ export function ConsultantsClient({
       </div>
       {filtered.length === 0 && (
         <div className="mt-10 text-center text-[13px] text-ink-muted">
-          No consultants match those filters yet — the cohort is growing.
+          No consultants match those filters yet - the cohort is growing.
         </div>
       )}
 
@@ -387,7 +387,7 @@ function ProfileModal({ c, onClose, demo = false, basePath = "" }: { c: Consulta
         }),
       });
       const d = await r.json().catch(() => ({}));
-      if (!r.ok) { setError(d?.error ?? "Booking failed — try again."); return; }
+      if (!r.ok) { setError(d?.error ?? "Booking failed - try again."); return; }
       if (d.booking.freeSession) {
         setState({ step: "done", free: true });
       } else {
@@ -411,7 +411,7 @@ function ProfileModal({ c, onClose, demo = false, basePath = "" }: { c: Consulta
       const cd = await confirm.json().catch(() => ({}));
       if (!confirm.ok) { setError(cd?.error ?? "Payment failed."); return; }
       if (cd?.transaction?.status !== "succeeded") {
-        setError(cd?.transaction?.failureReason ?? "Payment didn't go through — try again.");
+        setError(cd?.transaction?.failureReason ?? "Payment didn't go through - try again.");
         return;
       }
       const promote = await fetch(`/api/consultants/bookings/${state.bookingId}`, {
@@ -419,7 +419,7 @@ function ProfileModal({ c, onClose, demo = false, basePath = "" }: { c: Consulta
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: "confirm-payment" }),
       });
-      if (!promote.ok) { setError("Payment received — refresh Bookings to see the session."); return; }
+      if (!promote.ok) { setError("Payment received - refresh Bookings to see the session."); return; }
       setState({ step: "done", free: false });
     } finally {
       setBusy(false);
@@ -512,9 +512,9 @@ function ProfileModal({ c, onClose, demo = false, basePath = "" }: { c: Consulta
 
               {/* Availability timeline */}
               <div>
-                <Label>Availability — next two weeks (your local time)</Label>
+                <Label>Availability - next two weeks (your local time)</Label>
                 {days.length === 0 ? (
-                  <div className="text-[12px] text-ink-muted">Fully booked right now — check back soon.</div>
+                  <div className="text-[12px] text-ink-muted">Fully booked right now - check back soon.</div>
                 ) : (
                   <div className="space-y-2">
                     {days.map(([day, isos]) => (
@@ -533,12 +533,12 @@ function ProfileModal({ c, onClose, demo = false, basePath = "" }: { c: Consulta
                 )}
               </div>
 
-              {/* Price breakdown — transparent fee */}
+              {/* Price breakdown - transparent fee */}
               <div className="rounded-2xl bg-paper-soft px-4 py-3.5">
                 {free ? (
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-[13px] font-bold text-ink">First session — free</div>
+                      <div className="text-[13px] font-bold text-ink">First session - free</div>
                       <div className="text-[11px] text-ink-muted mt-0.5">
                         Verified consultant commitment · normally {formatMinor(c.priceMinor, "USD")}
                       </div>

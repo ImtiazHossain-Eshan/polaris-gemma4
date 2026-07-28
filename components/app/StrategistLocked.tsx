@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * StrategistLocked — the premium upgrade screen Free users see instead of
+ * StrategistLocked - the premium upgrade screen Free users see instead of
  * the working Strategist chat (page variant), plus a compact rail variant
  * for the right-hand AgentChat column. Both surfaces tell the truth about
  * what Pro unlocks and route to /billing.
@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 
 const UNLOCKS = [
   "AI roadmap guidance synced with your tree",
-  "Score analysis — SAT/IELTS gaps turned into tasks",
+  "Score analysis - SAT/IELTS gaps turned into tasks",
   "Deadline-aware recommendations",
   "Profile gap analysis",
   "Personalized next steps, every session",
@@ -92,7 +92,7 @@ export function StrategistLockedPage() {
             href="/billing"
             className="w-full sm:w-auto rounded-full bg-ink text-paper px-6 py-3 text-[13.5px] font-semibold hover:bg-polaris-700 transition-colors"
           >
-            Upgrade to Pro — $5/mo
+            Upgrade to Pro - $5/mo
           </Link>
           <Link
             href="/consultants"
@@ -102,7 +102,7 @@ export function StrategistLockedPage() {
           </Link>
         </div>
         <p className="mt-4 text-[11px] text-ink-muted">
-          No lock-in — monthly plans cancel anytime from Billing.
+          No lock-in - monthly plans cancel anytime from Billing.
         </p>
       </motion.div>
     </div>
@@ -125,7 +125,7 @@ export function StrategistLockedRail({ className }: { className?: string }) {
         </span>
         <div className="mt-3 text-[13.5px] font-bold">Pro &amp; Elite feature</div>
         <p className="mt-1.5 text-[11.5px] text-paper/60 leading-relaxed">
-          The AI Strategist reads your roadmap, scores, and deadlines — then
+          The AI Strategist reads your roadmap, scores, and deadlines - then
           tells you what to do next.
         </p>
         <Link

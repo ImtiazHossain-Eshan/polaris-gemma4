@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * Strategist section — the AI brain at the center of a context field.
+ * Strategist section - the AI brain at the center of a context field.
  * A glass chat card with a pulsing glow ring, surrounded by floating context
  * cards (score insight, deadline warning, focused node, next step) that all
- * feed into it — making it read as more than a chatbot.
+ * feed into it - making it read as more than a chatbot.
  */
 
 import { motion, useReducedMotion } from "framer-motion";
@@ -27,7 +27,7 @@ export function StrategistMotionPreview() {
         <SectionIntro
           eyebrow="The Strategist"
           title={<>Sees everything. Tells you <Accent>what to do next</Accent><Dot /></>}
-          sub="The Strategist reads your roadmap, scores, deadlines, and progress — selected node included — then recommends the next move and can rebalance the whole plan."
+          sub="The Strategist reads your roadmap, scores, deadlines, and progress - selected node included - then recommends the next move and can rebalance the whole plan."
         />
 
         <div className="relative mt-16 mx-auto max-w-3xl">
@@ -66,7 +66,7 @@ export function StrategistMotionPreview() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.3, duration: 0.5 }}
                 >
-                  My SAT mock came back 1210 — what should I change?
+                  My SAT mock came back 1210 - what should I change?
                 </motion.div>
 
                 <motion.div
@@ -78,7 +78,7 @@ export function StrategistMotionPreview() {
                 >
                   Math is 60 under your Toronto target while English is ahead, so
                   I rebalanced this month: two extra algebra blocks, essay review
-                  moved to next week — and your scholarship deadline still has
+                  moved to next week - and your scholarship deadline still has
                   9 days of slack.
                 </motion.div>
 
@@ -97,7 +97,7 @@ export function StrategistMotionPreview() {
             </div>
           </Reveal>
 
-          {/* Floating context cards — the Strategist's inputs */}
+          {/* Floating context cards - the Strategist's inputs */}
           <FloatWrap amplitude={8} duration={6.4} className="absolute -top-8 -left-2 lg:-left-16 hidden md:block z-10">
             <ContextCard
               tone="aurora"

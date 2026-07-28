@@ -1,8 +1,8 @@
 /**
  * /api/transactions
  *
- * GET  — list the user's transaction history.
- * POST — create a NEW transaction (status: pending). Body:
+ * GET  - list the user's transaction history.
+ * POST - create a NEW transaction (status: pending). Body:
  *        { method, amount, currency?, description, maskedAccount?, cardBrand? }
  *
  * Simulated payment: no real money moves. Treat as a fake-money sandbox.

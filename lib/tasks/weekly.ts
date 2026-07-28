@@ -1,5 +1,5 @@
 /**
- * Weekly task service — generation, dynamic replanning, and submission
+ * Weekly task service - generation, dynamic replanning, and submission
  * feedback for the week-by-week roadmap.
  *
  * Generation: profile + existing roadmap milestones → 8 weeks of granular,
@@ -58,18 +58,18 @@ function generationSystemPrompt(profile: StudentProfile, milestones: DbMilestone
     ``,
     `HIGH-LEVEL MILESTONES ALREADY PLANNED (translate these into weekly work)`,
     milestones.length
-      ? milestones.map((m, i) => `${i + 1}. [${m.category}/${m.priority}] ${m.title} — ${m.description}`).join("\n")
-      : "(none — design from the profile alone)",
+      ? milestones.map((m, i) => `${i + 1}. [${m.category}/${m.priority}] ${m.title} - ${m.description}`).join("\n")
+      : "(none - design from the profile alone)",
     ``,
     `REQUIREMENTS`,
     `1. Exactly ${PLAN_WEEKS} weeks, 2–3 tasks per week. Week numbers start at 1.`,
-    `2. Every task MUST include a "practice" field: a concrete hands-on exercise, drill, or deliverable the student physically produces this week (e.g. "Take practice test 6 sections 1–2 timed, log every wrong answer with the reason"). Never "read about X" — always "do X and produce Y".`,
+    `2. Every task MUST include a "practice" field: a concrete hands-on exercise, drill, or deliverable the student physically produces this week (e.g. "Take practice test 6 sections 1–2 timed, log every wrong answer with the reason"). Never "read about X" - always "do X and produce Y".`,
     `3. Tasks must be small enough to finish inside the week, intimate and specific to THIS student's profile (their curriculum, scores, target tier). Generic advice is a failure.`,
     `4. Sequence matters: earlier weeks build foundations the later weeks use.`,
     `5. Each week gets a short weekTheme (2–5 words) shared by its tasks.`,
     `6. category is one of: Academics, Testing, Extracurriculars, Skills, Applications, Research.`,
     ``,
-    `OUTPUT — respond with ONLY a JSON array (no prose) of objects:`,
+    `OUTPUT - respond with ONLY a JSON array (no prose) of objects:`,
     `{ "week": 1, "weekTheme": "...", "title": "...", "summary": "...", "practice": "...", "category": "...", "priority": "high|medium|low" }`,
   ].join("\n");
 }
@@ -113,7 +113,7 @@ function fallbackPlan(milestones: DbMilestone[]): GeneratedTask[] {
     out.push({
       week,
       weekTheme: m.category,
-      title: `${m.title} — plan & first rep`,
+      title: `${m.title} - plan & first rep`,
       summary: `Break "${m.title}" into concrete steps: ${m.description}`,
       practice: `Write a one-page plan with 3 measurable sub-goals, then complete the first sub-goal this week. Log what you produced in the task notes.`,
       category: m.category,
@@ -122,7 +122,7 @@ function fallbackPlan(milestones: DbMilestone[]): GeneratedTask[] {
     out.push({
       week: Math.min(week + 1, PLAN_WEEKS),
       weekTheme: m.category,
-      title: `${m.title} — execute & measure`,
+      title: `${m.title} - execute & measure`,
       summary: `Push "${m.title}" to a measurable checkpoint. Success metric: ${m.metric}`,
       practice: `Produce the deliverable named in the metric ("${m.metric}") or a draft of it, and submit it on this task for review.`,
       category: m.category,
@@ -188,12 +188,12 @@ function replanSystemPrompt(
     ``,
     `COMPLETED WORK (never change these)`,
     done.length
-      ? done.map((t) => `w${t.week} [${t.category}] ${t.title}${t.feedback ? ` — feedback given: ${t.feedback.slice(0, 140)}` : ""}`).join("\n")
+      ? done.map((t) => `w${t.week} [${t.category}] ${t.title}${t.feedback ? ` - feedback given: ${t.feedback.slice(0, 140)}` : ""}`).join("\n")
       : "(nothing completed yet)",
     ``,
     `OPEN TASKS BEING REPLACED (weeks ${fromWeek}+)`,
     open.filter((t) => t.week >= fromWeek)
-      .map((t) => `w${t.week} [${t.category}/${t.priority}] ${t.title} — progress ${t.progress}%`)
+      .map((t) => `w${t.week} [${t.category}/${t.priority}] ${t.title} - progress ${t.progress}%`)
       .join("\n") || "(none)",
     ``,
     `RECENT STUDENT NOTES`,
@@ -204,10 +204,10 @@ function replanSystemPrompt(
     `1. Design weeks ${fromWeek} through ${fromWeek + 3} (4 weeks), 2–3 tasks per week.`,
     `2. Build on what's already completed; address weak spots visible in the notes and progress.`,
     `3. Every task MUST include a hands-on "practice" deliverable the student produces that week.`,
-    `4. Small, specific, personal — reference this student's actual situation.`,
+    `4. Small, specific, personal - reference this student's actual situation.`,
     `5. category is one of: Academics, Testing, Extracurriculars, Skills, Applications, Research.`,
     ``,
-    `OUTPUT — ONLY a JSON array of objects:`,
+    `OUTPUT - ONLY a JSON array of objects:`,
     `{ "week": ${fromWeek}, "weekTheme": "...", "title": "...", "summary": "...", "practice": "...", "category": "...", "priority": "high|medium|low" }`,
   ].join("\n");
 }
@@ -279,9 +279,9 @@ export async function reviewSubmission(
       : ``,
     ``,
     `Review their submitted work below. Respond with 3 short sections in Markdown:`,
-    `**What's strong** — 1–3 specific things done well (quote their work where possible).`,
-    `**Improve next** — 1–3 concrete, actionable improvements ranked by impact.`,
-    `**Verdict** — one sentence: does this meet the practice deliverable, partially meet it, or miss it? Be honest but encouraging.`,
+    `**What's strong** - 1–3 specific things done well (quote their work where possible).`,
+    `**Improve next** - 1–3 concrete, actionable improvements ranked by impact.`,
+    `**Verdict** - one sentence: does this meet the practice deliverable, partially meet it, or miss it? Be honest but encouraging.`,
     `Keep the whole review under 220 words. No preamble.`,
   ].join("\n");
 
@@ -330,14 +330,14 @@ export function weeklyTaskContextLines(tasks: DbWeeklyTask[], maxLines = 14): st
   const open = tasks.filter((t) => t.status !== "done");
   const currentWeek = open.length ? Math.min(...open.map((t) => t.week)) : Math.max(...tasks.map((t) => t.week));
   const lines: string[] = [];
-  lines.push(`WEEKLY PLAN — current week: ${currentWeek}`);
+  lines.push(`WEEKLY PLAN - current week: ${currentWeek}`);
   for (const t of tasks) {
     if (lines.length >= maxLines) break;
     // Prioritize current + next week, then recent completions.
     if (t.week !== currentWeek && t.week !== currentWeek + 1 && t.status !== "done") continue;
     const note = t.notes.filter((n) => n.author === "user").slice(-1)[0];
     lines.push(
-      `w${t.week} [${t.status} ${t.progress}%] ${t.title} — practice: ${t.practice.slice(0, 90)}${note ? ` — latest note: ${note.text.slice(0, 80)}` : ""}`,
+      `w${t.week} [${t.status} ${t.progress}%] ${t.title} - practice: ${t.practice.slice(0, 90)}${note ? ` - latest note: ${note.text.slice(0, 80)}` : ""}`,
     );
   }
   return lines;

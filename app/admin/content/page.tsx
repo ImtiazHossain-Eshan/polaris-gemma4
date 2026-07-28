@@ -75,7 +75,7 @@ export default function AdminContentPage() {
     try {
       parsed = JSON.parse(draft);
     } catch {
-      setErr("Invalid JSON — check your syntax.");
+      setErr("Invalid JSON - check your syntax.");
       return;
     }
     const res = adding

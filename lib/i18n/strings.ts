@@ -41,7 +41,7 @@ type AnyDict = {
     step4: string;
   };
   // Plan names, prices, and feature lists come from the central catalog
-  // (lib/billing/plans.ts) — the i18n layer only holds section chrome.
+  // (lib/billing/plans.ts) - the i18n layer only holds section chrome.
   pricing: {
     eyebrow: string;
     title: string;
@@ -113,7 +113,7 @@ export const strings: Record<Lang, AnyDict> = {
       titleAccent: "North Star",
       title2: "for elite admissions.",
       subtitle:
-        "Polaris reverse-engineers the exact profile top universities accept. From early schooling to graduate school — one personalized, data-driven roadmap.",
+        "Polaris reverse-engineers the exact profile top universities accept. From early schooling to graduate school - one personalized, data-driven roadmap.",
       ctaPrimary: "Start your roadmap",
       ctaSecondary: "See how it works",
       stat1: "20+",
@@ -127,7 +127,7 @@ export const strings: Record<Lang, AnyDict> = {
       eyebrow: "The Problem",
       title: "Smart students apply blind.",
       body:
-        "85% of students in Bangladesh — and millions globally — navigate university admissions with fragmented Reddit threads, paid consultants ($2,000+), and pure guesswork. Top-tier admissions reward strategy, not luck. Polaris democratizes that strategy.",
+        "85% of students in Bangladesh - and millions globally - navigate university admissions with fragmented Reddit threads, paid consultants ($2,000+), and pure guesswork. Top-tier admissions reward strategy, not luck. Polaris democratizes that strategy.",
       p1Title: "Fragmented information",
       p1: "Forum threads, outdated blogs, and contradictory advice.",
       p2Title: "Inaccessible counseling",
@@ -143,7 +143,7 @@ export const strings: Record<Lang, AnyDict> = {
       step2Title: "2 · AI Strategist",
       step2: "Gemma 4 generates a structured, quarter-by-quarter roadmap grounded in retrieval-augmented university data.",
       step3Title: "3 · Probability Engine",
-      step3: "A trained ML model scores your acceptance chance against historical admit data — with transparent factors.",
+      step3: "A trained ML model scores your acceptance chance against historical admit data - with transparent factors.",
       step4Title: "4 · Scenario Sim",
       step4: "Move a slider, see your odds shift. Optimize the next 6–18 months before you spend them.",
     },
@@ -208,10 +208,10 @@ export const strings: Record<Lang, AnyDict> = {
     ethics: {
       title: "Ethical AI by design",
       body:
-        "Every probability shows its top contributing factors and weights. The model uses transparent features — academics, testing, ECs, research signal — not demographic proxies. Bias review notes are published with each model update.",
+        "Every probability shows its top contributing factors and weights. The model uses transparent features - academics, testing, ECs, research signal - not demographic proxies. Bias review notes are published with each model update.",
     },
     footer: {
-      tagline: "Polaris — your AI North Star.",
+      tagline: "Polaris - your AI North Star.",
       built: "Built for The Infinity AI BuildFest 2026.",
     },
     lang: { en: "EN", bn: "বাংলা" },
@@ -227,9 +227,9 @@ export const strings: Record<Lang, AnyDict> = {
       kicker: "এআই অ্যাকাডেমিক স্ট্র্যাটেজিস্ট",
       title1: "আপনার এআই",
       titleAccent: "নর্থ স্টার",
-      title2: "—সেরা ভর্তির জন্য।",
+      title2: "-সেরা ভর্তির জন্য।",
       subtitle:
-        "Polaris শীর্ষস্থানীয় বিশ্ববিদ্যালয়গুলো যেসব প্রোফাইল গ্রহণ করে, তা রিভার্স-ইঞ্জিনিয়ার করে। স্কুল থেকে গ্র্যাজুয়েট স্কুল—একটি ব্যক্তিগত, ডেটা-চালিত রোডম্যাপ।",
+        "Polaris শীর্ষস্থানীয় বিশ্ববিদ্যালয়গুলো যেসব প্রোফাইল গ্রহণ করে, তা রিভার্স-ইঞ্জিনিয়ার করে। স্কুল থেকে গ্র্যাজুয়েট স্কুল-একটি ব্যক্তিগত, ডেটা-চালিত রোডম্যাপ।",
       ctaPrimary: "রোডম্যাপ শুরু করুন",
       ctaSecondary: "কীভাবে কাজ করে দেখুন",
       stat1: "২০+",
@@ -243,7 +243,7 @@ export const strings: Record<Lang, AnyDict> = {
       eyebrow: "সমস্যা",
       title: "মেধাবী শিক্ষার্থীরা অন্ধকারে আবেদন করে।",
       body:
-        "বাংলাদেশের ৮৫% শিক্ষার্থী—এবং বিশ্বজুড়ে লক্ষ লক্ষ—খণ্ডিত রেডিট থ্রেড, ব্যয়বহুল কনসালট্যান্ট (২০০০+ ডলার) এবং অনুমানের ভিত্তিতে ভর্তির পথ চলে। শীর্ষস্থানীয় ভর্তিতে কৌশল কাজ করে, ভাগ্য নয়। Polaris সেই কৌশলকে সবার নাগালে আনে।",
+        "বাংলাদেশের ৮৫% শিক্ষার্থী-এবং বিশ্বজুড়ে লক্ষ লক্ষ-খণ্ডিত রেডিট থ্রেড, ব্যয়বহুল কনসালট্যান্ট (২০০০+ ডলার) এবং অনুমানের ভিত্তিতে ভর্তির পথ চলে। শীর্ষস্থানীয় ভর্তিতে কৌশল কাজ করে, ভাগ্য নয়। Polaris সেই কৌশলকে সবার নাগালে আনে।",
       p1Title: "ছড়ানো-ছিটানো তথ্য",
       p1: "ফোরাম থ্রেড, পুরোনো ব্লগ, পরস্পরবিরোধী পরামর্শ।",
       p2Title: "নাগালের বাইরে কাউন্সেলিং",
@@ -257,9 +257,9 @@ export const strings: Record<Lang, AnyDict> = {
       step1Title: "১ · ইনটেক",
       step1: "ছয়টি স্মার্ট প্রশ্নে আপনার গ্রেড, দেশ, লক্ষ্য, জিপিএ, কার্যক্রম এবং লক্ষ্য টিয়ার ক্যাপচার করা হয়।",
       step2Title: "২ · এআই স্ট্র্যাটেজিস্ট",
-      step2: "Gemma 4 আপনার জন্য কোয়ার্টার-ভিত্তিক, স্ট্রাকচার্ড রোডম্যাপ তৈরি করে—RAG-ভিত্তিক বিশ্ববিদ্যালয় ডেটার উপর গ্রাউন্ডেড।",
+      step2: "Gemma 4 আপনার জন্য কোয়ার্টার-ভিত্তিক, স্ট্রাকচার্ড রোডম্যাপ তৈরি করে-RAG-ভিত্তিক বিশ্ববিদ্যালয় ডেটার উপর গ্রাউন্ডেড।",
       step3Title: "৩ · প্রবেবিলিটি ইঞ্জিন",
-      step3: "একটি প্রশিক্ষিত ML মডেল ঐতিহাসিক ভর্তি ডেটার বিপরীতে আপনার সম্ভাবনা স্কোর করে—স্বচ্ছ ফ্যাক্টর সহ।",
+      step3: "একটি প্রশিক্ষিত ML মডেল ঐতিহাসিক ভর্তি ডেটার বিপরীতে আপনার সম্ভাবনা স্কোর করে-স্বচ্ছ ফ্যাক্টর সহ।",
       step4Title: "৪ · সিনারিও সিম",
       step4: "একটি স্লাইডার সরান, সম্ভাবনা কীভাবে বদলায় দেখুন। সময় খরচের আগে পরবর্তী ৬–১৮ মাস অপ্টিমাইজ করুন।",
     },
@@ -324,10 +324,10 @@ export const strings: Record<Lang, AnyDict> = {
     ethics: {
       title: "ডিজাইনে নৈতিক এআই",
       body:
-        "প্রতিটি সম্ভাবনা তার শীর্ষ ফ্যাক্টর ও ওজন দেখায়। মডেলটি স্বচ্ছ ফিচার ব্যবহার করে—একাডেমিক, টেস্টিং, ইসি, গবেষণা—কোনো ডেমোগ্রাফিক প্রক্সি নয়। প্রতিটি মডেল আপডেটের সাথে বায়াস রিভিউ নোট প্রকাশ করা হয়।",
+        "প্রতিটি সম্ভাবনা তার শীর্ষ ফ্যাক্টর ও ওজন দেখায়। মডেলটি স্বচ্ছ ফিচার ব্যবহার করে-একাডেমিক, টেস্টিং, ইসি, গবেষণা-কোনো ডেমোগ্রাফিক প্রক্সি নয়। প্রতিটি মডেল আপডেটের সাথে বায়াস রিভিউ নোট প্রকাশ করা হয়।",
     },
     footer: {
-      tagline: "Polaris — আপনার এআই নর্থ স্টার।",
+      tagline: "Polaris - আপনার এআই নর্থ স্টার।",
       built: "The Infinity AI BuildFest 2026-এর জন্য নির্মিত।",
     },
     lang: { en: "EN", bn: "বাংলা" },

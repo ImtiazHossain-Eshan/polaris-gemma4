@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 
 /**
  * Active-path selector. The Strategist and every page in the workspace
- * reads `?path=<id>` from the URL — switching paths just updates the query
+ * reads `?path=<id>` from the URL - switching paths just updates the query
  * and triggers a server re-fetch. No client cache to invalidate.
  * Dark-themed to sit inside the dark-glass LeftNav.
  */

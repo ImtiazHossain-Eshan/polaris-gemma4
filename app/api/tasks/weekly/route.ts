@@ -1,10 +1,10 @@
 /**
  * /api/tasks/weekly
  *
- * GET  — list the user's weekly tasks. Generates the plan on first access
+ * GET  - list the user's weekly tasks. Generates the plan on first access
  *        (LLM with deterministic fallback), so the response is never empty
  *        for a profiled user.
- * POST — { action: "regenerate" } wipes and regenerates the entire plan.
+ * POST - { action: "regenerate" } wipes and regenerates the entire plan.
  */
 
 import { z } from "zod";

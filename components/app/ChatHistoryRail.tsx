@@ -27,10 +27,10 @@ export type ThreadSummary = {
 type Props = {
   activeId: string | null;
   onSelect: (id: string) => void;
-  onNew: () => void;
+  onNew: (threadId?: string) => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
-  /** Re-fetch trigger — increment when the parent appends a message. */
+  /** Re-fetch trigger - increment when the parent appends a message. */
   reloadKey?: number;
   /** Pixel width applied via inline style (lets the parent resize this rail). */
   width: number;
@@ -38,7 +38,7 @@ type Props = {
   onResize: (px: number) => void;
   /** True while the user is currently dragging; suppresses width transitions. */
   resizing: boolean;
-  /** Called when the user starts/finishes a drag — for transition control. */
+  /** Called when the user starts/finishes a drag - for transition control. */
   onResizeStart: () => void;
   onResizeEnd: () => void;
   demo?: boolean;
@@ -82,7 +82,7 @@ export function ChatHistoryRail({
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ title: trimmed }),
-    }).catch(() => { /* swallow — UI already updated */ });
+    }).catch(() => { /* swallow - UI already updated */ });
   }
 
   async function remove(id: string) {
@@ -90,6 +90,23 @@ export function ChatHistoryRail({
     setThreads((prev) => prev.filter((t) => t.id !== id));
     if (!demo) await fetch(`/api/chat/threads/${id}`, { method: "DELETE" }).catch(() => { /* ignore */ });
     if (activeId === id) onNew();
+  }
+
+  function createNew() {
+    if (!demo) {
+      onNew();
+      return;
+    }
+    const now = new Date().toISOString();
+    const id = `demo-${Date.now()}`;
+    setThreads((previous) => [{
+      id,
+      title: "New conversation",
+      messageCount: 0,
+      lastMessageAt: now,
+      createdAt: now,
+    }, ...previous]);
+    onNew(id);
   }
 
   const filtered = useMemo(() => {
@@ -111,7 +128,7 @@ export function ChatHistoryRail({
           <PanelGlyph />
         </button>
         <button
-          onClick={onNew}
+          onClick={createNew}
           title="New chat"
           className="h-9 w-9 rounded-lg inline-flex items-center justify-center bg-polaris-500 text-white hover:bg-polaris-600 transition-colors shadow-sm"
         >
@@ -144,7 +161,7 @@ export function ChatHistoryRail({
 
       <div className="px-3 pt-3 pb-2 space-y-2">
         <button
-          onClick={onNew}
+          onClick={createNew}
           className="w-full h-9 rounded-lg bg-polaris-500 text-white text-[12.5px] font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-polaris-600 transition-colors shadow-sm"
         >
           <PlusGlyph /> New chat
@@ -258,7 +275,7 @@ function ResizeHandle({
 }) {
   function onPointerDown(e: React.PointerEvent) {
     e.preventDefault();
-    // Capture the rail element NOW — React nulls currentTarget once the
+    // Capture the rail element NOW - React nulls currentTarget once the
     // synthetic event is released, so the async listeners can't read it.
     const railEl = (e.currentTarget as HTMLElement).parentElement;
     if (!railEl) return;

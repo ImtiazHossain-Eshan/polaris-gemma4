@@ -54,7 +54,7 @@ export const GET = withErrorHandling(async (req, ctx: { params: Promise<{ provid
         provider,
         status: "connected",
         account: { username: me.email, displayName: me.name ?? me.email, avatarUrl: me.picture },
-        imported: ["OAuth connected — first sync pending"],
+        imported: ["OAuth connected - first sync pending"],
         insights: [],
       });
       // Tokens stored separately for sync jobs.
@@ -82,7 +82,7 @@ export const GET = withErrorHandling(async (req, ctx: { params: Promise<{ provid
         provider,
         status: "connected",
         account: { username: me.id, displayName: me.name ?? "Facebook account" },
-        imported: ["OAuth connected — event import pending"],
+        imported: ["OAuth connected - event import pending"],
         insights: [],
       });
       return back("connected");

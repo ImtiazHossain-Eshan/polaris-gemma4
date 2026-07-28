@@ -3,7 +3,7 @@
  *
  * Submit a review for a session you actually booked (one per booking,
  * only after the slot time has passed). Ratings shown on consultant cards
- * aggregate exclusively from these rows — never seeded.
+ * aggregate exclusively from these rows - never seeded.
  */
 
 import { z } from "zod";

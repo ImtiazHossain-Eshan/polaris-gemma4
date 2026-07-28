@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Universities — premium discovery + fit engine.
+ * Universities - premium discovery + fit engine.
  *
  *   Header (fit disclaimer · scenario lab toggle)
  *   Search + filter chips (country / difficulty / aid / tests / shortlist)
@@ -214,7 +214,7 @@ export function UniversitiesClient({
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <div className="text-[10.5px] uppercase tracking-wider text-ink-muted font-medium">What-if engine</div>
-                  <div className="text-[12px] text-ink-dim mt-0.5">Drag — every card&apos;s fit band recomputes live.</div>
+                  <div className="text-[12px] text-ink-dim mt-0.5">Drag - every card&apos;s fit band recomputes live.</div>
                 </div>
                 <button onClick={() => setInputs(initialInputs)} className="text-[12px] text-polaris-600 dark:text-polaris-300 font-medium hover:underline">
                   Reset to my profile
@@ -413,7 +413,7 @@ export function UniversitiesClient({
 }
 
 /* ════════════════════════════════════════════════════════════════════════
- * Card — 3D tilt, logo depth, urgency ring, fit band
+ * Card - 3D tilt, logo depth, urgency ring, fit band
  * ════════════════════════════════════════════════════════════════════════ */
 
 function UniCard({
@@ -482,7 +482,7 @@ function UniCard({
       </div>
 
       <div className="relative mt-3.5 flex items-center gap-2 flex-wrap">
-        <span className={cn("text-[10px] uppercase tracking-wider font-bold rounded-full px-2 py-0.5 ring-1 ring-inset", BAND_STYLES[fit.band])} title="Estimated fit from your profile — not an official probability">
+        <span className={cn("text-[10px] uppercase tracking-wider font-bold rounded-full px-2 py-0.5 ring-1 ring-inset", BAND_STYLES[fit.band])} title="Estimated fit from your profile - not an official probability">
           {fit.band}
         </span>
         <span className="text-[10.5px] font-mono text-ink-muted">accepts {(u.acceptanceRate * 100).toFixed(1)}%</span>
@@ -500,7 +500,7 @@ function UniCard({
       </div>
 
       <div className="relative mt-2.5 flex items-center gap-2 text-[10.5px] text-ink-muted">
-        <span className="truncate">{u.admissions?.applicationSystems.join(" / ") ?? "—"}</span>
+        <span className="truncate">{u.admissions?.applicationSystems.join(" / ") ?? "-"}</span>
         {u.admissions && (u.admissions.aid.toLowerCase().includes("need-blind") || u.admissions.aid.toLowerCase().includes("full")) && (
           <span className="ml-auto shrink-0 inline-flex items-center gap-1 text-aurora-600 dark:text-aurora-200 font-medium">
             <span className="h-1.5 w-1.5 rounded-full bg-aurora-500" /> aid
@@ -524,7 +524,7 @@ function UrgencyRing({ days }: { days: number }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
- * Detail modal — product page
+ * Detail modal - product page
  * ════════════════════════════════════════════════════════════════════════ */
 
 function UniDetailModal({
@@ -540,7 +540,7 @@ function UniDetailModal({
   function askStrategist() {
     roadmapStore.emit("UNIVERSITY_VIEWED", `Asked Strategist about ${u.name} (fit: ${fit.band})`);
     window.dispatchEvent(new CustomEvent("polaris:openAgentRail", {
-      detail: { draft: `How do I improve my chances for ${u.name}? My estimated fit is "${fit.band}" — biggest gap: ${fit.biggestGap ?? "unknown"}. ` },
+      detail: { draft: `How do I improve my chances for ${u.name}? My estimated fit is "${fit.band}" - biggest gap: ${fit.biggestGap ?? "unknown"}. ` },
     }));
     onClose();
   }
@@ -734,12 +734,12 @@ function CompareModal({
   onClose: () => void;
 }) {
   const rows: Array<{ label: string; get: (u: UniProfile) => string }> = [
-    { label: "Fit (estimate)", get: (u) => fits[u.id]?.band ?? "—" },
+    { label: "Fit (estimate)", get: (u) => fits[u.id]?.band ?? "-" },
     { label: "Acceptance", get: (u) => `${(u.acceptanceRate * 100).toFixed(1)}%` },
     { label: "Application", get: (u) => u.admissions?.applicationSystems.join(", ") ?? "Not available" },
     { label: "Next deadline", get: (u) => {
         const next = u.admissions?.deadlines.map((d) => ({ d, when: nextOccurrence(d) })).sort((a, b) => a.when.getTime() - b.when.getTime())[0];
-        return next ? `${next.d.label} — ${next.when.toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : "Not available";
+        return next ? `${next.d.label} - ${next.when.toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : "Not available";
       } },
     { label: "Tests", get: (u) => u.admissions?.testPolicy ?? "Not available" },
     { label: "English", get: (u) => u.admissions?.english ?? "Not available" },
@@ -807,7 +807,7 @@ function CompareModal({
 }
 
 /* ════════════════════════════════════════════════════════════════════════
- * Import deadlines modal — confirm before adding to the calendar
+ * Import deadlines modal - confirm before adding to the calendar
  * ════════════════════════════════════════════════════════════════════════ */
 
 const APP_CHECKLIST = [
@@ -841,7 +841,7 @@ function ImportDeadlinesModal({
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             date: iso,
-            title: `${u.name} — ${it.d.label}`,
+            title: `${u.name} - ${it.d.label}`,
             kind: "hard",
             type: "application",
             priority: "high",
@@ -933,7 +933,7 @@ function Heart({ filled, className }: { filled: boolean; className?: string }) {
   );
 }
 
-/** Compact styled select — one control per filter keeps the row clean. */
+/** Compact styled select - one control per filter keeps the row clean. */
 /* Mini glyphs for dropdown options. */
 function GlobeMini() {
   return (

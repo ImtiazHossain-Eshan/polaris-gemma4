@@ -9,7 +9,7 @@ import { PLAN_CATALOG, type PlanLimits } from "@/lib/billing/plans";
  * declares its required plan, whether it's actually implemented, where it
  * lives, and what the upgrade prompt should say. The billing catalog
  * (lib/billing/plans.ts) is the matching source of truth for what each
- * plan ADVERTISES — the two are audited together (docs/PLAN_VERIFICATION.md).
+ * plan ADVERTISES - the two are audited together (docs/PLAN_VERIFICATION.md).
  */
 
 export type Feature =
@@ -156,7 +156,7 @@ export function planMeets(plan: Plan, minPlan: Plan): boolean {
   return PLAN_RANK[plan] >= PLAN_RANK[minPlan];
 }
 
-/** Plan allows it AND it actually exists — never unlocks vaporware. */
+/** Plan allows it AND it actually exists - never unlocks vaporware. */
 export function canUse(plan: Plan, feature: Feature): boolean {
   const f = FEATURE_ACCESS[feature];
   return f.implemented && planMeets(plan, f.minPlan);

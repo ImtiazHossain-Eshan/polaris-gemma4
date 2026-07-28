@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const DeadlineKindSchema = z.enum(["hard", "soft", "repeat"]);
 
-/** What kind of obligation this is — drives icons, colors, and checklists. */
+/** What kind of obligation this is - drives icons, colors, and checklists. */
 export const DeadlineTypeSchema = z.enum([
   "application",
   "scholarship",

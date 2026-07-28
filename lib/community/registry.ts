@@ -1,5 +1,5 @@
 /**
- * Community — channel registry + guidelines. Channels are config, messages
+ * Community - channel registry + guidelines. Channels are config, messages
  * live in Mongo (lib/community/service.ts). Every signed-in user (any plan)
  * can read and post; safety tooling (report, block, auto-hide, link guard)
  * is enforced server-side.
@@ -40,14 +40,14 @@ export const CHANNEL_KIND_LABELS: Record<ChannelKind, string> = {
 };
 
 export const COMMUNITY_GUIDELINES: string[] = [
-  "Be kind — everyone here is figuring the same things out.",
+  "Be kind - everyone here is figuring the same things out.",
   "No links or payment requests in chat. Verified consultants are badged by Polaris; nobody else may offer paid services.",
   "Advice here is peer experience, not official legal or visa counsel.",
   "No spam, self-promotion, or recruitment.",
-  "Report anything suspicious — messages with multiple reports auto-hide pending moderation.",
+  "Report anything suspicious - messages with multiple reports auto-hide pending moderation.",
   "Never share passport numbers, payment details, or one-time codes.",
 ];
 
 export const COMMUNITY_DISCLAIMER =
-  "Community advice is shared student experience — not official legal, visa, or financial counsel. " +
+  "Community advice is shared student experience - not official legal, visa, or financial counsel. " +
   "Only consultants verified by Polaris may offer paid services here.";

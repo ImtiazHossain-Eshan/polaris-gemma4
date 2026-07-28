@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Integrations — a data-flow scene: real brand tiles (GitHub, Google
+ * Integrations - a data-flow scene: real brand tiles (GitHub, Google
  * Calendar, Drive, Codeforces) stream progress into the Polaris core along
  * animated dashed lines; coming-soon tools sit dimmed at the edges. The
  * privacy promise is stated explicitly, matching the real Connections hub.
@@ -15,7 +15,7 @@ import {
   GShield, NorthStarMark,
 } from "./shared";
 
-/** Active tools — positions are % of the scene; the SVG paths match them. */
+/** Active tools - positions are % of the scene; the SVG paths match them. */
 const ACTIVE: { key: BrandKey; left: number; top: number; feeds: string }[] = [
   { key: "github",     left: 8,  top: 16, feeds: "repos & commits" },
   { key: "codeforces", left: 86, top: 14, feeds: "rating & solves" },
@@ -53,7 +53,7 @@ export function IntegrationsOrbitPreview() {
           onDark
           eyebrow="Connections"
           title={<>Connect the tools that <Accent>already show your progress</Accent><Dot /></>}
-          sub="GitHub commits, Codeforces ratings, calendar blocks, and essay drafts become roadmap signals — imported only when you say so."
+          sub="GitHub commits, Codeforces ratings, calendar blocks, and essay drafts become roadmap signals - imported only when you say so."
         />
 
         {/* ── Data-flow scene ── */}
@@ -143,7 +143,7 @@ export function IntegrationsOrbitPreview() {
             <p className="text-[13px] leading-relaxed text-paper/70">
               <span className="font-semibold text-paper">Explicit permission only.</span>{" "}
               You choose what each tool shares, see exactly what was imported,
-              and can disconnect — and wipe the data — anytime.
+              and can disconnect - and wipe the data - anytime.
             </p>
           </div>
         </Reveal>

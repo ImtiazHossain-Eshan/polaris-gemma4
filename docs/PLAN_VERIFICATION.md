@@ -23,45 +23,45 @@ actually does, plus the manual test checklist.
 ### Free
 | Promise | Status | Where |
 | --- | --- | --- |
-| University & scholarship directory | WORKS — `/universities` gate relaxed from `requirePlan("pro")` to `requireSession`; scholarships in `/resources` (never gated) | `app/(app)/universities/page.tsx` |
-| Acceptance-rate benchmarks | WORKS — `/api/benchmark` relaxed to `requireSession`; acceptance data shown on university cards/detail | `app/api/benchmark/route.ts` |
-| Public requirement summaries | WORKS — university detail modal (requirements, test policy, deadlines) | `UniversitiesClient` |
-| Community resources & knowledge hub | WORKS — `/resources` has no plan gate | `app/(app)/resources/page.tsx` |
-| 1 active roadmap with weekly tasks & replans | WORKS — roadmap v2 generate/adapt are session-gated only (one living doc per user); rate-limited | `/api/roadmap/v2`, `/api/roadmap/v2/adapt` |
-| Deadline tracking & family view | WORKS — `/deadlines`, `/family` ungated | — |
-| AI Strategist | LOCKED by design — `/strategist` renders the upgrade screen, the rail shows `StrategistLockedRail`, and `/api/strategist` returns 403 `UPGRADE_REQUIRED` | `app/(app)/strategist/page.tsx`, `app/(app)/layout.tsx`, `app/api/strategist/route.ts` |
-| Consultants, bookings & community | WORKS — deliberately plan-free (marketplace revenue), never subscription-gated | `/consultants`, `/bookings`, `/community` |
+| University & scholarship directory | WORKS - `/universities` gate relaxed from `requirePlan("pro")` to `requireSession`; scholarships in `/resources` (never gated) | `app/(app)/universities/page.tsx` |
+| Acceptance-rate benchmarks | WORKS - `/api/benchmark` relaxed to `requireSession`; acceptance data shown on university cards/detail | `app/api/benchmark/route.ts` |
+| Public requirement summaries | WORKS - university detail modal (requirements, test policy, deadlines) | `UniversitiesClient` |
+| Community resources & knowledge hub | WORKS - `/resources` has no plan gate | `app/(app)/resources/page.tsx` |
+| 1 active roadmap with weekly tasks & replans | WORKS - roadmap v2 generate/adapt are session-gated only (one living doc per user); rate-limited | `/api/roadmap/v2`, `/api/roadmap/v2/adapt` |
+| Deadline tracking & family view | WORKS - `/deadlines`, `/family` ungated | - |
+| AI Strategist | LOCKED by design - `/strategist` renders the upgrade screen, the rail shows `StrategistLockedRail`, and `/api/strategist` returns 403 `UPGRADE_REQUIRED` | `app/(app)/strategist/page.tsx`, `app/(app)/layout.tsx`, `app/api/strategist/route.ts` |
+| Consultants, bookings & community | WORKS - deliberately plan-free (marketplace revenue), never subscription-gated | `/consultants`, `/bookings`, `/community` |
 
 ### Pro
 | Promise | Status | Where |
 | --- | --- | --- |
-| AI Strategist (chat, score analysis, replans) | WORKS — page + rail + API unlock at `planMeets(plan, "pro")`; budget 30 msgs / 5 min | `app/api/strategist/route.ts`, `lib/ratelimit.ts` |
-| Integration hub | WORKS — `/connections` is `requirePlan("pro")`; real Codeforces/GitHub imports | `app/(app)/connections/page.tsx` |
-| Partner marketplace | WORKS — `/partners` is `requirePlan("pro")` | `app/(app)/partners/page.tsx` |
-| Up to 6 connected tools | WORKS — `PLAN_FEATURES.pro.maxConnections = 6` (derived from catalog) | `lib/features.ts` |
+| AI Strategist (chat, score analysis, replans) | WORKS - page + rail + API unlock at `planMeets(plan, "pro")`; budget 30 msgs / 5 min | `app/api/strategist/route.ts`, `lib/ratelimit.ts` |
+| Integration hub | WORKS - `/connections` is `requirePlan("pro")`; real Codeforces/GitHub imports | `app/(app)/connections/page.tsx` |
+| Partner marketplace | WORKS - `/partners` is `requirePlan("pro")` | `app/(app)/partners/page.tsx` |
+| Up to 6 connected tools | WORKS - `PLAN_FEATURES.pro.maxConnections = 6` (derived from catalog) | `lib/features.ts` |
 
 ### Elite
 | Promise | Status | Where |
 | --- | --- | --- |
-| 2× Strategist budget (60 / 5 min) | WORKS — `BUDGETS.elite = 60` | `lib/ratelimit.ts` |
-| Unlimited tool connections | WORKS — cap 99 | `lib/features.ts` |
+| 2× Strategist budget (60 / 5 min) | WORKS - `BUDGETS.elite = 60` | `lib/ratelimit.ts` |
+| Unlimited tool connections | WORKS - cap 99 | `lib/features.ts` |
 | Deep benchmarking vs admitted profiles | NOT BUILT → listed under `comingSoon`, renders with "Soon" tag | catalog |
 | Faculty & recommender lists | NOT BUILT → `comingSoon` | catalog |
 | Priority Bangla support | NOT BUILT → `comingSoon` | catalog |
 
 ### Removed claims (previously advertised, not true)
-- "Unlimited roadmaps" (Pro) — the v2 engine keeps one living roadmap per
+- "Unlimited roadmaps" (Pro) - the v2 engine keeps one living roadmap per
   user for every plan. Replaced with honest limits.
-- "Probability engine" as Pro-only — fit bands on `/universities` are now
+- "Probability engine" as Pro-only - fit bands on `/universities` are now
   Free along with the directory.
-- Landing's old Pro $19 / Elite $49 — checkout actually charges $5 / $15
+- Landing's old Pro $19 / Elite $49 - checkout actually charges $5 / $15
   monthly ($49 / $149 yearly). Landing now renders catalog prices.
 - "Priority Strategist queue", "Advanced analytics & streak insights"
-  (Elite) — no implementation; dropped (streaks are free for everyone).
+  (Elite) - no implementation; dropped (streaks are free for everyone).
 
 ## Manual test checklist
 
-1. **Free user** — sign up fresh → can open `/universities` (directory, fit
+1. **Free user** - sign up fresh → can open `/universities` (directory, fit
    rings, compare, detail requirements), `/resources`, `/deadlines`,
    `/family`, `/consultants`, `/community`, `/bookings`; generate + replan
    the single roadmap. `/strategist` shows the upgrade screen (5 unlock
@@ -70,16 +70,16 @@ actually does, plus the manual test checklist.
    `/connections` and `/partners` redirect to `/billing` (requirePlan).
    Sidebar shows lock badges on Strategist, Connections, and Partners.
    Plan badge everywhere says "Free".
-2. **Pro user** (set `plan: "pro"` on the user in Mongo or via admin) —
+2. **Pro user** (set `plan: "pro"` on the user in Mongo or via admin) -
    everything in Free, plus `/connections` and `/partners` open; Strategist
    budget 30; billing hero shows "Pro", its card shows "Your plan", Free
    card button says "Included"-style passive state, Elite shows
    "Upgrade to Elite".
-3. **Elite user** — budget 60; both Pro pages open; Elite card active;
+3. **Elite user** - budget 60; both Pro pages open; Elite card active;
    Pro card button reads "Switch to Pro" (downgrade-style action).
-4. **Downgrade** — cancel subscription in `/billing` → renews-until state
+4. **Downgrade** - cancel subscription in `/billing` → renews-until state
    shows; after period ends (or manual plan flip) gated pages bounce again.
-5. **Cycle toggle** — landing and `/billing`: monthly shows $5/$15,
+5. **Cycle toggle** - landing and `/billing`: monthly shows $5/$15,
    yearly shows $49/$149 with the "2 months free" badge; prices animate.
-6. **Coming soon** — Elite card (both surfaces) renders the three unbuilt
+6. **Coming soon** - Elite card (both surfaces) renders the three unbuilt
    promises with a clock icon + "Soon" chip, never as a checked benefit.

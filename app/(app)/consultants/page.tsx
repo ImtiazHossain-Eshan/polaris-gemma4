@@ -1,5 +1,5 @@
 /**
- * /consultants — verified consultant marketplace. Open to EVERY plan:
+ * /consultants - verified consultant marketplace. Open to EVERY plan:
  * free users can browse, match, and book exactly like Pro/Elite. The
  * server assembles real availability, real review aggregates, and the
  * explainable matches from the student's roadmap/deadline state.

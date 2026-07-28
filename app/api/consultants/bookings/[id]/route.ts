@@ -1,10 +1,10 @@
 /**
  * /api/consultants/bookings/[id]
  *
- * PATCH — { action: "cancel" | "confirm-payment" }
- *   cancel          — allowed until 24h before the slot; paid bookings get a
+ * PATCH - { action: "cancel" | "confirm-payment" }
+ *   cancel          - allowed until 24h before the slot; paid bookings get a
  *                     refund note + the linked transaction flips to refunded.
- *   confirm-payment — after the client confirms the sandbox transaction
+ *   confirm-payment - after the client confirms the sandbox transaction
  *                     (/api/transactions/[id]/confirm), promotes the booking
  *                     from pending_payment → confirmed.
  */
@@ -32,7 +32,7 @@ export const PATCH = withErrorHandling(async (req, ctx: { params: Promise<{ id: 
 
   const booking = await confirmBookingPayment(session.id, id);
   if (!booking) {
-    throw new HttpError(409, "Payment not confirmed yet — complete the transaction first.");
+    throw new HttpError(409, "Payment not confirmed yet - complete the transaction first.");
   }
   return ok({ status: booking.status });
 });

@@ -1,5 +1,5 @@
 /**
- * Consultants — DB layer: seeded profiles, real availability (template slots
+ * Consultants - DB layer: seeded profiles, real availability (template slots
  * minus existing bookings), bookings with transparent fee math, free-session
  * eligibility, reviews aggregated from real submissions only.
  *
@@ -97,7 +97,7 @@ export async function getConsultant(id: string): Promise<DbConsultant | null> {
   return db.collection<DbConsultant>("consultants").findOne({ id });
 }
 
-/** Real ratings only — aggregated from the reviews collection. */
+/** Real ratings only - aggregated from the reviews collection. */
 export async function ratingSummaries(): Promise<Record<string, RatingSummary>> {
   const db = await getDb();
   const rows = await db
@@ -149,7 +149,7 @@ export async function availableSlots(consultant: DbConsultant): Promise<string[]
 
 /* ─── Bookings ─────────────────────────────────────────────────────────── */
 
-/** A free first session applies once per consultant per user — verified flag required. */
+/** A free first session applies once per consultant per user - verified flag required. */
 export async function freeSessionEligible(userId: string, consultant: DbConsultant): Promise<boolean> {
   if (!consultant.freeFirstSession) return false;
   if (consultant.verification !== "verified" && consultant.verification !== "featured") return false;
@@ -192,7 +192,7 @@ export async function createBooking(input: CreateBookingInput): Promise<CreateBo
 
   const slots = await availableSlots(consultant);
   if (!slots.includes(input.slotIso)) {
-    return { ok: false, error: "That slot was just taken — pick another time." };
+    return { ok: false, error: "That slot was just taken - pick another time." };
   }
 
   const free = input.useFreeSession && (await freeSessionEligible(input.userId, consultant));
@@ -230,7 +230,7 @@ export async function createBooking(input: CreateBookingInput): Promise<CreateBo
       method: input.method ?? "card",
       amount: priceMinor,
       currency: "USD",
-      description: `Consultation — ${consultant.name} (${input.service})`,
+      description: `Consultation - ${consultant.name} (${input.service})`,
     });
     booking.transactionId = transaction._id?.toString();
   }

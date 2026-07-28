@@ -1,5 +1,5 @@
 /**
- * /billing — the subscription console.
+ * /billing - the subscription console.
  *
  * Server loads the real billing state (plan, subscription record, saved
  * payment methods, lifetime spend from the transaction ledger) and hands it
@@ -29,7 +29,7 @@ export default async function BillingPage() {
           <span className="grad-text">Billing</span> & plan
         </h1>
         <p className="text-[12.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">
-          Manage your subscription, payment methods, and invoices — Card, bKash, Nagad, and Rocket supported.
+          Manage your subscription, payment methods, and invoices - Card, bKash, Nagad, and Rocket supported.
         </p>
       </header>
 

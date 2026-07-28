@@ -6,9 +6,9 @@
  * source-transparency fields the hub renders:
  *   - real official application URLs per scholarship
  *   - scholarship type + typical deadline window (month-level, labelled
- *     "typical — verify", because exact dates shift every cycle)
+ *     "typical - verify", because exact dates shift every cycle)
  *   - officially-sourced living-cost figures per country (visa maintenance
- *     requirements / blocked accounts — real published numbers)
+ *     requirements / blocked accounts - real published numbers)
  *
  * Nothing here is invented: where a value isn't published, the UI shows
  * "Not available from verified source".
@@ -29,7 +29,7 @@ export type ScholarshipMeta = {
   type: ScholarshipType;
   /** Typical opening/deadline window, month-level only. */
   typicalWindow: string;
-  /** Month (1-12) the typical deadline lands in — for "Add deadline". */
+  /** Month (1-12) the typical deadline lands in - for "Add deadline". */
   windowMonth: number;
   difficulty: "extreme" | "high" | "moderate";
 };
@@ -126,7 +126,7 @@ export const COUNTRY_COSTS: Record<string, CountryCost> = {
 /* ─── case-study presentation meta ─── */
 
 export const CASE_STUDY_DISCLOSURE =
-  "Anonymized composite case studies — admission patterns drawn from publicly documented admit profiles and official program criteria. Names and identifying details are removed or generalized.";
+  "Anonymized composite case studies - admission patterns drawn from publicly documented admit profiles and official program criteria. Names and identifying details are removed or generalized.";
 
 /** Map a case study's tags to a university id in the KB (for logos). */
 export function caseStudyUniId(tags: string[]): string | null {

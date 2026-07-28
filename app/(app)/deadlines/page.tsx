@@ -1,8 +1,8 @@
 /**
- * /deadlines — server page. Loads the user's full deadline horizon (past 90
+ * /deadlines - server page. Loads the user's full deadline horizon (past 90
  * days → next 18 months) for the initial paint, then hands off to
  * DeadlinesClient: Agenda countdown cards, Month calendar, and the Risk
- * board, plus workload insights and the rich detail modal — all backed by
+ * board, plus workload insights and the rich detail modal - all backed by
  * /api/deadlines.
  */
 

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "Admissions enrichment for the university KB, keyed by university id. Real official links, application systems, deadline patterns (month/day, year-agnostic — the next occurrence is computed at render time), test policy, English requirements, indicative international tuition, and aid/scholarship notes.",
+    "description": "Admissions enrichment for the university KB, keyed by university id. Real official links, application systems, deadline patterns (month/day, year-agnostic - the next occurrence is computed at render time), test policy, English requirements, indicative international tuition, and aid/scholarship notes.",
     "lastUpdated": "2026-06-11",
     "verifyNote": "Dates and policies follow recent published cycles. Always confirm on the official admissions page before relying on them."
   },
@@ -17,7 +17,7 @@
     "english": "TOEFL 90+ (100 recommended) or IELTS 7.5 recommended",
     "tuitionIntl": "≈$62k/yr before aid",
     "aid": "Need-blind for all applicants incl. international; meets 100% of demonstrated need",
-    "scholarships": "All MIT aid is need-based — no merit awards",
+    "scholarships": "All MIT aid is need-based - no merit awards",
     "typeTags": ["Private", "STEM-heavy", "Need-blind intl"],
     "sourceUrls": ["https://mitadmissions.org/apply/firstyear/deadlines-requirements/"]
   },
@@ -61,7 +61,7 @@
       { "label": "Early Decision 1", "month": 11, "day": 1 },
       { "label": "Early Decision 2 / Regular", "month": 1, "day": 3 }
     ],
-    "testPolicy": "Varies by college — verify current policy for SCS",
+    "testPolicy": "Varies by college - verify current policy for SCS",
     "english": "TOEFL 102+ or IELTS 7.5 recommended",
     "tuitionIntl": "≈$64k/yr",
     "aid": "Very limited need-based aid for internationals",
@@ -77,7 +77,7 @@
       { "label": "UC Application opens", "month": 10, "day": 1 },
       { "label": "UC Application closes", "month": 12, "day": 2 }
     ],
-    "testPolicy": "Test-blind — SAT/ACT not considered",
+    "testPolicy": "Test-blind - SAT/ACT not considered",
     "english": "TOEFL 80+ / IELTS 6.5+",
     "tuitionIntl": "≈$50k/yr nonresident; no intl aid",
     "aid": "No need-based aid for internationals (public university)",
@@ -109,7 +109,7 @@
       { "label": "Restrictive Early Action", "month": 11, "day": 1 },
       { "label": "Regular Decision", "month": 1, "day": 1 }
     ],
-    "testPolicy": "Verify current cycle — recently test-optional",
+    "testPolicy": "Verify current cycle - recently test-optional",
     "english": "TOEFL 100+ competitive",
     "tuitionIntl": "≈$62k/yr before aid",
     "aid": "Need-blind for all incl. international; most generous aid in the Ivy League",
@@ -125,7 +125,7 @@
       { "label": "Restrictive Early Action", "month": 11, "day": 1 },
       { "label": "Regular Decision", "month": 1, "day": 2 }
     ],
-    "testPolicy": "Test-flexible — SAT/ACT/AP/IB scores required",
+    "testPolicy": "Test-flexible - SAT/ACT/AP/IB scores required",
     "english": "TOEFL 100+ / IELTS 7+",
     "tuitionIntl": "≈$67k/yr before aid",
     "aid": "Need-blind for all incl. international; meets full need",
@@ -142,7 +142,7 @@
       { "label": "Admissions tests (course-specific)", "month": 10, "day": 31 },
       { "label": "Interviews", "month": 12, "day": 1 }
     ],
-    "testPolicy": "Course admissions tests (MAT/PAT/TSA…) — SAT not used",
+    "testPolicy": "Course admissions tests (MAT/PAT/TSA…) - SAT not used",
     "english": "IELTS 7.0–7.5 by course",
     "tuitionIntl": "£35k–£60k/yr by course",
     "aid": "Very limited intl undergrad aid (Reach Oxford for low-income countries)",
@@ -287,7 +287,7 @@
       { "label": "JEE Advanced", "month": 5, "day": 18 },
       { "label": "JoSAA counselling", "month": 6, "day": 10 }
     ],
-    "testPolicy": "JEE Advanced rank only — no essays/ECs",
+    "testPolicy": "JEE Advanced rank only - no essays/ECs",
     "english": "Not required (Indian national system)",
     "tuitionIntl": "₹2–3 lakh/yr (~$3k)",
     "aid": "Merit-cum-means fee waivers",
@@ -305,7 +305,7 @@
     "testPolicy": "BUET admission test only",
     "english": "Not required",
     "tuitionIntl": "Nominal public fees",
-    "aid": "Public university — minimal fees",
+    "aid": "Public university - minimal fees",
     "scholarships": "Board scholarships",
     "typeTags": ["Bangladesh", "Public", "Exam-based"],
     "sourceUrls": ["https://ugadmission.buet.ac.bd/"]
@@ -320,7 +320,7 @@
     "testPolicy": "IBA admission test only",
     "english": "Test includes heavy English section",
     "tuitionIntl": "Nominal public fees",
-    "aid": "Public university — minimal fees",
+    "aid": "Public university - minimal fees",
     "scholarships": "Merit awards",
     "typeTags": ["Bangladesh", "Business", "Exam-based"],
     "sourceUrls": ["https://iba-du.edu/"]

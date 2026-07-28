@@ -4,7 +4,7 @@ import { getToken } from "next-auth/jwt";
 
 /**
  * Auth gate for protected areas. We read the JWT explicitly (rather than the
- * default withAuth) so we can force `secureCookie` on HTTPS — this keeps the
+ * default withAuth) so we can force `secureCookie` on HTTPS - this keeps the
  * cookie name (__Secure-next-auth.session-token) consistent with what the auth
  * callback writes, regardless of how NEXTAUTH_URL is configured. Without this,
  * a misconfigured NEXTAUTH_URL makes the middleware miss the session and bounce

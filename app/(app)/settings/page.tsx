@@ -1,5 +1,5 @@
 /**
- * /settings — expanded account control center.
+ * /settings - expanded account control center.
  *
  * Server component fetches session-bound data, server-renders every
  * section, then hands the lot to <SettingsShell> (client) which holds
@@ -253,7 +253,7 @@ export default async function SettingsPage() {
         <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-1.5">Account</div>
         <h1 className="font-serif text-[34px] leading-[1.05] font-bold tracking-tight text-ink">Settings</h1>
         <p className="text-[13.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">
-          Identity, security, notifications, appearance, and connected services — all from one place.
+          Identity, security, notifications, appearance, and connected services - all from one place.
         </p>
       </header>
 

@@ -1,4 +1,4 @@
-/** /consultants/[id] — deep link that opens the profile on the marketplace. */
+/** /consultants/[id] - deep link that opens the profile on the marketplace. */
 import { redirect } from "next/navigation";
 
 export default async function ConsultantDeepLink({

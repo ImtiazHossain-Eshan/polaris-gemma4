@@ -1,18 +1,18 @@
 "use client";
 
 /**
- * Resources — the Admission Knowledge Hub.
+ * Resources - the Admission Knowledge Hub.
  *
- *   Hero          — animated gradient + interactive category tiles
- *   Stories       — "Admission Galaxy": composite admit case studies as
+ *   Hero          - animated gradient + interactive category tiles
+ *   Stories       - "Admission Galaxy": composite admit case studies as
  *                   glowing stars clustered by destination, click → rich
  *                   journey modal with Apply-strategy / Ask-Strategist
- *   Scholarships  — real scholarships, official URLs, typical windows,
+ *   Scholarships  - real scholarships, official URLs, typical windows,
  *                   one-click deadline import
- *   Costs         — sourced tuition + official visa-benchmark living costs
- *   Exam hub      — SAT/IELTS (or explorer topics for younger levels) with
+ *   Costs         - sourced tuition + official visa-benchmark living costs
+ *   Exam hub      - SAT/IELTS (or explorer topics for younger levels) with
  *                   in-app playable videos and practice links
- *   Guides        — essay / application / leadership resource packs
+ *   Guides        - essay / application / leadership resource packs
  *
  * Personalized by education level + shortlisted universities; every
  * interaction emits shared-store events the Strategist can see.
@@ -135,7 +135,7 @@ export function ResourcesClient({
             Learn from the paths that <span className="grad-text">already worked</span>
           </h1>
           <p className="text-[12.5px] text-ink-dim mt-2 max-w-xl leading-relaxed">
-            Composite admit stories, real scholarships, sourced costs — wired into your roadmap and Strategist.
+            Composite admit stories, real scholarships, sourced costs - wired into your roadmap and Strategist.
           </p>
 
           {/* Category tiles */}
@@ -216,7 +216,7 @@ function TileIcon({ d }: { d: string }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
- * Admission Galaxy — stories as glowing stars clustered by destination
+ * Admission Galaxy - stories as glowing stars clustered by destination
  * ════════════════════════════════════════════════════════════════════════ */
 
 const CLUSTERS: Array<{ label: string; match: (s: HubCaseStudy) => boolean; cx: number; cy: number }> = [
@@ -260,7 +260,7 @@ function Galaxy({
 
   return (
     <div>
-      {/* The galaxy panel — always deep-space dark, both themes */}
+      {/* The galaxy panel - always deep-space dark, both themes */}
       <div className="relative rounded-3xl overflow-hidden app-glass-dark min-h-[380px] sm:min-h-[440px]">
         {/* star field + nebulas */}
         <div className="absolute inset-0 opacity-60" style={{
@@ -368,7 +368,7 @@ function Galaxy({
 }
 
 /* ════════════════════════════════════════════════════════════════════════
- * Story modal — the journey
+ * Story modal - the journey
  * ════════════════════════════════════════════════════════════════════════ */
 
 function StoryModal({
@@ -399,7 +399,7 @@ function StoryModal({
         onToast("Roadmap adapted with this strategy");
         onClose();
       } else {
-        onToast(d?.error ?? "Couldn't adapt the roadmap — try again");
+        onToast(d?.error ?? "Couldn't adapt the roadmap - try again");
       }
     } finally {
       setApplyBusy(false);
@@ -458,7 +458,7 @@ function StoryModal({
             </div>
           </section>
 
-          {/* Journey — what they actually did */}
+          {/* Journey - what they actually did */}
           <section>
             <HubLabel>What they built</HubLabel>
             <ol className="relative space-y-2.5 pl-5 before:absolute before:left-[5px] before:top-1 before:bottom-1 before:w-px before:bg-gradient-to-b before:from-polaris-400/60 before:to-aurora-400/50">
@@ -548,12 +548,12 @@ function ScholarshipExplorer({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           date: iso,
-          title: `${s.name} — typical window`,
+          title: `${s.name} - typical window`,
           kind: "soft",
           type: "scholarship",
           priority: "high",
           officialLink: meta.officialUrl,
-          notes: `Typical window: ${meta.typicalWindow}. Exact dates shift every cycle — verify on the official page. ${HUB_META.verifyNote}`,
+          notes: `Typical window: ${meta.typicalWindow}. Exact dates shift every cycle - verify on the official page. ${HUB_META.verifyNote}`,
           reminderDays: [14, 7],
           checklist: [
             { id: "c0", text: "Eligibility checked", done: false },
@@ -565,7 +565,7 @@ function ScholarshipExplorer({
       });
       if (r.ok) {
         roadmapStore.emit("SCHOLARSHIP_DEADLINE_ADDED", `Added ${s.name} deadline window to the calendar`);
-        onToast(`${s.name} window added to your calendar — verify exact date on the official page`);
+        onToast(`${s.name} window added to your calendar - verify exact date on the official page`);
       }
     } finally {
       setBusyId(null);
@@ -678,7 +678,7 @@ function CostExplorer({ unis, shortlist }: { unis: UniProfile[]; shortlist: Set<
     <div>
       <p className="text-[11.5px] text-ink-muted mb-4 max-w-2xl leading-relaxed">
         Tuition from each university&apos;s published figures; living costs from official visa/maintenance benchmarks.
-        Exact totals vary by program — {HUB_META.verifyNote.toLowerCase()}
+        Exact totals vary by program - {HUB_META.verifyNote.toLowerCase()}
       </p>
       <motion.div
         initial="hidden" animate="visible"

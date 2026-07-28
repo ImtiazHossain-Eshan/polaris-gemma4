@@ -1,11 +1,11 @@
 /**
- * Payment brand marks — bKash, Nagad, Rocket, and card networks.
+ * Payment brand marks - bKash, Nagad, Rocket, and card networks.
  *
  * Hand-drawn vector recreations in each brand's real colors (bKash magenta
  * #E2136E, Nagad red→orange, Rocket purple #8C3494, Mastercard interlocking
  * circles, Visa wordmark, Amex panel) so checkout, saved methods, and the
  * transactions ledger all show recognizable marks instead of generic glyphs.
- * SVG, not rasters — crisp at any size, no licensing baggage from bundling
+ * SVG, not rasters - crisp at any size, no licensing baggage from bundling
  * official asset files.
  */
 
@@ -41,7 +41,7 @@ export function PaymentMark({ method, size = 16 }: { method: PayMethod; size?: n
         </svg>
       );
     case "rocket":
-      // Dutch-Bangla's Rocket — a literal rocket with porthole + fins.
+      // Dutch-Bangla's Rocket - a literal rocket with porthole + fins.
       return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="#fff" aria-hidden>
           <path d="M12 1.6c3.3 1.7 5.2 5.2 5.2 9.2 0 1.1-.15 2.2-.45 3.2l-2.1-1.1c-.5 1.6-1.4 3-2.65 4.1-1.25-1.1-2.15-2.5-2.65-4.1l-2.1 1.1c-.3-1-.45-2.1-.45-3.2 0-4 1.9-7.5 5.2-9.2z" />
@@ -58,7 +58,7 @@ export function PaymentMark({ method, size = 16 }: { method: PayMethod; size?: n
   }
 }
 
-/** Brand tile — mark on its real brand gradient. */
+/** Brand tile - mark on its real brand gradient. */
 export function PaymentLogo({
   method, size = "md", className,
 }: {

@@ -1,5 +1,5 @@
 /**
- * GET /api/integrations — the full hub state for the signed-in user:
+ * GET /api/integrations - the full hub state for the signed-in user:
  * registry definitions merged with per-user connection rows and
  * env-credential availability for OAuth providers.
  */

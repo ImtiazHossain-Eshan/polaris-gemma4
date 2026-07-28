@@ -1,5 +1,5 @@
 /**
- * Per-user AI model preference — the server-side source of truth.
+ * Per-user AI model preference - the server-side source of truth.
  *
  * The picker UI mirrors this to localStorage for instant boot, but the
  * saved document here is what survives devices/sessions and what server
@@ -7,7 +7,7 @@
  * when no explicit pick arrives with the request.
  *
  * Stored in its own `ai_prefs` collection keyed by userId so the users
- * collection stays lean. Never contains API keys — only ids/labels.
+ * collection stays lean. Never contains API keys - only ids/labels.
  */
 
 import { z } from "zod";

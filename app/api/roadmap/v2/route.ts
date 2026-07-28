@@ -1,14 +1,14 @@
 /**
  * /api/roadmap/v2
  *
- * GET    — the user's live roadmap doc, or { doc: null } → setup needed.
- * POST   — body = RoadmapConfig (+ optional profileSeed) → generate + save.
+ * GET    - the user's live roadmap doc, or { doc: null } → setup needed.
+ * POST   - body = RoadmapConfig (+ optional profileSeed) → generate + save.
  *          The roadmap setup IS the onboarding: when no profile exists yet,
  *          one is created here from the setup answers, so new users never
  *          see a separate intake form. When a profile exists, the seed
  *          fields the user just confirmed are merged in (single source of
- *          truth — no duplicate questions later).
- * DELETE — wipe the roadmap (back to setup).
+ *          truth - no duplicate questions later).
+ * DELETE - wipe the roadmap (back to setup).
  */
 
 import { NextResponse } from "next/server";
@@ -64,7 +64,7 @@ export const POST = withErrorHandling(async (req) => {
   const rl = await rateLimit(session.id, session.plan, "strategist");
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: language === "bn" ? BN_ERRORS.rateLimit : "Rate limit reached — try again in a few minutes." },
+      { error: language === "bn" ? BN_ERRORS.rateLimit : "Rate limit reached - try again in a few minutes." },
       { status: 429, headers: rateLimitHeaders(rl) },
     );
   }
@@ -91,7 +91,7 @@ export const POST = withErrorHandling(async (req) => {
         grade: LEVEL_TO_GRADE[config.educationLevel] ?? "late-hs",
         country: seed.country ?? "Bangladesh",
         degree: seed.degree ?? "undergrad",
-        gpa: 3.5, // neutral default — refined on the account page
+        gpa: 3.5, // neutral default - refined on the account page
         ecs: [],
         targetTier: seed.targetTier ?? "top200",
         ...(tests ? { testScores: tests } : {}),

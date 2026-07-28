@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Partners — a useful ecosystem, not a coupon wall. A loose floating cluster
+ * Partners - a useful ecosystem, not a coupon wall. A loose floating cluster
  * of real offer chips (free-first), one card carrying the "matched to your
- * roadmap" ribbon, and the transparency promise stated outright — mirroring
+ * roadmap" ribbon, and the transparency promise stated outright - mirroring
  * the real marketplace rules in lib/partners.
  */
 
@@ -37,7 +37,7 @@ export function PartnersPreview() {
         <SectionIntro
           eyebrow="Partners + free student stuff"
           title={<>Free student tools and offers, <Accent>only when they match your goals</Accent><Dot /></>}
-          sub="The marketplace reads your roadmap and surfaces what actually helps right now — free resources always rank first."
+          sub="The marketplace reads your roadmap and surfaces what actually helps right now - free resources always rank first."
         />
 
         {/* Floating offer cluster */}

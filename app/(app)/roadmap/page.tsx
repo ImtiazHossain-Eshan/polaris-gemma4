@@ -1,9 +1,9 @@
 /**
- * /roadmap — the roadmap v2 tree / skill-map.
+ * /roadmap - the roadmap v2 tree / skill-map.
  *
  * Server resolves the default education level from the student's profile
  * grade; the client fetches the live roadmap doc (or runs the setup flow),
- * renders the tree, and keeps the Strategist in sync — both read the same
+ * renders the tree, and keeps the Strategist in sync - both read the same
  * /api/roadmap/v2 document.
  */
 

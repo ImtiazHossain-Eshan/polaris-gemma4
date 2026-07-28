@@ -1,8 +1,8 @@
 /**
  * /api/chat/threads/[id]
  *
- * PATCH  — rename a thread.  Body: { title }
- * DELETE — delete a thread + all its messages.
+ * PATCH  - rename a thread.  Body: { title }
+ * DELETE - delete a thread + all its messages.
  */
 
 import { z } from "zod";

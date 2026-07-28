@@ -33,13 +33,13 @@ export function buildSystemPrompt(
       : "(none yet)",
     ``,
     `RULES`,
-    `1. Always ground your response in (a) the student's profile, (b) their roadmap, or (c) the retrieved KB documents the platform provides as <kb> tags. If you cannot ground a claim, say so plainly — do not invent.`,
+    `1. Always ground your response in (a) the student's profile, (b) their roadmap, or (c) the retrieved KB documents the platform provides as <kb> tags. If you cannot ground a claim, say so plainly - do not invent.`,
     `2. Cite every factual claim with an inline <cite>label|uri</cite> tag. The renderer turns these into source chips. Never invent a URI.`,
     `3. Use short paragraphs and numbered bullets when listing more than 2 items. No headings.`,
     `4. End every response with one concrete next action the student can take in the next 24 hours.`,
     `5. Never reference demographic information about the student in your reasoning. Only academic signals.`,
     `6. If the student asks about something Polaris cannot help with (medical, legal, financial advice beyond scholarships), redirect them to a qualified professional in one sentence.`,
-    `7. Probability claims must come from the Polaris ML model only — never invent numbers.`,
+    `7. Probability claims must come from the Polaris ML model only - never invent numbers.`,
     ``,
     `TOOLS`,
     `- search_kb(query): semantic search over the curated KB.`,
@@ -50,11 +50,11 @@ export function buildSystemPrompt(
 }
 
 export const REFUSAL_FALLBACK =
-  "I don't have grounded sources to answer that confidently. Try asking me about your roadmap, your target universities, or the resources in your library — I'll cite what I find.";
+  "I don't have grounded sources to answer that confidently. Try asking me about your roadmap, your target universities, or the resources in your library - I'll cite what I find.";
 
 export function refusalFallback(lang: Lang): string {
   return lang === "bn"
-    ? "বিশ্বস্ত উৎসের ভিত্তিতে এই প্রশ্নের নিশ্চিত উত্তর দেওয়ার মতো যথেষ্ট তথ্য আমার কাছে নেই। আপনার রোডম্যাপ, লক্ষ্য বিশ্ববিদ্যালয় বা রিসোর্স লাইব্রেরি সম্পর্কে জিজ্ঞেস করুন—প্রাসঙ্গিক উৎস উল্লেখ করে উত্তর দেব।"
+    ? "বিশ্বস্ত উৎসের ভিত্তিতে এই প্রশ্নের নিশ্চিত উত্তর দেওয়ার মতো যথেষ্ট তথ্য আমার কাছে নেই। আপনার রোডম্যাপ, লক্ষ্য বিশ্ববিদ্যালয় বা রিসোর্স লাইব্রেরি সম্পর্কে জিজ্ঞেস করুন-প্রাসঙ্গিক উৎস উল্লেখ করে উত্তর দেব।"
     : REFUSAL_FALLBACK;
 }
 
@@ -78,7 +78,7 @@ export function buildResearchSystemPrompt(
     generationLanguageInstruction(lang),
     `  (a) the student's own profile + roadmap + saved memories,`,
     `  (b) a curated KB the platform supplies as <kb> tags,`,
-    `  (c) the live web, via your Google Search tool — use it for current authoritative info (deadlines, scholarship rules, program requirements, recent admissions data, news).`,
+    `  (c) the live web, via your Google Search tool - use it for current authoritative info (deadlines, scholarship rules, program requirements, recent admissions data, news).`,
     ``,
     `STUDENT PROFILE`,
     summarizeProfile(profile),
@@ -93,14 +93,14 @@ export function buildResearchSystemPrompt(
     ``,
     `HOW TO RESEARCH`,
     `1. Decide whether the question needs the web. Profile / strategy / motivation questions usually don't. Anything about specific deadlines, dollar amounts, admit rates, course content, or recent changes does.`,
-    `2. When you search, run multiple targeted queries — not one vague one. Cross-check at least two reputable sources before stating a number.`,
+    `2. When you search, run multiple targeted queries - not one vague one. Cross-check at least two reputable sources before stating a number.`,
     `3. Prefer official sources (university .edu pages, government scholarship boards, board exam authorities) over aggregators. Reject content farms.`,
     `4. If your sources disagree, say so out loud and explain which you trust and why.`,
     ``,
     `RULES`,
     `1. Personalize. Every recommendation must reference at least one specific thing about THIS student (their curriculum, results, goals, or saved memories). Generic advice is a failure.`,
-    `2. Probability claims must come from the Polaris ML model only — never invent numbers.`,
-    `3. Never reference demographic information about the student in your reasoning — only academic signals.`,
+    `2. Probability claims must come from the Polaris ML model only - never invent numbers.`,
+    `3. Never reference demographic information about the student in your reasoning - only academic signals.`,
     `4. If asked about medical, legal, or non-scholarship financial advice, redirect them to a qualified professional in one sentence.`,
     ``,
     `OUTPUT FORMAT`,
@@ -117,7 +117,7 @@ export function buildResearchSystemPrompt(
     `Cite every concrete claim. Use inline <cite>label|uri</cite> tags where:`,
     `  • label is a 2–4 word display name (e.g. "MIT EA deadline"),`,
     `  • uri is one of kb://<id>, profile://you, roadmap://<n>, or case://<id>.`,
-    `Web citations from your search tool are emitted automatically — do not invent http URIs in <cite> tags.`,
+    `Web citations from your search tool are emitted automatically - do not invent http URIs in <cite> tags.`,
     `The renderer turns each <cite> into a small numbered chip linked to a source list below the message.`,
     ``,
     `STRUCTURE`,

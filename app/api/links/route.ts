@@ -1,7 +1,7 @@
 /**
- * GET    /api/links            — list invites for the signed-in student
- * POST   /api/links            — invite a parent / partner
- * DELETE /api/links?id=<oid>   — revoke an invite
+ * GET    /api/links            - list invites for the signed-in student
+ * POST   /api/links            - invite a parent / partner
+ * DELETE /api/links?id=<oid>   - revoke an invite
  *
  * Accepts BOTH the legacy JSON body ({ viewerEmail, relationship }) and the
  * form-encoded body the new (app)/family InviteForm posts ({ email,
@@ -61,7 +61,7 @@ export const POST = withErrorHandling(async (req) => {
   const link = await createLink(user.id, user.name ?? undefined, email, parsed.relationship);
 
   // TODO(email): enqueue the invite email here. The repo has no mail helper
-  // yet — add lib/mail/send.ts (Resend/SES/etc.) and send `link.inviteToken`
+  // yet - add lib/mail/send.ts (Resend/SES/etc.) and send `link.inviteToken`
   // as an /monitor?accept=<token> link. Until then, the student shares the
   // token from the Family page.
 

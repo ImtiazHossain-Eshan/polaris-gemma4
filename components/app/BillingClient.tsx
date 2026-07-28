@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * BillingClient — the full subscription console.
+ * BillingClient - the full subscription console.
  *
- *   Current-plan hero    — status, price, cycle, renewal date, cancel/resume
- *   Cycle toggle         — monthly / yearly (two months free on yearly)
- *   3D pricing cards     — animated price swap, popular glow, real plan gates
- *   Billing summary      — next invoice, default method, lifetime spend
- *   Payment methods      — saved instruments, add (display-safe), default, remove
+ *   Current-plan hero    - status, price, cycle, renewal date, cancel/resume
+ *   Cycle toggle         - monthly / yearly (two months free on yearly)
+ *   3D pricing cards     - animated price swap, popular glow, real plan gates
+ *   Billing summary      - next invoice, default method, lifetime spend
+ *   Payment methods      - saved instruments, add (display-safe), default, remove
  *
  * All money movement is the sandbox checkout (CheckoutModal → /api/transactions).
  * A successful payment writes real subscription state server-side; this screen
@@ -123,7 +123,7 @@ export function BillingClient({
                 )}
               </div>
             )}
-            {!isPaid && <div className="mt-2 text-[12.5px] text-white/75">Forever free — upgrade when the roadmap outgrows it.</div>}
+            {!isPaid && <div className="mt-2 text-[12.5px] text-white/75">Forever free - upgrade when the roadmap outgrows it.</div>}
           </div>
           <div className="ml-auto flex items-center gap-2 flex-wrap">
             {isPaid && (canceled ? (
@@ -144,7 +144,7 @@ export function BillingClient({
         </div>
         {canceled && (
           <div className="relative mt-4 rounded-xl bg-white/10 px-4 py-2.5 text-[12px] text-white/85">
-            Renewal is canceled — you keep every {plan} feature until {subscription?.renewsAt ? fmtDate(subscription.renewsAt) : "the period ends"}, then drop to Free. Resume anytime before that.
+            Renewal is canceled - you keep every {plan} feature until {subscription?.renewsAt ? fmtDate(subscription.renewsAt) : "the period ends"}, then drop to Free. Resume anytime before that.
           </div>
         )}
       </motion.div>
@@ -213,7 +213,7 @@ export function BillingClient({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
         </span>
         <p className="text-[11.5px] text-ink-dim leading-relaxed">
-          <span className="font-semibold text-ink">Sandbox billing.</span> Card, bKash, Nagad, and Rocket run in demo mode — no real money moves, but every flow is end-to-end: plans activate, transactions ledger, receipts generate, and subscription state updates. The gateway layer is abstracted so production processors drop in without UI changes.
+          <span className="font-semibold text-ink">Sandbox billing.</span> Card, bKash, Nagad, and Rocket run in demo mode - no real money moves, but every flow is end-to-end: plans activate, transactions ledger, receipts generate, and subscription state updates. The gateway layer is abstracted so production processors drop in without UI changes.
         </p>
       </div>
 
@@ -241,7 +241,7 @@ function StatusChip({ status }: { status: string }) {
   const meta: Record<string, { label: string; cls: string }> = {
     active:   { label: "Active",   cls: "bg-aurora-400/25 text-aurora-100 ring-aurora-300/40" },
     free:     { label: "Free",     cls: "bg-white/15 text-white/85 ring-white/25" },
-    canceled: { label: "Canceled — ends at period", cls: "bg-nova-400/25 text-nova-100 ring-nova-300/40" },
+    canceled: { label: "Canceled - ends at period", cls: "bg-nova-400/25 text-nova-100 ring-nova-300/40" },
     past_due: { label: "Past due", cls: "bg-rose-400/25 text-rose-100 ring-rose-300/40" },
     trial:    { label: "Trial",    cls: "bg-polaris-400/25 text-polaris-100 ring-polaris-300/40" },
   };
@@ -385,14 +385,14 @@ function SummaryCard({
         <SummaryRow k="Next invoice" v={
           renewing && subscription?.renewsAt && subscription.priceMinor != null && subscription.currency
             ? `${formatMinor(subscription.priceMinor, subscription.currency)} on ${fmtDate(subscription.renewsAt)}`
-            : subscription?.status === "canceled" ? "None — renewal canceled" : "None"
+            : subscription?.status === "canceled" ? "None - renewal canceled" : "None"
         } />
-        <SummaryRow k="Billing cycle" v={subscription?.billingCycle ? subscription.billingCycle[0].toUpperCase() + subscription.billingCycle.slice(1) : "—"} />
-        <SummaryRow k="Member since" v={subscription?.startedAt ? fmtDate(subscription.startedAt) : "—"} />
+        <SummaryRow k="Billing cycle" v={subscription?.billingCycle ? subscription.billingCycle[0].toUpperCase() + subscription.billingCycle.slice(1) : "-"} />
+        <SummaryRow k="Member since" v={subscription?.startedAt ? fmtDate(subscription.startedAt) : "-"} />
         <SummaryRow k="Default method" v={defaultMethod?.label ?? "None saved"} />
         <SummaryRow k="Successful payments" v={String(succeededCount)} />
         <SummaryRow k="Lifetime spend" v={
-          lifetimeSpend.length === 0 ? "—" : lifetimeSpend.map((s) => formatMinor(s.minor, s.currency)).join(" + ")
+          lifetimeSpend.length === 0 ? "-" : lifetimeSpend.map((s) => formatMinor(s.minor, s.currency)).join(" + ")
         } />
       </dl>
     </div>
@@ -440,7 +440,7 @@ function MethodsPanel({
       {methods.length === 0 ? (
         <div className="rounded-xl bg-paper-soft px-4 py-6 text-center">
           <div className="text-[12.5px] text-ink-dim">No saved methods yet.</div>
-          <div className="text-[11px] text-ink-muted mt-1">Save one at checkout, or add one here — only the last 4 digits are ever stored.</div>
+          <div className="text-[11px] text-ink-muted mt-1">Save one at checkout, or add one here - only the last 4 digits are ever stored.</div>
         </div>
       ) : (
         <ul className="space-y-2">
@@ -488,7 +488,7 @@ function AddMethodModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
   async function save() {
     setErr(null);
     const digits = value.replace(/\D/g, "");
-    if (isCard && digits.length < 12) { setErr("Enter the full card number — we keep only the last 4 digits."); return; }
+    if (isCard && digits.length < 12) { setErr("Enter the full card number - we keep only the last 4 digits."); return; }
     if (!isCard && !/^01[3-9]\d{8}$/.test(digits)) { setErr("Enter a valid BD mobile number (01XXXXXXXXX)."); return; }
     setBusy(true);
     try {
@@ -545,7 +545,7 @@ function AddMethodModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
           className="w-full h-10 px-3 rounded-xl bg-paper-soft hairline text-[13.5px] text-ink placeholder-ink-muted focus:outline-none focus:ring-2 focus:ring-polaris-400"
         />
         <p className="text-[10.5px] text-ink-muted mt-2 leading-relaxed">
-          Display-safe storage: only the type, brand, and last 4 digits are saved — never the full number.
+          Display-safe storage: only the type, brand, and last 4 digits are saved - never the full number.
         </p>
         {err && <div className="mt-2 text-[12px] text-rose-600 dark:text-rose-300">{err}</div>}
         <button onClick={() => void save()} disabled={busy}

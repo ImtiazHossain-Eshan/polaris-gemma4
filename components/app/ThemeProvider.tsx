@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Theme provider — toggles `data-theme="dark"` on <html> + persists in
+ * Theme provider - toggles `data-theme="dark"` on <html> + persists in
  * localStorage. Scoped to the authenticated (app) workspace routes only;
  * the marketing/landing/auth pages always render light.
  */
@@ -86,7 +86,7 @@ export function useTheme() {
 /**
  * Tiny inline script that runs BEFORE React hydration to prevent a flash
  * of unstyled light when the user prefers dark. Only honors the saved theme
- * on app routes — marketing/landing pages are always forced to light.
+ * on app routes - marketing/landing pages are always forced to light.
  */
 export const THEME_PREFLIGHT_SCRIPT = `
 (function(){

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * AvatarUploader — real profile-picture upload (no URL field).
+ * AvatarUploader - real profile-picture upload (no URL field).
  *
  *   drag & drop or click to choose · JPG / PNG / WebP · max 5MB input
  *   → center-crop square → 256px canvas downscale (webp, jpeg fallback)
@@ -205,7 +205,7 @@ export function AvatarUploader({
               className="h-9 px-4 rounded-full bg-paper-soft text-ink-dim text-[12px] font-medium hairline hover:text-ink transition-colors">
               Discard
             </button>
-            <span className="text-[11px] text-ink-muted ml-1">Preview — not saved yet</span>
+            <span className="text-[11px] text-ink-muted ml-1">Preview - not saved yet</span>
           </motion.div>
         )}
         {phase.kind === "error" && (

@@ -1,5 +1,5 @@
 /**
- * Polaris plan catalog — the single source of truth for pricing AND plan
+ * Polaris plan catalog - the single source of truth for pricing AND plan
  * promises. Used by the landing pricing section, /billing, the checkout
  * flow, and the feature-gating layer (lib/features.ts derives its limits
  * from here). Don't hardcode plan text anywhere else.
@@ -7,9 +7,9 @@
  * Honesty rules:
  *   • `features` lists only what WORKS today for that plan (verified against
  *     the real gates: requirePlan pages, rate-limit budgets, connection
- *     caps — see docs/PLAN_VERIFICATION.md).
+ *     caps - see docs/PLAN_VERIFICATION.md).
  *   • Unbuilt promises live in `comingSoon` and always render with a
- *     "Soon" tag — never as active benefits.
+ *     "Soon" tag - never as active benefits.
  *
  * Client-safe (no server imports). Amounts are minor units: USD cents and
  * BDT paisa. Yearly pricing = 10 months (two free).
@@ -34,11 +34,11 @@ export type PlanDef = {
   audience: string;
   usd: { monthly: number; yearly: number };
   bdt: { monthly: number; yearly: number };
-  /** Implemented, working features — verified against real gates. */
+  /** Implemented, working features - verified against real gates. */
   features: string[];
   /** Bengali translations of `features` (same order). */
   featuresBn: string[];
-  /** Promised but not yet built — always rendered with a "Soon" tag. */
+  /** Promised but not yet built - always rendered with a "Soon" tag. */
   comingSoon?: string[];
   comingSoonBn?: string[];
   limits: PlanLimits;
@@ -69,7 +69,7 @@ export const PLAN_CATALOG: PlanDef[] = [
       "অ্যাকসেপ্টেন্স-রেট বেঞ্চমার্ক",
       "পাবলিক রিকোয়ারমেন্ট সারাংশ",
       "কমিউনিটি রিসোর্স ও নলেজ হাব",
-      "১টি সক্রিয় রোডম্যাপ — সাপ্তাহিক টাস্ক ও রিপ্ল্যান",
+      "১টি সক্রিয় রোডম্যাপ - সাপ্তাহিক টাস্ক ও রিপ্ল্যান",
       "ডেডলাইন ট্র্যাকিং ও ফ্যামিলি ভিউ",
     ],
     limits: { strategistPer5Min: 0, maxConnections: 0, activeRoadmaps: 1 },
@@ -84,18 +84,18 @@ export const PLAN_CATALOG: PlanDef[] = [
     bdt: { monthly: 55000, yearly: 549000 }, // ৳550 / ৳5,490
     features: [
       "Everything in Free",
-      "AI Strategist — chat, score analysis, next steps",
+      "AI Strategist - chat, score analysis, next steps",
       "Strategist-aware roadmap replans & guidance",
-      "Integration hub — GitHub, Codeforces & more",
-      "Partner marketplace — matched student offers",
+      "Integration hub - GitHub, Codeforces & more",
+      "Partner marketplace - matched student offers",
       "Up to 6 connected tools feeding your roadmap",
     ],
     featuresBn: [
       "ফ্রি-র সবকিছু",
-      "এআই স্ট্র্যাটেজিস্ট — চ্যাট, স্কোর বিশ্লেষণ, পরবর্তী ধাপ",
+      "এআই স্ট্র্যাটেজিস্ট - চ্যাট, স্কোর বিশ্লেষণ, পরবর্তী ধাপ",
       "স্ট্র্যাটেজিস্ট-চালিত রোডম্যাপ রিপ্ল্যান ও গাইডেন্স",
-      "ইন্টিগ্রেশন হাব — GitHub, Codeforces সহ",
-      "পার্টনার মার্কেটপ্লেস — ম্যাচ করা অফার",
+      "ইন্টিগ্রেশন হাব - GitHub, Codeforces সহ",
+      "পার্টনার মার্কেটপ্লেস - ম্যাচ করা অফার",
       "৬টি পর্যন্ত কানেক্টেড টুল",
     ],
     limits: { strategistPer5Min: 30, maxConnections: 6, activeRoadmaps: 1 },
@@ -112,12 +112,12 @@ export const PLAN_CATALOG: PlanDef[] = [
     bdt: { monthly: 169000, yearly: 1690000 }, // ৳1,690 / ৳16,900
     features: [
       "Everything in Pro",
-      "2× Strategist budget — 60 messages / 5 min",
+      "2× Strategist budget - 60 messages / 5 min",
       "Unlimited tool connections",
     ],
     featuresBn: [
       "প্রো-র সবকিছু",
-      "২× স্ট্র্যাটেজিস্ট বাজেট — ৫ মিনিটে ৬০ মেসেজ",
+      "২× স্ট্র্যাটেজিস্ট বাজেট - ৫ মিনিটে ৬০ মেসেজ",
       "আনলিমিটেড টুল কানেকশন",
     ],
     comingSoon: [
@@ -151,7 +151,7 @@ export function formatMinor(minor: number, currency: string): string {
   return `$${v.toLocaleString("en-US", { minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 }
 
-/** "Polaris Pro (yearly)" — parsed back by the confirm route. */
+/** "Polaris Pro (yearly)" - parsed back by the confirm route. */
 export function planDescription(id: Exclude<PlanId, "free">, cycle: BillingCycle): string {
   return `Polaris ${id === "pro" ? "Pro" : "Elite"} (${cycle})`;
 }

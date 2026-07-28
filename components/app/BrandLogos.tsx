@@ -1,5 +1,5 @@
 /**
- * Brand logos — real SVG paths sourced from Simple Icons (CC0 license).
+ * Brand logos - real SVG paths sourced from Simple Icons (CC0 license).
  * Each logo includes its canonical brand color so we can render either:
  *   - full-color on a neutral background (default), or
  *   - monochrome currentColor when `color="current"`.
@@ -49,7 +49,7 @@ export function BrandLogo({ brand, ...rest }: Props) {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Glyph paths — Simple Icons (CC0). Rendered with `fill="currentColor"` so
+   Glyph paths - Simple Icons (CC0). Rendered with `fill="currentColor"` so
    callers can colour-tint, or wrap in a coloured tile.
    ────────────────────────────────────────────────────────────────────────── */
 

@@ -1,5 +1,5 @@
 /**
- * /universities — university discovery + fit engine. Free for every signed-in
+ * /universities - university discovery + fit engine. Free for every signed-in
  * student: the directory, acceptance-rate benchmarks, and requirement
  * summaries are part of the Free plan promise. Merges the KB rows with the
  * admissions enrichment dataset (official links, application systems,

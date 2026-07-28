@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Landing design primitives — the shared visual language for every section:
+ * Landing design primitives - the shared visual language for every section:
  * eyebrow pills, serif-accent headlines, glass panels, 3D tilt, and float
  * loops. Pure presentation; all motion is transform/opacity-only so the page
  * stays smooth on low-end devices.

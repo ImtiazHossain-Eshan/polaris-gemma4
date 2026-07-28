@@ -1,5 +1,5 @@
 /**
- * Integration service — per-user connection rows + the REAL importers.
+ * Integration service - per-user connection rows + the REAL importers.
  *
  *   Codeforces: official public API (user.info / user.status / user.rating)
  *   GitHub:     public REST API by username; optional PAT is used for the
@@ -61,7 +61,7 @@ export async function importCodeforces(userId: string, handle: string): Promise<
 
   const info = await infoRes.json().catch(() => null);
   if (!infoRes.ok || info?.status !== "OK") {
-    throw new Error(info?.comment?.includes("not found") ? `Handle "${clean}" not found on Codeforces.` : "Codeforces API is unreachable right now — try again shortly.");
+    throw new Error(info?.comment?.includes("not found") ? `Handle "${clean}" not found on Codeforces.` : "Codeforces API is unreachable right now - try again shortly.");
   }
   const user = info.result[0] as {
     handle: string; rating?: number; maxRating?: number; rank?: string; maxRank?: string; avatar?: string;
@@ -92,10 +92,10 @@ export async function importCodeforces(userId: string, handle: string): Promise<
 
   const insights = [
     user.rating && user.maxRating && user.rating < user.maxRating - 100
-      ? `Rating is ${user.maxRating - user.rating} below your peak — consistency practice would help.`
+      ? `Rating is ${user.maxRating - user.rating} below your peak - consistency practice would help.`
       : user.rating
         ? `Solid standing at ${user.rating}; next band is within reach with targeted practice.`
-        : "No rating yet — enter a rated contest to establish a baseline.",
+        : "No rating yet - enter a rated contest to establish a baseline.",
     weakTags.length ? `Weakest topics by failed attempts: ${weakTags.join(", ")}. Worth a focused block on your Olympiad branch.` : "",
   ].filter(Boolean);
 
@@ -121,7 +121,7 @@ export async function importGitHub(userId: string, username: string, token?: str
     "Accept": "application/vnd.github+json",
     "User-Agent": "polaris-app",
   };
-  if (token?.trim()) headers["Authorization"] = `Bearer ${token.trim()}`; // transient — never persisted
+  if (token?.trim()) headers["Authorization"] = `Bearer ${token.trim()}`; // transient - never persisted
 
   const [userRes, repoRes] = await Promise.all([
     fetch(`https://api.github.com/users/${encodeURIComponent(clean)}`, { headers, cache: "no-store" }),
@@ -129,8 +129,8 @@ export async function importGitHub(userId: string, username: string, token?: str
   ]);
 
   if (userRes.status === 404) throw new Error(`GitHub user "${clean}" not found.`);
-  if (userRes.status === 403) throw new Error("GitHub rate limit hit — add a personal access token or retry in an hour.");
-  if (!userRes.ok) throw new Error("GitHub API is unreachable right now — try again shortly.");
+  if (userRes.status === 403) throw new Error("GitHub rate limit hit - add a personal access token or retry in an hour.");
+  if (!userRes.ok) throw new Error("GitHub API is unreachable right now - try again shortly.");
 
   const profile = await userRes.json() as { login: string; name?: string; avatar_url?: string; public_repos?: number; followers?: number };
   const repos = (await repoRes.json().catch(() => [])) as Array<{
@@ -163,11 +163,11 @@ export async function importGitHub(userId: string, username: string, token?: str
 
   const insights = [
     undocumented > 0
-      ? `${undocumented} repositor${undocumented === 1 ? "y has" : "ies have"} no description — documentation polish is the cheapest portfolio upgrade.`
-      : "All repositories are documented — strong portfolio hygiene.",
+      ? `${undocumented} repositor${undocumented === 1 ? "y has" : "ies have"} no description - documentation polish is the cheapest portfolio upgrade.`
+      : "All repositories are documented - strong portfolio hygiene.",
     portfolio.length
-      ? `"${portfolio[0]}" is your strongest public signal — worth a README pass and a pinned spot.`
-      : "No standout public project yet — shipping one documented project would strengthen your profile fast.",
+      ? `"${portfolio[0]}" is your strongest public signal - worth a README pass and a pinned spot.`
+      : "No standout public project yet - shipping one documented project would strengthen your profile fast.",
   ];
 
   const row: IntegrationRow = {
@@ -187,7 +187,7 @@ export async function importGitHub(userId: string, username: string, token?: str
 export async function syncIntegration(userId: string, provider: string): Promise<IntegrationRow> {
   const rows = await listIntegrationRows(userId);
   const row = rows.find((r) => r.provider === provider);
-  if (!row?.account?.username) throw new Error("Nothing to sync — connect first.");
+  if (!row?.account?.username) throw new Error("Nothing to sync - connect first.");
   if (provider === "codeforces") return importCodeforces(userId, row.account.username);
   if (provider === "github") return importGitHub(userId, row.account.username);
   throw new Error("Sync isn't supported for this provider yet.");

@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * Deadlines — intelligent admission-planning calendar.
+ * Deadlines - intelligent admission-planning calendar.
  *
- *   Workload strip   — next 7/14/30 days: counts, urgent, open items, est. hours
- *   View toggle      — Agenda (countdown cards) · Month (calendar) · Board (risk kanban)
- *   Detail modal     — countdown ring, checklist, notes, reminders, source badge,
+ *   Workload strip   - next 7/14/30 days: counts, urgent, open items, est. hours
+ *   View toggle      - Agenda (countdown cards) · Month (calendar) · Board (risk kanban)
+ *   Detail modal     - countdown ring, checklist, notes, reminders, source badge,
  *                      reschedule, mark complete, Ask Strategist
- *   Create modal     — typed deadlines with checklist seeds
+ *   Create modal     - typed deadlines with checklist seeds
  *
  * Risk = days remaining × open checklist × priority. University-sourced
  * deadlines show the school's logo + official link. Completing/importing
@@ -63,7 +63,7 @@ const TYPE_META: Record<string, { label: string; tone: string; tile: string }> =
   "custom":            { label: "Custom",         tone: "text-ink-dim",                            tile: "from-ink/10 to-ink/[0.03] text-ink-dim dark:from-white/15 dark:to-white/5" },
 };
 
-/** Line-icon set for deadline types — crisp SVGs instead of emojis. */
+/** Line-icon set for deadline types - crisp SVGs instead of emojis. */
 const TYPE_PATHS: Record<string, string> = {
   "application":       "M22 10L12 5 2 10l10 5 10-5zM6 12.5V17c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4.5M22 10v5",
   "scholarship":       "M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM8.5 11.5 7 22l5-3 5 3-1.5-10.5",
@@ -89,7 +89,7 @@ function TypeIcon({ type, size = 14, className }: { type: string; size?: number;
   );
 }
 
-/** Gradient icon tile — the modern replacement for emoji squares. */
+/** Gradient icon tile - the modern replacement for emoji squares. */
 function TypeTile({ type, size = 36 }: { type: string; size?: number }) {
   const meta = TYPE_META[type] ?? TYPE_META.custom;
   return (
@@ -283,7 +283,7 @@ function rowToUi(d: Record<string, unknown>): UiDeadline {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
- * Agenda — countdown cards grouped by urgency
+ * Agenda - countdown cards grouped by urgency
  * ════════════════════════════════════════════════════════════════════════ */
 
 function Agenda({ items, onOpen }: { items: UiDeadline[]; onOpen: (id: string) => void }) {
@@ -883,7 +883,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       </span>
       <div className="font-serif text-[20px] font-bold text-ink">No deadlines yet</div>
       <p className="text-[12.5px] text-ink-dim mt-1.5 max-w-md mx-auto">
-        Add your own, or shortlist universities on the Universities page — their official deadlines import here with application checklists.
+        Add your own, or shortlist universities on the Universities page - their official deadlines import here with application checklists.
       </p>
       <button onClick={onAdd} className="mt-4 inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-ink text-paper text-[13px] font-medium hover:bg-polaris-700 transition-colors">
         <Icon.plus size={13} /> Add first deadline

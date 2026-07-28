@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Roadmap section — a glowing skill tree that grows in as you scroll, with a
+ * Roadmap section - a glowing skill tree that grows in as you scroll, with a
  * progress pulse traveling the trunk. Copy stays minimal; the level/timeline
  * chips and the score-adaptation card carry the "it adapts to you" story.
  */
@@ -32,7 +32,7 @@ export function RoadmapMotionPreview() {
               onDark
               eyebrow="The roadmap"
               title={<>A roadmap that changes with your <Accent>level, timeline, and goals</Accent><Dot /></>}
-              sub="Not a static checklist — a living plan that knows where you are and how long you have."
+              sub="Not a static checklist - a living plan that knows where you are and how long you have."
             />
 
             <div className="mt-8 space-y-4">
@@ -42,7 +42,7 @@ export function RoadmapMotionPreview() {
               />
               <AdaptRow
                 k="Timeline-aware"
-                v="A 15-day sprint is planned differently from a one-year campaign — same goal, different pacing and milestones."
+                v="A 15-day sprint is planned differently from a one-year campaign - same goal, different pacing and milestones."
               />
               <AdaptRow
                 k="Score-adaptive"
@@ -71,7 +71,7 @@ export function RoadmapMotionPreview() {
             <GrowingTree />
             {/* Level / timeline chips floating over the scene */}
             <div className="mt-6 flex flex-wrap justify-center gap-2.5">
-              {["Class 5 — exploration", "SSC — foundations", "HSC / A-Level — admission sprint"].map((c, i) => (
+              {["Class 5 - exploration", "SSC - foundations", "HSC / A-Level - admission sprint"].map((c, i) => (
                 <motion.span
                   key={c}
                   className="rounded-full border border-white/12 bg-white/[0.05] backdrop-blur-md px-3.5 py-1.5 text-[12px] text-paper/80"
@@ -123,7 +123,7 @@ function AdaptRow({ k, v }: { k: string; v: string }) {
   );
 }
 
-/* ─── The tree — branches draw on scroll, leaves glow, pulse travels ───── */
+/* ─── The tree - branches draw on scroll, leaves glow, pulse travels ───── */
 
 const TRUNK = "M210 360 C210 300 200 260 205 215 C209 180 215 150 213 110";
 const BRANCHES = [

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * RelationshipSelect — PremiumSelect inside the server-rendered invite form.
+ * RelationshipSelect - PremiumSelect inside the server-rendered invite form.
  * Holds its own state and posts via a hidden input so the form action keeps
  * receiving `relationship` exactly as before.
  */

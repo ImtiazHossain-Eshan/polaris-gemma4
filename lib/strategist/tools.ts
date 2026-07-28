@@ -3,7 +3,7 @@
  * can request via function-calling. Handlers run server-side, return JSON
  * that we feed back into the next round trip.
  *
- * Tools are deliberately small and orthogonal — composition happens in
+ * Tools are deliberately small and orthogonal - composition happens in
  * the model, not here.
  */
 
@@ -91,7 +91,7 @@ export async function runTool(
     case "compute_probability": {
       const { universityId } = ComputeProbabilityArgs.parse(rawArgs);
       // Wired to the repo's transparent logistic engine (lib/ml/probability.ts).
-      // No demographic features — inputs are GPA / test / EC / research only.
+      // No demographic features - inputs are GPA / test / EC / research only.
       const universities = (await getUniversities()) as unknown as Array<{
         id: string;
         name?: string;

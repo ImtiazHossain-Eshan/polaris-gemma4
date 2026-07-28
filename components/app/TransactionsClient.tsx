@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * Transactions — the payment ledger.
+ * Transactions - the payment ledger.
  *
- *   Overview     — animated counters: payments, spend, succeeded/failed/pending
- *   Filter bar   — status chips, method filter, free-text search
- *   Ledger rows  — layered cards with method badge, status, reference
- *   Detail modal — full record + Polaris-branded receipt with print action
+ *   Overview     - animated counters: payments, spend, succeeded/failed/pending
+ *   Filter bar   - status chips, method filter, free-text search
+ *   Ledger rows  - layered cards with method badge, status, reference
+ *   Detail modal - full record + Polaris-branded receipt with print action
  *
- * Rows are real DB records created by the sandbox checkout — nothing here is
+ * Rows are real DB records created by the sandbox checkout - nothing here is
  * hardcoded.
  */
 
@@ -90,7 +90,7 @@ export function TransactionsClient({ rows, userName, userEmail }: { rows: TxDto[
         <StatCard label="Payments" value={String(stats.total)} sub={`${stats.ok} successful`} tone="polaris" delay={0} />
         <StatCard
           label="Total spent"
-          value={stats.spend.length ? stats.spend.map(([c, m]) => money(m, c)).join(" + ") : "—"}
+          value={stats.spend.length ? stats.spend.map(([c, m]) => money(m, c)).join(" + ") : "-"}
           sub="sandbox ledger" tone="aurora" delay={0.06}
         />
         <StatCard label="Failed" value={String(stats.bad)} sub={stats.bad ? "review & retry" : "all clear"} tone="rose" delay={0.12} />
@@ -241,7 +241,7 @@ function TxModal({ t, userName, userEmail, onClose }: { t: TxDto; userName: stri
     <tr><td>Status</td><td>${sm.label}</td></tr>
     <tr class="total"><td>Total</td><td>${money(t.amount, t.currency)}</td></tr>
   </table>
-  <p class="note">Sandbox transaction — no real funds moved. Polaris · the admissions intelligence layer.<br/>Questions? Reply to your welcome email or visit the Help section.</p>
+  <p class="note">Sandbox transaction - no real funds moved. Polaris · the admissions intelligence layer.<br/>Questions? Reply to your welcome email or visit the Help section.</p>
   <script>window.print();</scr` + `ipt>
 </body></html>`);
     w.document.close();
@@ -300,7 +300,7 @@ function TxModal({ t, userName, userEmail, onClose }: { t: TxDto; userName: stri
           </button>
         </div>
         <div className="px-6 pb-5 -mt-1 text-[10px] text-ink-muted text-center">
-          Sandbox transaction — no real funds moved.
+          Sandbox transaction - no real funds moved.
         </div>
       </motion.div>
     </motion.div>

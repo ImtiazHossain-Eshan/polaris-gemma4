@@ -2,12 +2,12 @@
  * Admissions data layer.
  *
  * Merges the university KB (data/universities.json via lib/content) with the
- * admissions enrichment dataset (data/university-admissions.json — official
+ * admissions enrichment dataset (data/university-admissions.json - official
  * links, application systems, deadline patterns, test policy, tuition, aid,
  * sources, lastUpdated) into one `UniProfile` the Universities page renders.
  *
  * Fit banding sits on the existing transparent probability engine
- * (lib/ml/probability) — five bands instead of fake percentages, always
+ * (lib/ml/probability) - five bands instead of fake percentages, always
  * labelled as an estimate, with an explanation derived from the engine's
  * real factor contributions.
  */
@@ -114,9 +114,9 @@ export type FitBand = "Reach" | "Competitive Reach" | "Target" | "Likely" | "Saf
 
 export type FitResult = {
   band: FitBand;
-  /** Engine probability 0–1 — surfaced ONLY as a labelled estimate. */
+  /** Engine probability 0–1 - surfaced ONLY as a labelled estimate. */
   estimate: number;
-  /** Why — from the engine's real factor contributions. */
+  /** Why - from the engine's real factor contributions. */
   explanation: string;
   topDriver?: string;
   biggestGap?: string;

@@ -1,5 +1,5 @@
 /**
- * Landing page — the front door of Polaris.
+ * Landing page - the front door of Polaris.
  *
  * A scroll story through the real product: cinematic hero with a floating
  * 3D product mockup → connected ecosystem orbit → growing roadmap tree →
@@ -8,7 +8,7 @@
  *
  * Sections alternate dark/light and carry data-section-theme markers so the
  * glass Nav pill adapts as you scroll. Every vignette mirrors a module that
- * actually exists in the app — no invented features.
+ * actually exists in the app - no invented features.
  */
 
 import { Nav } from "@/components/Nav";

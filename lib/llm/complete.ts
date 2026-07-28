@@ -6,7 +6,7 @@
  * SSE stream. Walks the router's fallback chain on failure.
  *
  * When `userId` is provided, the user's saved AI preference (model pick,
- * speed mode, paid/offline flags) steers routing — the same preference the
+ * speed mode, paid/offline flags) steers routing - the same preference the
  * Strategist picker writes. Every attempt is recorded to the llm_usage
  * telemetry (provider, model, tokens, latency, outcome, fallback) tagged
  * with the calling feature.

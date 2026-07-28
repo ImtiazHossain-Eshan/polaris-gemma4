@@ -4,7 +4,7 @@
  * Real OAuth entry point for gcal / gdrive / facebook. When the operator
  * has configured client credentials (env vars), this redirects to the
  * provider's consent screen with the exact scopes the registry declares.
- * Without credentials it returns the honest requires_setup error — the UI
+ * Without credentials it returns the honest requires_setup error - the UI
  * never shows a fake Connect for these.
  *
  * Callback: /api/integrations/oauth/[provider]/callback (same directory).

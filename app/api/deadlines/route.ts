@@ -1,8 +1,8 @@
 /**
- * GET    /api/deadlines             — list deadlines for the signed-in user
- * POST   /api/deadlines             — create a deadline (user-source)
- * PATCH  /api/deadlines?id=<oid>    — edit a deadline
- * DELETE /api/deadlines?id=<oid>    — delete a deadline
+ * GET    /api/deadlines             - list deadlines for the signed-in user
+ * POST   /api/deadlines             - create a deadline (user-source)
+ * PATCH  /api/deadlines?id=<oid>    - edit a deadline
+ * DELETE /api/deadlines?id=<oid>    - delete a deadline
  *
  * All routes require a signed-in user. Zod-validated. The user can only
  * mutate their own rows.

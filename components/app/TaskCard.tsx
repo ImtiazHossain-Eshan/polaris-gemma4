@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Roadmap task card — server-rendered list item with a click target that
+ * Roadmap task card - server-rendered list item with a click target that
  * opens TaskPanel. Pure presentation; no fetching here.
  */
 

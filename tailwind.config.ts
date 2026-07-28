@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // Class-based dark mode driven by <html data-theme="dark"> — set by the
+  // Class-based dark mode driven by <html data-theme="dark"> - set by the
   // ThemeProvider. Lets us use `dark:` utility prefixes for components
   // that need tone-specific dark overrides.
   darkMode: ["selector", '[data-theme="dark"]'],
@@ -58,7 +58,7 @@ const config: Config = {
         aurora: {
           50:  "#E3EEE6",
           100: "#D3E6D8",
-          200: "#B7D4BE", // SOLID — was rgba(.4) which had no contrast on dark
+          200: "#B7D4BE", // SOLID - was rgba(.4) which had no contrast on dark
           300: "#8FB89A", // solid bright for dark-mode text
           400: "#6B9E7B",
           500: "#5B8C6D",

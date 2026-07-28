@@ -1,5 +1,5 @@
 /**
- * Partner offer matching — profile-driven, free-first.
+ * Partner offer matching - profile-driven, free-first.
  *
  * Inputs come from the live system (roadmap doc branches/topics, logged
  * scores, education level, shortlist tier, upcoming deadline types) and every
@@ -58,7 +58,7 @@ export function matchOffers(ctx: MatchContext): MatchedOffer[] {
       const mapped = SCORE_TOPIC[w.key] ?? [];
       if (offer.topics.some((t) => mapped.includes(t))) {
         score += 40;
-        reasons.push(`Your ${w.label} is below target — this directly targets that gap`);
+        reasons.push(`Your ${w.label} is below target - this directly targets that gap`);
         break;
       }
     }
@@ -76,7 +76,7 @@ export function matchOffers(ctx: MatchContext): MatchedOffer[] {
     // Dream-tier fit boosters.
     if (ctx.aimsElite && (offer.topics.includes("portfolio") || offer.topics.includes("coding") || offer.category === "research")) {
       score += 18;
-      reasons.push("Elite targets reward shipped projects — this strengthens your portfolio");
+      reasons.push("Elite targets reward shipped projects - this strengthens your portfolio");
     }
     if (ctx.aimsElite && offer.category === "essay") {
       score += 12;

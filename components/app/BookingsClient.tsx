@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Bookings — the student's consultation sessions. Upcoming sessions show a
+ * Bookings - the student's consultation sessions. Upcoming sessions show a
  * countdown; pending-payment bookings can complete payment; cancellation
  * follows the 24-hour rule; completed sessions invite a real review (the
  * only source of consultant ratings).
@@ -75,7 +75,7 @@ export function BookingsClient({ initial, demo = false, basePath = "" }: { initi
 
   /** Resume payment for a pending booking using its stored transaction. */
   async function pay(b: BookingView, otp: string): Promise<string | null> {
-    if (!b.transactionId) return "No payment attached — rebook from the marketplace.";
+    if (!b.transactionId) return "No payment attached - rebook from the marketplace.";
     setBusyId(b.id);
     try {
       const confirm = await fetch(`/api/transactions/${b.transactionId}/confirm`, {
@@ -86,16 +86,16 @@ export function BookingsClient({ initial, demo = false, basePath = "" }: { initi
       const cd = await confirm.json().catch(() => ({}));
       if (!confirm.ok) return cd?.error ?? "Payment failed.";
       if (cd?.transaction?.status !== "succeeded") {
-        return cd?.transaction?.failureReason ?? "Payment didn't go through — try again.";
+        return cd?.transaction?.failureReason ?? "Payment didn't go through - try again.";
       }
       const promote = await fetch(`/api/consultants/bookings/${b.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: "confirm-payment" }),
       });
-      if (!promote.ok) return "Payment received — refresh to see the confirmed session.";
+      if (!promote.ok) return "Payment received - refresh to see the confirmed session.";
       setBookings((cur) => cur.map((x) => (x.id === b.id ? { ...x, status: "confirmed" } : x)));
-      setToast("Payment confirmed — session booked.");
+      setToast("Payment confirmed - session booked.");
       setTimeout(() => setToast(null), 5000);
       return null;
     } finally {
@@ -123,7 +123,7 @@ export function BookingsClient({ initial, demo = false, basePath = "" }: { initi
         <div className="mt-14 text-center">
           <div className="text-[15px] font-semibold text-ink">No sessions yet</div>
           <p className="mt-1 text-[13px] text-ink-dim">
-            Browse verified consultants — several offer a free first session.
+            Browse verified consultants - several offer a free first session.
           </p>
         </div>
       )}
@@ -152,7 +152,7 @@ export function BookingsClient({ initial, demo = false, basePath = "" }: { initi
             {toast}
           </motion.div>
         )}
-        {review && <ReviewModal b={review} onClose={() => setReview(null)} onDone={() => { setReview(null); setToast("Review saved — thank you."); setTimeout(() => setToast(null), 4000); }} />}
+        {review && <ReviewModal b={review} onClose={() => setReview(null)} onDone={() => { setReview(null); setToast("Review saved - thank you."); setTimeout(() => setToast(null), 4000); }} />}
       </AnimatePresence>
     </div>
   );
@@ -187,7 +187,7 @@ function BookingCard({
     setPayErr(null);
     const err = await onPay(otp);
     if (err) {
-      // Wallet transactions need an OTP — reveal the field and let them retry.
+      // Wallet transactions need an OTP - reveal the field and let them retry.
       if (/otp/i.test(err)) setPayOpen(true);
       setPayErr(err);
     } else {
@@ -285,7 +285,7 @@ function BookingCard({
   );
 }
 
-/* ─── Review modal — the only source of consultant ratings ─── */
+/* ─── Review modal - the only source of consultant ratings ─── */
 
 function ReviewModal({ b, onClose, onDone }: { b: BookingView; onClose: () => void; onDone: () => void }) {
   const [rating, setRating] = useState(5);

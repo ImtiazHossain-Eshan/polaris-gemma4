@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * UniversityLogo — branded badge per school using each university's real
+ * UniversityLogo - branded badge per school using each university's real
  * primary color + a serif monogram.
  *
  * Each entry carries:
- *   • bg          — the school's primary brand color
- *   • fg          — best contrast text color (default white)
- *   • mark        — 2–4 letter monogram (defaults to school's acronym)
- *   • gradientTo  — optional second color for a subtle gradient finish
+ *   • bg          - the school's primary brand color
+ *   • fg          - best contrast text color (default white)
+ *   • mark        - 2–4 letter monogram (defaults to school's acronym)
+ *   • gradientTo  - optional second color for a subtle gradient finish
  *
  * Avoids the mess of mismatched bitmap logos by giving every school the
  * same elegant treatment with its authentic palette.
@@ -93,6 +93,7 @@ export function UniversityLogo({
 
   return (
     <div
+      data-no-translate
       className={cn(
         "relative inline-flex items-center justify-center shrink-0 overflow-hidden",
         className,

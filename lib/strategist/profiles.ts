@@ -7,10 +7,10 @@
  * with web search + reasoning).
  *
  * Modes:
- *   • general   — friendly co-pilot, balanced
- *   • research  — deep multi-source synthesis, prefers web search
- *   • study     — explainer mode, step-by-step, pedagogically clear
- *   • coding    — code-first, syntax + runnable snippets
+ *   • general   - friendly co-pilot, balanced
+ *   • research  - deep multi-source synthesis, prefers web search
+ *   • study     - explainer mode, step-by-step, pedagogically clear
+ *   • coding    - code-first, syntax + runnable snippets
  */
 
 import type { TaskKind } from "@/lib/llm/providers/types";
@@ -26,9 +26,9 @@ export const MODE_LABELS: Record<StrategistMode, string> = {
 
 export const MODE_DESCRIPTIONS: Record<StrategistMode, string> = {
   general:  "Balanced co-pilot. Friendly tone, normal depth.",
-  research: "Deep dive — searches the web, cross-checks sources, cites everything.",
-  study:    "Explainer mode — walks through concepts step-by-step at your level.",
-  coding:   "Code-first — runnable snippets, exact syntax, no waffle.",
+  research: "Deep dive - searches the web, cross-checks sources, cites everything.",
+  study:    "Explainer mode - walks through concepts step-by-step at your level.",
+  coding:   "Code-first - runnable snippets, exact syntax, no waffle.",
 };
 
 /**
@@ -44,7 +44,7 @@ export function modeInstructions(mode: StrategistMode): string {
         ``,
         `=== MODE: RESEARCH ===`,
         `You are in deep-research mode. Treat every question as if the user wants the most authoritative answer possible.`,
-        `  • Always check the web for current data — deadlines, requirements, fees, recent admissions stats.`,
+        `  • Always check the web for current data - deadlines, requirements, fees, recent admissions stats.`,
         `  • Run 2–4 targeted sub-queries, not one vague search.`,
         `  • Cross-check at least two reputable sources before stating a specific number, date, or quote.`,
         `  • Prefer .edu, official government, official scholarship boards over aggregators or blogs.`,

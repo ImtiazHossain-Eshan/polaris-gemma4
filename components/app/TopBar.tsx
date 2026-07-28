@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * Top bar — glass chrome with breadcrumb / search / actions / account menu.
+ * Top bar - glass chrome with breadcrumb / search / actions / account menu.
  *
- *   Search       — ⌘K focus, glow ring on focus
- *   Strategist   — luminous gradient-border button; live insight count from
+ *   Search       - ⌘K focus, glow ring on focus
+ *   Strategist   - luminous gradient-border button; live insight count from
  *                  the shared roadmap store (events this session), pulsing
  *                  status dot when there's something new to read
- *   Account menu — theme-aware glass panel, avatar (real photo when set,
+ *   Account menu - theme-aware glass panel, avatar (real photo when set,
  *                  synced via `polaris:avatarUpdated`), plan badge, real
  *                  profile-completion bar (same getMissingFields logic as
  *                  /account), quick links, sign out
@@ -63,7 +63,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
     name.split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? "").join("") || "P";
   const planTone = plan === "elite" ? "aurora" : plan === "pro" ? "polaris" : "ink";
 
-  // Avatar — real photo when set; kept in sync app-wide via the upload event.
+  // Avatar - real photo when set; kept in sync app-wide via the upload event.
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   useEffect(() => {
     let alive = true;
@@ -80,7 +80,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
     return () => { alive = false; window.removeEventListener("polaris:avatarUpdated", onAvatar); };
   }, [demoUser]);
 
-  // Profile completion — lazy-loaded the first time the menu opens, using the
+  // Profile completion - lazy-loaded the first time the menu opens, using the
   // same getMissingFields logic the /account page renders.
   const [completion, setCompletion] = useState<number | null>(demoUser ? 100 : null);
   useEffect(() => {
@@ -99,7 +99,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
     return () => { alive = false; };
   }, [profileOpen, completion, demoUser]);
 
-  // Strategist insight count — store events from this session.
+  // Strategist insight count - store events from this session.
   const insightCount = events.length;
 
   // ⌘K to focus search.
@@ -204,7 +204,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
             </span>
           </button>
 
-          {/* ─── Strategist — the luminous one ─── */}
+          {/* ─── Strategist - the luminous one ─── */}
           <button
             onClick={toggleAgent}
             title={insightCount > 0 ? `${insightCount} new signal${insightCount === 1 ? "" : "s"} for the Strategist` : "Open the Strategist"}
@@ -300,7 +300,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
                             />
                           </div>
                           {completion < 100 && (
-                            <Link href={basePath ? `${basePath}/settings` : "/account"} onClick={() => setProfileOpen(false)}
+                            <Link href={basePath ? `${basePath}/settings?tab=profile` : "/account"} onClick={() => setProfileOpen(false)}
                               className="mt-1.5 inline-block text-[10.5px] font-semibold text-polaris-600 dark:text-polaris-300 hover:underline">
                               Complete your profile →
                             </Link>
@@ -312,8 +312,8 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
 
                   {/* links */}
                   <ul className="py-1.5">
-                    <MenuLink href={basePath ? `${basePath}/settings` : "/account"} onClick={() => setProfileOpen(false)} icon={<UserGlyph />}>Account</MenuLink>
-                    <MenuLink href={`${basePath}/settings`} onClick={() => setProfileOpen(false)} icon={<CogGlyph />}>Settings</MenuLink>
+                    <MenuLink href={basePath ? `${basePath}/settings?tab=profile` : "/account"} onClick={() => setProfileOpen(false)} icon={<UserGlyph />}>Account</MenuLink>
+                    <MenuLink href={basePath ? `${basePath}/settings?tab=appearance` : "/settings"} onClick={() => setProfileOpen(false)} icon={<CogGlyph />}>Settings</MenuLink>
                     <MenuLink href={`${basePath}/billing`} onClick={() => setProfileOpen(false)} icon={<CardGlyph />}>Billing &amp; plan</MenuLink>
                     <MenuLink href={`${basePath}/transactions`} onClick={() => setProfileOpen(false)} icon={<ReceiptGlyph />}>Transactions</MenuLink>
                     <li>

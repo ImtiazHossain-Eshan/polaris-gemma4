@@ -28,7 +28,7 @@ type MonitorStudent = {
 export default function MonitorPage() {
   const [students, setStudents] = useState<MonitorStudent[] | null>(null);
 
-  // Parent/partner invite acceptance lives here now — relocated from the old
+  // Parent/partner invite acceptance lives here now - relocated from the old
   // /family page, which became the student-only workspace under app/(app).
   const [acceptToken, setAcceptToken] = useState("");
   const [acceptMsg, setAcceptMsg] = useState("");

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Universities + Deadlines — two systems shown as one: floating tilt cards
+ * Universities + Deadlines - two systems shown as one: floating tilt cards
  * with fit rings on the left, a deadline rail with countdown ring + urgency
  * states on the right, and a dashed "import" connection between them.
  */
@@ -30,7 +30,7 @@ export function UniversityDeadlinePreview() {
           onDark
           eyebrow="Universities + deadlines"
           title={<>Explore universities, understand fit, and <Accent>never miss a deadline</Accent><Dot /></>}
-          sub="Shortlist real universities with fit and reach analysis — then import their deadlines straight into a calendar that knows how much slack you really have."
+          sub="Shortlist real universities with fit and reach analysis - then import their deadlines straight into a calendar that knows how much slack you really have."
         />
 
         <div className="relative mt-16 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
@@ -66,7 +66,7 @@ export function UniversityDeadlinePreview() {
 
           {/* ── Deadline rail ── */}
           <div className="relative">
-            {/* Import connection — dashed line flowing from cards to rail */}
+            {/* Import connection - dashed line flowing from cards to rail */}
             <svg
               aria-hidden
               className="absolute -left-14 top-10 hidden lg:block"
@@ -109,9 +109,9 @@ export function UniversityDeadlinePreview() {
                 </div>
 
                 <div className="mt-5 space-y-2.5">
-                  <DeadlineRow label="U of T — early application" days={23} tone="amber" checks={[true, true, false]} />
+                  <DeadlineRow label="U of T - early application" days={23} tone="amber" checks={[true, true, false]} />
                   <DeadlineRow label="IELTS booking window" days={41} tone="ok" checks={[true, false, false]} />
-                  <DeadlineRow label="TU Munich — uni-assist" days={67} tone="ok" checks={[false, false, false]} />
+                  <DeadlineRow label="TU Munich - uni-assist" days={67} tone="ok" checks={[false, false, false]} />
                 </div>
               </div>
             </Reveal>

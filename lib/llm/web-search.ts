@@ -11,7 +11,7 @@ export type WebSearchResult = {
 
 /**
  * Best-effort Tavily search. Returns [] when the key is missing or the
- * request fails — callers should treat web search as additive context, not
+ * request fails - callers should treat web search as additive context, not
  * a hard dependency.
  */
 export async function tavilySearch(

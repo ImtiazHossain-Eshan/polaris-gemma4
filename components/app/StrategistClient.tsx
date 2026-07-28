@@ -4,7 +4,7 @@
  * Full-page Strategist (AgentView).
  *
  * Replaces the previous duplicate-of-the-right-rail layout. On /strategist
- * THIS is the only chat surface — the right-rail AgentChat hides itself
+ * THIS is the only chat surface - the right-rail AgentChat hides itself
  * when the route is /strategist (see AgentChat.tsx).
  *
  * Feature parity with the right-rail chat:
@@ -13,7 +13,7 @@
  *   • Web-search thinking indicator.
  *   • Web sources rendered as clickable chips.
  *   • Routing reason shown post-stream.
- *   • Real /api/strategist SSE — same backend as the right rail.
+ *   • Real /api/strategist SSE - same backend as the right rail.
  *
  * Layout:
  *   ┌──── chat canvas ────────┬── context strip ──┐
@@ -82,7 +82,7 @@ const MODE_KEY = "polaris.strategist.mode";
 const PAID_KEY = "polaris.strategist.allowPaid";
 const OFFLINE_KEY = "polaris.strategist.offline";
 const ROUTE_MODE_KEY = "polaris.strategist.routeMode";
-/** Shared with the right-rail AgentChat — both surfaces use one thread. */
+/** Shared with the right-rail AgentChat - both surfaces use one thread. */
 const ACTIVE_THREAD_KEY = "polaris.chat.activeThread";
 /** One-shot draft handoff (e.g. "Ask Strategist for help" on a weekly task). */
 const DRAFT_KEY = "polaris.strategist.draft";
@@ -103,7 +103,7 @@ export function StrategistClient({
     {
       id: "seed",
       role: "agent",
-      text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Here's how your profile compares to admits — ask me to turn any gap into a plan.`,
+      text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Here's how your profile compares to admits - ask me to turn any gap into a plan.`,
       sources: [],
       gap: true,
     },
@@ -306,11 +306,11 @@ export function StrategistClient({
   useEffect(() => {
     if (demo) return;
     if (!threadId) {
-      // Fresh session — reset to seed.
+      // Fresh session - reset to seed.
       setMessages([{
         id: "seed",
         role: "agent",
-        text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Here's how your profile compares to admits — ask me to turn any gap into a plan.`,
+        text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Here's how your profile compares to admits - ask me to turn any gap into a plan.`,
         sources: [],
         gap: true,
       }]);
@@ -376,12 +376,16 @@ export function StrategistClient({
     } catch { /* best-effort */ }
   }, [demo]);
 
-  function startNewChat() {
-    setThreadId(null);
+  function startNewChat(nextThreadId?: string) {
+    setThreadId(nextThreadId ?? null);
+    setInput("");
+    setStreaming(false);
+    setThinking(null);
+    setRouteInfo(null);
     setMessages([{
       id: "seed",
       role: "agent",
-      text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Here's how your profile compares to admits — ask me to turn any gap into a plan.`,
+      text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Here's how your profile compares to admits - ask me to turn any gap into a plan.`,
       sources: [],
       gap: true,
     }]);
@@ -404,7 +408,7 @@ export function StrategistClient({
 
   // Forward wheel events from the hero / non-scrollable areas of the chat
   // column into the messages scroller, so the wheel works anywhere over the
-  // middle column — not only when hovering the messages themselves.
+  // middle column - not only when hovering the messages themselves.
   const chatColRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const col = chatColRef.current;
@@ -496,7 +500,7 @@ export function StrategistClient({
             const r = chunk.result as { sources?: number } | undefined;
             setThinking(
               r?.sources
-                ? `Read ${r.sources} source${r.sources === 1 ? "" : "s"} — synthesizing…`
+                ? `Read ${r.sources} source${r.sources === 1 ? "" : "s"} - synthesizing…`
                 : null,
             );
           } else if (chunk.status === "error") {
@@ -564,7 +568,7 @@ export function StrategistClient({
       )}
       style={{ gridTemplateColumns: gridCols }}
     >
-      {/* ─── Chat history rail — grid column (md+) or overlay drawer (mobile) ─── */}
+      {/* ─── Chat history rail - grid column (md+) or overlay drawer (mobile) ─── */}
       {bp !== "mobile" ? (
         <ChatHistoryRail
           activeId={threadId}
@@ -598,7 +602,7 @@ export function StrategistClient({
             <ChatHistoryRail
               activeId={threadId}
               onSelect={(id) => { setThreadId(id); setMobileChatsOpen(false); }}
-              onNew={() => { startNewChat(); setMobileChatsOpen(false); }}
+              onNew={(id) => { startNewChat(id); setMobileChatsOpen(false); }}
               collapsed={false}
               onToggleCollapse={() => setMobileChatsOpen(false)}
               reloadKey={threadsReloadKey}
@@ -618,7 +622,7 @@ export function StrategistClient({
           would grow past the row, leaving the inner scroller unconstrained
           (= content clipped by the grid's overflow-hidden, wheel dead). */}
       <div ref={chatColRef} className="flex flex-col bg-paper min-w-0 min-h-0">
-        {/* Hero — full only while the conversation is fresh; collapses to a
+        {/* Hero - full only while the conversation is fresh; collapses to a
             slim strip once the user starts chatting so messages get the room. */}
         <div className={cn(
           "px-4 sm:px-6 lg:px-10 border-b border-polaris-500/10 bg-gradient-to-b from-paper-soft/40 to-paper",
@@ -760,7 +764,7 @@ export function StrategistClient({
           <div className="bg-paper-card hairline rounded-2xl p-3 max-w-3xl mx-auto focus-within:shadow-[0_0_0_2px_rgba(196,125,78,0.18)]">
             <textarea value={input} onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-              rows={2} placeholder="Ask the Strategist anything — your profile, your KB, your roadmap, the live web."
+              rows={2} placeholder="Ask the Strategist anything - your profile, your KB, your roadmap, the live web."
               className="w-full bg-transparent text-[14px] placeholder-ink-muted outline-none resize-none" />
             <div className="flex items-center gap-2 pt-2 border-t border-polaris-500/10 mt-2">
               <CapabilityChip tone="polaris" icon={<Icon.book size={11} />} label="KB grounded" />
@@ -786,7 +790,7 @@ export function StrategistClient({
         </div>
       </div>
 
-      {/* ─── Right context strip (desktop only — grid drops it below xl) ─── */}
+      {/* ─── Right context strip (desktop only - grid drops it below xl) ─── */}
       <div className={cn("border-l border-polaris-500/10 bg-paper-soft/40 p-5 min-h-0 overflow-y-auto overscroll-contain scroll-y", bp !== "desktop" && "hidden")}>
         <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-3">Context</div>
         <Card className="p-4 mb-3">
@@ -820,7 +824,7 @@ export function StrategistClient({
 /* ════════════════════════════════════════════════════════════════════════ */
 
 /**
- * CapabilityChip — composer "this AI can …" badges. Built for both themes:
+ * CapabilityChip - composer "this AI can …" badges. Built for both themes:
  * soft brand-color gradient backing, ring-1 inset, small icon, pulsing dot
  * accent so they look alive instead of dead labels.
  */
@@ -975,7 +979,7 @@ function GapAnalysis({ rows }: { rows: GapRow[] }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
-   MODEL PICKER — light theme variant (different from the dark right-rail)
+   MODEL PICKER - light theme variant (different from the dark right-rail)
    ════════════════════════════════════════════════════════════════════════ */
 
 function patchLast(m: Msg[], fn: (msg: Msg) => Msg): Msg[] {

@@ -1,8 +1,8 @@
 /**
  * /api/consultants/bookings
  *
- * GET  — the signed-in user's bookings (any plan — never plan-gated).
- * POST — create a booking. Free first sessions confirm immediately when the
+ * GET  - the signed-in user's bookings (any plan - never plan-gated).
+ * POST - create a booking. Free first sessions confirm immediately when the
  *        consultant's verified free-session flag + first-time eligibility
  *        hold; paid sessions create a pending sandbox transaction whose
  *        price transparently includes the 10% platform fee.

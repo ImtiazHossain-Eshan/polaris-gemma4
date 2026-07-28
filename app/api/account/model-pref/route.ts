@@ -1,8 +1,8 @@
 /**
  * /api/account/model-pref
  *
- * GET — the signed-in user's saved AI model preference (choice/mode/flags).
- * PUT — save a new preference. Validated server-side; never contains keys.
+ * GET - the signed-in user's saved AI model preference (choice/mode/flags).
+ * PUT - save a new preference. Validated server-side; never contains keys.
  *
  * The Strategist picker reads this on mount and writes through on change,
  * so the selection follows the user across devices, and server-side jobs

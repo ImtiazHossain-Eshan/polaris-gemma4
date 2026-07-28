@@ -4,7 +4,7 @@
  * Streams a Strategist response over Server-Sent Events. Requires a
  * signed-in user and respects per-plan rate limits.
  *
- * Body: see `StrategistRequestSchema` — accepts optional mode, model,
+ * Body: see `StrategistRequestSchema` - accepts optional mode, model,
  * autoSelect, offline, allowPaid params.
  * Response: `text/event-stream` with `StrategistChunk` events.
  */
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
   try {
     const user = await requireSession();
 
-    // The AI Strategist is a Pro/Elite feature — Free users get a clear
+    // The AI Strategist is a Pro/Elite feature - Free users get a clear
     // upgrade signal, never a degraded chat (matches FEATURE_ACCESS).
     if (!planMeets(user.plan, "pro")) {
       return NextResponse.json(
@@ -69,12 +69,12 @@ export async function POST(req: Request) {
     // The SAME roadmap doc that renders the tree feeds the Strategist:
     // config, branch focus nodes, recent scores, last adaptation. When the
     // tree changes (task ticked, score entered, replan) the next message
-    // already reflects it — the two surfaces can't drift.
+    // already reflects it - the two surfaces can't drift.
     const recentMilestones = roadmapV2
       ? roadmapContextLines(roadmapV2)
       : roadmap?.roadmap.milestones
           .slice(0, 6)
-          .map((m) => `${m.title} — ${m.status} — priority ${m.priority}`) ?? [];
+          .map((m) => `${m.title} - ${m.status} - priority ${m.priority}`) ?? [];
 
     // Live client context: the node the user is focused on right now + the
     // last few roadmap events. The Strategist must answer about THAT node
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
         .find(({ n }) => n.id === body.roadmapContext!.selectedNodeId);
       if (node) {
         recentMilestones.push(
-          `USER'S SELECTED NODE (answer about this without re-asking): "${node.n.title}" [${node.b.category}] — status ${node.n.status}, progress ${node.n.progress}%, priority ${node.n.priority}, ~${node.n.estimatedHoursPerWeek}h/wk. Do: ${node.n.description} How: ${node.n.how.slice(0, 220)} Done when: ${node.n.completionCriteria}`,
+          `USER'S SELECTED NODE (answer about this without re-asking): "${node.n.title}" [${node.b.category}] - status ${node.n.status}, progress ${node.n.progress}%, priority ${node.n.priority}, ~${node.n.estimatedHoursPerWeek}h/wk. Do: ${node.n.description} How: ${node.n.how.slice(0, 220)} Done when: ${node.n.completionCriteria}`,
         );
       }
     }

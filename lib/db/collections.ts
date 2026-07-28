@@ -12,7 +12,7 @@ export type Subscription = {
   variantId?: string;
   status?: string; // active, canceled, expired, past_due, etc.
   renewsAt?: string;
-  /* Sandbox-billing fields — written by /api/transactions/[id]/confirm. */
+  /* Sandbox-billing fields - written by /api/transactions/[id]/confirm. */
   planId?: Plan;
   billingCycle?: "monthly" | "yearly";
   startedAt?: string;
@@ -155,7 +155,7 @@ export type DbRoadmapV2 = {
   updatedAt: Date;
 };
 
-/** One live roadmap per user — replaced wholesale on every mutation. */
+/** One live roadmap per user - replaced wholesale on every mutation. */
 export async function getRoadmapV2(userId: string): Promise<RoadmapDoc | null> {
   const db = await getDb();
   const row = await db.collection<DbRoadmapV2>("roadmaps_v2").findOne({ userId });
@@ -453,7 +453,7 @@ export type DbChatThread = {
   lastMessageAt: Date;
   /** Number of messages currently saved on this thread. */
   messageCount: number;
-  /** Last mode used on this thread — informational. */
+  /** Last mode used on this thread - informational. */
   lastMode?: "general" | "research" | "study" | "coding";
 };
 
@@ -576,7 +576,7 @@ export async function getMessages(
 /**
  * Durable facts the Strategist has learned about a single student across
  * conversations. Stored as an inline `facts` array on a single document per
- * user (keeps reads cheap — most users will have <100 facts).
+ * user (keeps reads cheap - most users will have <100 facts).
  *
  * Source: "explicit" means the user typed/edited it themselves; "inferred"
  * means the LLM extracted it from a conversation. Confidence lets us decay
@@ -683,7 +683,7 @@ export type LlmUsageRow = {
   latencyMs: number;
   /** True when the orchestrator had to fall back from the initial pick. */
   fallback: boolean;
-  /** "ok" | "error" — high-level outcome. */
+  /** "ok" | "error" - high-level outcome. */
   outcome: "ok" | "error";
   errorCode?: string;
   createdAt: Date;
@@ -697,7 +697,7 @@ export async function recordUsage(row: Omit<LlmUsageRow, "_id" | "createdAt">) {
       createdAt: new Date(),
     });
   } catch (err) {
-    // Telemetry is best-effort — never crash a chat over it.
+    // Telemetry is best-effort - never crash a chat over it.
     console.error("[usage] insert failed:", err);
   }
 }

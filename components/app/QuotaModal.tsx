@@ -3,9 +3,9 @@
 /**
  * Quota pop-up for the Strategist. Two variants:
  *  - "plan": the user exhausted their per-plan message budget (HTTP 429 from
- *    /api/strategist's plan-aware rate limiter) — offers an upgrade.
+ *    /api/strategist's plan-aware rate limiter) - offers an upgrade.
  *  - "ai": the underlying model is temporarily rate-limited / over quota
- *    (e.g. provider 429) — it's not the user's fault, just retry.
+ *    (e.g. provider 429) - it's not the user's fault, just retry.
  */
 
 import { Btn, Icon } from "./ui";
@@ -25,9 +25,9 @@ export function QuotaModal({ quota, onClose }: { quota: QuotaState; onClose: () 
         </div>
         <p className="text-[13px] text-ink-dim mt-2 leading-relaxed">
           {isPlan ? (
-            <>You&apos;ve used all your Strategist messages for now{quota.resetHint ? <> — your limit resets {quota.resetHint}</> : ""}. Upgrade your plan for a higher limit and priority access.</>
+            <>You&apos;ve used all your Strategist messages for now{quota.resetHint ? <> - your limit resets {quota.resetHint}</> : ""}. Upgrade your plan for a higher limit and priority access.</>
           ) : (
-            <>The Strategist&apos;s AI is temporarily rate-limited{quota.resetHint ? <> — try again {quota.resetHint}</> : " — please try again in a moment"}. Your messages and roadmap are unaffected.</>
+            <>The Strategist&apos;s AI is temporarily rate-limited{quota.resetHint ? <> - try again {quota.resetHint}</> : " - please try again in a moment"}. Your messages and roadmap are unaffected.</>
           )}
         </p>
         <div className="mt-5 flex items-center justify-end gap-2">

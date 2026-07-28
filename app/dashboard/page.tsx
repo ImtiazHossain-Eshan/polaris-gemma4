@@ -114,7 +114,7 @@ export default function DashboardPage() {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    // Benchmarking is a Pro feature — skip the call for free users.
+    // Benchmarking is a Pro feature - skip the call for free users.
     if (!profile || benchFetched.current || !can("benchmark")) return;
     benchFetched.current = true;
     fetch("/api/benchmark", {

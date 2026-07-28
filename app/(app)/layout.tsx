@@ -20,7 +20,7 @@ import { AgentChat } from "@/components/app/AgentChat";
 import { StrategistLockedRail } from "@/components/app/StrategistLocked";
 import type { PathSummary } from "@/types/app";
 
-export const dynamic = "force-dynamic"; // session-bound — never cache the shell
+export const dynamic = "force-dynamic"; // session-bound - never cache the shell
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -78,7 +78,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </div>
 
       {user.plan === "free" ? (
-        // Free plan: the Strategist rail shows the honest locked state — the
+        // Free plan: the Strategist rail shows the honest locked state - the
         // working chat (and its API) are Pro/Elite.
         <StrategistLockedRail />
       ) : (

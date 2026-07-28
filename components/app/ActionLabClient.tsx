@@ -19,6 +19,15 @@ import { cn } from "@/lib/cn";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as const;
 
+const PROOF_TYPES = [
+  { value: "Project / portfolio", en: "Project / portfolio", bn: "প্রকল্প / পোর্টফোলিও", hintEn: "Builds, launches, and repositories", hintBn: "তৈরি কাজ, প্রকাশনা ও রিপোজিটরি", tone: "from-polaris-500/20 to-polaris-500/[0.04]" },
+  { value: "Certificate / award", en: "Certificate / award", bn: "সনদ / পুরস্কার", hintEn: "Verified recognition", hintBn: "যাচাইযোগ্য স্বীকৃতি", tone: "from-nova-500/20 to-nova-500/[0.04]" },
+  { value: "Score report", en: "Score report", bn: "স্কোর রিপোর্ট", hintEn: "Official test evidence", hintBn: "অফিসিয়াল পরীক্ষার প্রমাণ", tone: "from-aurora-500/20 to-aurora-500/[0.04]" },
+  { value: "Reference letter", en: "Reference letter", bn: "সুপারিশপত্র", hintEn: "A credible third-party view", hintBn: "বিশ্বস্ত তৃতীয় পক্ষের মতামত", tone: "from-rose-500/20 to-rose-500/[0.04]" },
+  { value: "Research / publication", en: "Research / publication", bn: "গবেষণা / প্রকাশনা", hintEn: "Methods, findings, and authorship", hintBn: "পদ্ধতি, ফলাফল ও লেখকত্ব", tone: "from-polaris-500/20 to-nova-500/[0.04]" },
+  { value: "Community impact", en: "Community impact", bn: "সামাজিক প্রভাব", hintEn: "People reached and outcomes", hintBn: "উপকৃত মানুষ ও ফলাফল", tone: "from-aurora-500/20 to-polaris-500/[0.04]" },
+] as const;
+
 const COPY = {
   en: {
     eyebrow: "Polaris Action Lab",
@@ -381,12 +390,52 @@ function EvidenceGraph({ lang }: { lang: "en" | "bn" }) {
           {bn ? "আপনার দাবি" : "Your claim"}
           <textarea value={claim} onChange={(e) => setClaim(e.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-xl border border-ink-faint/25 bg-bg/60 px-3.5 py-3 text-[13px] normal-case leading-relaxed tracking-normal text-ink outline-none focus:border-polaris-500" />
         </label>
-        <label className="mt-3 block text-[10.5px] font-semibold uppercase tracking-wider text-ink-muted">
-          {bn ? "প্রমাণের ধরন" : "Proof type"}
-          <select value={proofType} onChange={(e) => setProofType(e.target.value)} className="mt-1.5 h-10 w-full rounded-lg border border-ink-faint/25 bg-bg px-3 text-[12.5px] normal-case tracking-normal text-ink outline-none">
-            {["Project / portfolio", "Certificate / award", "Score report", "Reference letter", "Research / publication", "Community impact"].map((type) => <option key={type}>{type}</option>)}
-          </select>
-        </label>
+        <fieldset className="mt-3">
+          <legend className="text-[10.5px] font-semibold uppercase tracking-wider text-ink-muted">
+            {bn ? "প্রমাণের ধরন" : "Proof type"}
+          </legend>
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {PROOF_TYPES.map((type, index) => {
+              const selected = proofType === type.value;
+              return (
+                <motion.button
+                  key={type.value}
+                  type="button"
+                  aria-pressed={selected}
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => setProofType(type.value)}
+                  className={cn(
+                    "group relative overflow-hidden rounded-xl border px-3 py-2.5 text-left transition-all",
+                    selected
+                      ? "border-polaris-500 bg-paper-card shadow-[0_8px_24px_-16px_rgba(196,125,78,0.9)] ring-2 ring-polaris-500/15"
+                      : "border-ink-faint/15 bg-bg/45 hover:border-polaris-500/35 hover:bg-paper-card",
+                  )}
+                >
+                  <span className={cn("pointer-events-none absolute inset-0 bg-gradient-to-br opacity-70", type.tone)} />
+                  <span className="relative flex items-start gap-2.5">
+                    <span className={cn(
+                      "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[9px] font-bold transition-colors",
+                      selected
+                        ? "border-polaris-500 bg-polaris-500 text-white"
+                        : "border-ink-faint/20 bg-paper-card text-ink-muted group-hover:text-ink",
+                    )}>
+                      {selected ? (
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M5 12l4 4L19 6" />
+                        </svg>
+                      ) : String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[11.5px] font-semibold normal-case tracking-normal text-ink">{bn ? type.bn : type.en}</span>
+                      <span className="mt-0.5 block text-[9.5px] font-normal normal-case leading-snug tracking-normal text-ink-muted">{bn ? type.hintBn : type.hintEn}</span>
+                    </span>
+                  </span>
+                </motion.button>
+              );
+            })}
+          </div>
+        </fieldset>
         <label className="mt-3 block text-[10.5px] font-semibold uppercase tracking-wider text-ink-muted">
           {bn ? "লিংক বা বিস্তারিত" : "Link or details"}
           <textarea value={proofDetail} onChange={(e) => setProofDetail(e.target.value)} rows={3} className="mt-1.5 w-full resize-none rounded-xl border border-ink-faint/25 bg-bg/60 px-3.5 py-3 text-[13px] normal-case leading-relaxed tracking-normal text-ink outline-none focus:border-polaris-500" />

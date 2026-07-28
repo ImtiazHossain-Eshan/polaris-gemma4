@@ -98,7 +98,7 @@ export type StudentProfile = {
   achievements?: Achievement[];
 
   /* ─── Undergraduate (only when grade = undergrad / recent-grad) ───── */
-  /** Current undergraduate CGPA on a 0–4 scale (US convention) — derived. */
+  /** Current undergraduate CGPA on a 0–4 scale (US convention) - derived. */
   undergradCgpa?: number;
   /** Raw CGPA on the student's home scale (0–4, 0–5, or 0–10). */
   undergradCgpaRaw?: number;

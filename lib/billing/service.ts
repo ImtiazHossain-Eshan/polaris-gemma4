@@ -1,8 +1,8 @@
 /**
- * Billing service — saved payment methods + billing summary.
+ * Billing service - saved payment methods + billing summary.
  *
  * Sandbox-mode storage: we keep only display-safe data (type, label, last4,
- * brand) — never full card numbers or wallet PINs. The shape mirrors what a
+ * brand) - never full card numbers or wallet PINs. The shape mirrors what a
  * Stripe/SSLCommerz/bKash-gateway integration would persist, so swapping in
  * a real processor later only changes where tokens come from.
  */
@@ -95,7 +95,7 @@ export async function cancelSubscription(userId: string): Promise<Subscription |
     status: "canceled",
     canceledAt: new Date().toISOString(),
   };
-  // Access continues until renewsAt — plan stays; renewal simply won't happen.
+  // Access continues until renewsAt - plan stays; renewal simply won't happen.
   await setUserPlan(userId, u.plan, sub);
   return sub;
 }

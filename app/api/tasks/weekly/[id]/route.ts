@@ -4,7 +4,7 @@
  * Update a weekly task: progress (0–100), status, work submission, or
  * append a note. When the patch completes the task (status "done" or
  * progress 100), the Strategist reviews the submission + notes and writes
- * feedback onto the task before the response returns — so the UI can show
+ * feedback onto the task before the response returns - so the UI can show
  * the review immediately.
  */
 
@@ -81,7 +81,7 @@ export const PATCH = withErrorHandling(async (req, ctx: { params: Promise<{ id: 
         await addWeeklyTaskNote(session.id, id, {
           id: weeklyTaskId(),
           author: "strategist",
-          text: "I reviewed your work — see the feedback section on this task.",
+          text: "I reviewed your work - see the feedback section on this task.",
           at: new Date(),
         });
       }

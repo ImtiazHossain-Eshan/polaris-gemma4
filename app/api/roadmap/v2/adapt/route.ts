@@ -29,7 +29,7 @@ export const POST = withErrorHandling(async (req) => {
   const rl = await rateLimit(session.id, session.plan, "strategist");
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: language === "bn" ? BN_ERRORS.rateLimit : "Rate limit reached — try the adaptation again in a few minutes." },
+      { error: language === "bn" ? BN_ERRORS.rateLimit : "Rate limit reached - try the adaptation again in a few minutes." },
       { status: 429, headers: rateLimitHeaders(rl) },
     );
   }

@@ -46,7 +46,7 @@ export const StrategistRequestSchema = z.object({
 
 export type StrategistRequest = z.infer<typeof StrategistRequestSchema>;
 
-/** SSE payload schema — every chunk the server emits conforms to this. */
+/** SSE payload schema - every chunk the server emits conforms to this. */
 export const ChunkSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("text"),   delta: z.string() }),
   z.object({ kind: z.literal("source"), label: z.string(), uri: z.string(), source: z.enum(["kb","case","web","profile","roadmap"]) }),

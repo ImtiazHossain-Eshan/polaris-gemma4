@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * RoadmapNodeModal — the interactive mission popup for a clicked leaf.
+ * RoadmapNodeModal - the interactive mission popup for a clicked leaf.
  *
  * Sections: Mission Brief (what/why/how) · Task Checklist (live toggles) ·
  * Resource Pack (embedded YouTube + links) · Score input · Notes ·
  * Completion criteria · Mark done · Ask Strategist · Next unlock.
  *
  * Every mutation PATCHes /api/roadmap/v2/node/[id] and swaps in the full
- * updated doc — the same doc the Strategist reads.
+ * updated doc - the same doc the Strategist reads.
  */
 
 import { useMemo, useState } from "react";
@@ -117,7 +117,7 @@ export function RoadmapNodeModal({
       try { localStorage.setItem("polaris.strategist.draft", draft); } catch { /* ignore */ }
       router.refresh();
     } else {
-      // Focus the Strategist rail in place — no navigation. Below xl this
+      // Focus the Strategist rail in place - no navigation. Below xl this
       // opens the overlay; on desktop the rail is already visible and just
       // picks up the focused-node context card.
       window.dispatchEvent(new CustomEvent("polaris:openAgentRail", { detail: { draft } }));
@@ -290,7 +290,7 @@ export function RoadmapNodeModal({
             <section>
               <Label>Log a score</Label>
               <p className="text-[11.5px] text-ink-muted mb-2">
-                Took a test or mock for this mission? Log it — the roadmap re-prioritizes automatically and the Strategist sees it.
+                Took a test or mock for this mission? Log it - the roadmap re-prioritizes automatically and the Strategist sees it.
               </p>
               <div className="flex flex-wrap items-end gap-2">
                 <div className="flex flex-wrap gap-1.5">

@@ -1,5 +1,5 @@
 /**
- * Partner Marketplace registry — the honest catalog.
+ * Partner Marketplace registry - the honest catalog.
  *
  * Offer types are real:
  *   - free_student_benefit   → official student programs (GitHub Pack, Notion
@@ -7,7 +7,7 @@
  *   - curated_no_commission  → genuinely useful tools we recommend with ZERO
  *                              commission, clearly labeled
  *   - official_student_offer → an official discount published by the vendor
- *   - affiliate / referral   → supported by the model, but NONE are active —
+ *   - affiliate / referral   → supported by the model, but NONE are active -
  *                              Polaris has no affiliate deals yet and we don't
  *                              fake codes or links
  *   - coming_soon            → partnerships we want but don't have; request
@@ -45,9 +45,9 @@ export type PartnerOffer = {
   educationLevels?: Array<"early-school" | "middle-school" | "ssc" | "hsc" | "gap-applicant">;
   /** Roadmap topic tags this boosts (sat-math, ielts-writing, coding…). */
   topics: string[];
-  /** Real coupon/referral code — null unless an actual code exists. */
+  /** Real coupon/referral code - null unless an actual code exists. */
   couponCode: string | null;
-  /** Real affiliate URL — null unless an actual program exists. */
+  /** Real affiliate URL - null unless an actual program exists. */
   affiliateUrl: string | null;
   officialOfferUrl: string;
   estimatedValue?: string;
@@ -59,7 +59,7 @@ export type PartnerOffer = {
 };
 
 export const PARTNER_DISCLOSURE =
-  "Polaris may earn a commission on some partner offers — every such offer is labeled. Right now no affiliate deals are active: everything below is an official student benefit, a free resource, or a no-commission recommendation. Free options are always shown before paid ones.";
+  "Polaris may earn a commission on some partner offers - every such offer is labeled. Right now no affiliate deals are active: everything below is an official student benefit, a free resource, or a no-commission recommendation. Free options are always shown before paid ones.";
 
 const V = "2026-06-11";
 
@@ -75,7 +75,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "coding",
     offerType: "free_student_benefit",
     status: "active",
-    description: "Dozens of paid developer tools free while you're a student — domains, cloud credits, IDEs, learning platforms — verified with proof of enrollment.",
+    description: "Dozens of paid developer tools free while you're a student - domains, cloud credits, IDEs, learning platforms - verified with proof of enrollment.",
     benefits: ["Free domains + cloud credits", "JetBrains, Copilot & dev tool access", "The standard portfolio-building kit"],
     eligibility: "Enrolled students 13+, verified via GitHub Education",
     countries: "Worldwide",
@@ -99,7 +99,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "productivity",
     offerType: "free_student_benefit",
     status: "active",
-    description: "Notion's Education Plus plan free with a school email — the standard for application tracking, study systems, and note databases.",
+    description: "Notion's Education Plus plan free with a school email - the standard for application tracking, study systems, and note databases.",
     benefits: ["Education Plus plan free", "Unlimited pages + blocks", "Application tracker templates"],
     eligibility: "Students with a school email address",
     countries: "Worldwide",
@@ -121,7 +121,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "design",
     offerType: "free_student_benefit",
     status: "active",
-    description: "Figma's professional plan free for verified students — design portfolios, posters for clubs, and product mockups.",
+    description: "Figma's professional plan free for verified students - design portfolios, posters for clubs, and product mockups.",
     benefits: ["Professional plan free", "Unlimited files", "FigJam included"],
     eligibility: "Students 13+, education verification",
     countries: "Worldwide",
@@ -143,7 +143,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "coding",
     offerType: "free_student_benefit",
     status: "active",
-    description: "All JetBrains professional IDEs (IntelliJ Ultimate, PyCharm Pro, CLion…) free for students — renewable yearly.",
+    description: "All JetBrains professional IDEs (IntelliJ Ultimate, PyCharm Pro, CLion…) free for students - renewable yearly.",
     benefits: ["All professional IDEs free", "Renewable while enrolled"],
     eligibility: "Students with school email / GitHub Pack / ISIC",
     countries: "Worldwide",
@@ -187,7 +187,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "design",
     offerType: "free_student_benefit",
     status: "active",
-    description: "Canva Pro features free for eligible K-12 students and teachers — club posters, science-fair boards, presentation polish.",
+    description: "Canva Pro features free for eligible K-12 students and teachers - club posters, science-fair boards, presentation polish.",
     benefits: ["Pro features free (K-12)", "Templates + brand kits"],
     eligibility: "K-12 students/teachers via school verification",
     countries: "Worldwide",
@@ -210,7 +210,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "scholarship",
     offerType: "free_student_benefit",
     status: "active",
-    description: "Most Coursera courses offer full financial aid — certificates for strong applications without the fee.",
+    description: "Most Coursera courses offer full financial aid - certificates for strong applications without the fee.",
     benefits: ["Course fees waived on approval", "Real certificates for your profile"],
     eligibility: "Per-course application with a short statement",
     countries: "Worldwide",
@@ -235,7 +235,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "sat",
     offerType: "curated_no_commission",
     status: "active",
-    description: "The official, completely free SAT prep platform — adaptive practice tied to College Board. Use this before paying for anything.",
+    description: "The official, completely free SAT prep platform - adaptive practice tied to College Board. Use this before paying for anything.",
     benefits: ["100% free, official", "Topic-level mastery tracking", "Full practice integration"],
     eligibility: "Everyone",
     countries: "Worldwide",
@@ -258,7 +258,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "mock_test",
     offerType: "curated_no_commission",
     status: "active",
-    description: "Free full-length adaptive digital SAT practice tests in the official Bluebook app — the only mock that matches test day exactly.",
+    description: "Free full-length adaptive digital SAT practice tests in the official Bluebook app - the only mock that matches test day exactly.",
     benefits: ["Official full-length adaptive mocks", "Free"],
     eligibility: "Everyone",
     countries: "Worldwide",
@@ -281,7 +281,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "ielts",
     offerType: "curated_no_commission",
     status: "active",
-    description: "Official sample questions and band descriptors for all four skills, straight from the test maker — your baseline before any paid course.",
+    description: "Official sample questions and band descriptors for all four skills, straight from the test maker - your baseline before any paid course.",
     benefits: ["Official samples, all 4 skills", "Real band descriptors", "Free"],
     eligibility: "Everyone",
     countries: "Worldwide",
@@ -304,7 +304,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "olympiad",
     offerType: "curated_no_commission",
     status: "active",
-    description: "The standard Olympiad training ground — free community + contest archives; paid books/classes if you go deep. We earn nothing recommending it.",
+    description: "The standard Olympiad training ground - free community + contest archives; paid books/classes if you go deep. We earn nothing recommending it.",
     benefits: ["Free contest archives + community", "The canonical Olympiad path"],
     eligibility: "Everyone",
     countries: "Worldwide",
@@ -349,7 +349,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "scholarship",
     offerType: "curated_no_commission",
     status: "active",
-    description: "Free, searchable international scholarship database — vetted listings, no signup paywall.",
+    description: "Free, searchable international scholarship database - vetted listings, no signup paywall.",
     benefits: ["Free scholarship search", "International filters"],
     eligibility: "Everyone",
     countries: "Worldwide",
@@ -396,7 +396,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     category: "mentorship",
     offerType: "coming_soon",
     status: "coming_soon",
-    description: "Verified admits from MIT, Oxbridge, NUS and more — essay reads, mock interviews, and strategy calls.",
+    description: "Verified admits from MIT, Oxbridge, NUS and more - essay reads, mock interviews, and strategy calls.",
     benefits: ["Verified admit mentors", "Essay + interview help"],
     eligibility: "TBD",
     countries: "TBD",
@@ -431,7 +431,7 @@ export const PARTNER_OFFERS: PartnerOffer[] = [
     sourceUrl: "",
     sourceName: "",
     lastVerifiedAt: V,
-    comingSoonReason: "Reviewer quality bar isn't met yet — we won't launch with unvetted editors.",
+    comingSoonReason: "Reviewer quality bar isn't met yet - we won't launch with unvetted editors.",
   },
   {
     id: "visa-docs-partner",
@@ -467,7 +467,7 @@ export const OFFER_TYPE_META: Record<PartnerOfferType, { label: string; tone: "a
   coming_soon:            { label: "Coming soon", tone: "ink" },
 };
 
-/** Honest link resolution — null means "no working link, don't fake a CTA". */
+/** Honest link resolution - null means "no working link, don't fake a CTA". */
 export function resolveOfferLink(o: PartnerOffer): string | null {
   if (o.status !== "active") return null;
   if (o.affiliateUrl) return o.affiliateUrl;

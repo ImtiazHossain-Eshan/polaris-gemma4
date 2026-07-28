@@ -5,7 +5,7 @@ import { z } from "zod";
  *
  * Required vars fail fast at first import with a clear message.
  * Payment + AI vars are optional so the app still boots for local dev /
- * the heuristic fallback — the relevant feature checks `isConfigured` itself.
+ * the heuristic fallback - the relevant feature checks `isConfigured` itself.
  */
 
 const schema = z.object({
@@ -23,7 +23,7 @@ const schema = z.object({
   // Comma-separated list of emails that should be treated as admins.
   ADMIN_EMAILS: z.string().optional(),
 
-  // LemonSqueezy (optional — checkout/portal degrade gracefully if absent)
+  // LemonSqueezy (optional - checkout/portal degrade gracefully if absent)
   LEMONSQUEEZY_API_KEY: z.string().optional(),
   LEMONSQUEEZY_STORE_ID: z.string().optional(),
   LEMONSQUEEZY_WEBHOOK_SECRET: z.string().optional(),

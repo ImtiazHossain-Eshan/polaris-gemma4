@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * RoadmapSetup — first-time setup flow for the roadmap tree.
+ * RoadmapSetup - first-time setup flow for the roadmap tree.
  * 3 steps: (1) who you are, (2) the mission, (3) time + constraints.
  * Produces a RoadmapConfig and hands it to onGenerate.
  */
@@ -15,7 +15,7 @@ import {
 } from "@/lib/roadmap/types";
 import type { Country, Degree, Tier } from "@/lib/profile";
 
-/** Profile answers collected during setup — saved server-side with the
+/** Profile answers collected during setup - saved server-side with the
  *  roadmap so onboarding and roadmap share one source of truth. */
 export type ProfileSeed = {
   country: Country;
@@ -125,7 +125,7 @@ export function RoadmapSetup({
           Let&apos;s build your <span className="grad-text">roadmap</span>
         </h1>
         <p className="text-[13.5px] text-ink-dim mt-2 leading-relaxed">
-          Answer a few questions so Polaris can create your personalized plan —
+          Answer a few questions so Polaris can create your personalized plan -
           this is the only setup; everything else adapts from here.
         </p>
 
@@ -340,7 +340,7 @@ export function RoadmapSetup({
                     ))}
                   </div>
                 </div>
-                <Field label={`Available hours per week — ${hours}h`} hint="Be honest. The plan budgets inside this.">
+                <Field label={`Available hours per week - ${hours}h`} hint="Be honest. The plan budgets inside this.">
                   <input
                     type="range" min={2} max={40} step={1} value={hours}
                     onChange={(e) => setHours(parseInt(e.target.value, 10))}

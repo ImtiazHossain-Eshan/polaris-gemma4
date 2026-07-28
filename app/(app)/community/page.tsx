@@ -1,5 +1,5 @@
 /**
- * /community — verified student community. Channel registry is config; the
+ * /community - verified student community. Channel registry is config; the
  * client polls messages per channel. Open to every signed-in user (any
  * plan); safety rules are enforced by the messages API.
  */

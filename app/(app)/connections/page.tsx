@@ -1,5 +1,5 @@
 /**
- * /connections — the Integration Hub. Plan-gated to Pro+.
+ * /connections - the Integration Hub. Plan-gated to Pro+.
  *
  * Server assembles the honest hub state (registry × per-user rows ×
  * env-credential availability) and hands off to the client: status

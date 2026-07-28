@@ -1,5 +1,5 @@
 /**
- * Day streak — server-side, earned only by meaningful work.
+ * Day streak - server-side, earned only by meaningful work.
  *
  * `recordStreakActivity(userId, action)` is called from mutation routes that
  * represent real progress (roadmap node updates, score logs, replans, weekly
@@ -20,9 +20,9 @@ export type DbStreak = {
   longest: number;
   /** YYYY-MM-DD of the last counted day. */
   lastActiveDay: string;
-  /** Recent active days (YYYY-MM-DD), capped — drives the heatmap. */
+  /** Recent active days (YYYY-MM-DD), capped - drives the heatmap. */
   days: string[];
-  /** Actions logged today (resets each new day) — "what earned it". */
+  /** Actions logged today (resets each new day) - "what earned it". */
   todayActions: string[];
   updatedAt: Date;
 };

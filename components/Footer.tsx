@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * Footer — light/paper themed (back to brand-warm), three layers:
- *   1. Pre-footer CTA strip — big italic-accent headline + animated CTA button
+ * Footer - light/paper themed (back to brand-warm), three layers:
+ *   1. Pre-footer CTA strip - big italic-accent headline + animated CTA button
  *   2. Brand block (animated logo) + multi-column link groups with hover arrows
  *   3. Bottom bar with copyright, language, and a "live" status pill
  *
@@ -162,7 +162,7 @@ function AnimatedLogo() {
           variants={{ rest: { opacity: 0 }, hover: { opacity: 1 } }}
           transition={{ duration: 0.3 }}
         />
-        {/* Compass — slow rotate always, faster on hover */}
+        {/* Compass - slow rotate always, faster on hover */}
         <motion.span
           className="relative inline-flex"
           variants={{
@@ -213,7 +213,7 @@ function CtaButton() {
           whileHover={{ x: "100%" }}
           transition={{ duration: 0.9, ease: "easeInOut" }}
         />
-        <span className="relative">Start free — no card</span>
+        <span className="relative">Start free - no card</span>
         <motion.span
           aria-hidden
           className="relative inline-block"

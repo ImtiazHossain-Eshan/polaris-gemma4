@@ -1,5 +1,5 @@
 /**
- * GET /api/account/export — download all data Polaris holds for the
+ * GET /api/account/export - download all data Polaris holds for the
  * signed-in user as a JSON file. Auth-guarded; a user can only export
  * their own data. Supports the "Ethical AI compliance" data-portability
  * requirement in the app README.

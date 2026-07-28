@@ -1,5 +1,5 @@
 /**
- * GET /api/streak — the user's real day streak.
+ * GET /api/streak - the user's real day streak.
  *
  * No POST here on purpose: streaks are earned by meaningful mutations
  * (roadmap progress, scores, replans, weekly tasks, deadlines), which call

@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * /account — Student Profile Settings.
+ * /account - Student Profile Settings.
  *
  * Layout matches the spec:
  *   1. Academic Profile (on top)
  *      a. Basic Information (Name / Email / Phone / Avatar URL)
  *      b. Curriculum (5-way segment)
- *      c. Academic Results (SSC + HSC — conditional A* vs GPA based on
+ *      c. Academic Results (SSC + HSC - conditional A* vs GPA based on
  *         the chosen curriculum)
  *      d. Scholarships & Achievements (add/remove rows)
  *      e. Academic Summary (display card)
@@ -15,7 +15,7 @@
  *   3. Plan & billing summary
  *
  * A welcome modal pops on first visit after signup (?welcome=1) prompting
- * the student to complete the academic profile — clicking the CTA scrolls
+ * the student to complete the academic profile - clicking the CTA scrolls
  * the page to the Academic Profile section.
  */
 
@@ -223,7 +223,7 @@ function AcademicProfileCard({
     return Number.isFinite(n) ? n : undefined;
   }
 
-  // Live completeness check from the current form state — so the badge
+  // Live completeness check from the current form state - so the badge
   // updates as the student fills fields without waiting for save.
   const missingFields: MissingField[] = useMemo(() => {
     const draft: StudentProfile = {
@@ -476,7 +476,7 @@ function AcademicProfileCard({
 
       {/* ── b.5) Undergraduate (only when grade ∈ {undergrad, recent-grad}) ─── */}
       {isUndergrad && (
-        <SubSection title="Undergraduate" desc="Your current undergraduate standing — the Strategist uses this CGPA over your SSC/HSC for postgrad targets.">
+        <SubSection title="Undergraduate" desc="Your current undergraduate standing - the Strategist uses this CGPA over your SSC/HSC for postgrad targets.">
           <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Institution" hint="University or institute name.">
               <input
@@ -623,7 +623,7 @@ function AcademicProfileCard({
         </div>
       </SubSection>
 
-      <SubSection title="Achievements & academic awards" desc="Anything notable — competition results, publications, leadership roles.">
+      <SubSection title="Achievements & academic awards" desc="Anything notable - competition results, publications, leadership roles.">
         <div className="space-y-2">
           {achievements.length === 0 && (
             <div className="text-[12.5px] text-ink-muted italic">No achievements added yet.</div>
@@ -667,7 +667,7 @@ function AcademicProfileCard({
       </SubSection>
 
       {/* ── e) Goals (target degree + tier + activity categories) ────── */}
-      <SubSection title="Goals" desc="What you're aiming for next — drives the Strategist's recommendations.">
+      <SubSection title="Goals" desc="What you're aiming for next - drives the Strategist's recommendations.">
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Target degree">
             <Select value={degree} onChange={(v) => setDegree(v as Degree)} options={DEGREES.map((d) => ({ v: d.v, label: d.label }))} />
@@ -898,14 +898,14 @@ function SummaryCard({
 }) {
   const usesAStars = curriculumUsesAStars(curriculum);
   const sscDisplay = usesAStars
-    ? (sscAStars !== undefined ? `${sscAStars} A* grades` : "—")
-    : (sscGpa !== undefined ? `GPA ${sscGpa.toFixed(2)}` : "—");
+    ? (sscAStars !== undefined ? `${sscAStars} A* grades` : "-")
+    : (sscGpa !== undefined ? `GPA ${sscGpa.toFixed(2)}` : "-");
   const hscDisplay = usesAStars
-    ? (hscAStars !== undefined ? `${hscAStars} A* grades` : "—")
-    : (hscGpa !== undefined ? `GPA ${hscGpa.toFixed(2)}` : "—");
+    ? (hscAStars !== undefined ? `${hscAStars} A* grades` : "-")
+    : (hscGpa !== undefined ? `GPA ${hscGpa.toFixed(2)}` : "-");
   return (
     <div className="rounded-xl bg-polaris-50 ring-1 ring-inset ring-polaris-500/15 p-4 space-y-2 text-[13px] dark:bg-polaris-400/10 dark:ring-polaris-400/25">
-      <SumRow k="Student" v={name || "—"} />
+      <SumRow k="Student" v={name || "-"} />
       {phone && <SumRow k="Phone" v={phone} />}
       <SumRow k="Curriculum" v={CURRICULUM_LABELS[curriculum]} />
       <SumRow k={usesAStars ? "O Level" : "SSC"} v={sscDisplay} />
@@ -1069,10 +1069,10 @@ function WelcomeModal({ onStart, onSkip }: { onStart: () => void; onSkip: () => 
       <div className="bg-paper-card rounded-3xl shadow-pop ring-1 ring-inset ring-polaris-500/10 max-w-[440px] w-full p-7 dark:ring-white/[0.12]">
         <div className="text-[10.5px] uppercase tracking-[0.22em] text-ink-muted font-medium mb-2">Welcome to Polaris</div>
         <h2 className="font-serif text-[24px] font-bold tracking-tight text-ink leading-tight">
-          One last step — complete your academic profile.
+          One last step - complete your academic profile.
         </h2>
         <p className="mt-3 text-[13.5px] text-ink-dim leading-relaxed">
-          Your curriculum, results, scholarships, and achievements feed every recommendation the Strategist makes —
+          Your curriculum, results, scholarships, and achievements feed every recommendation the Strategist makes -
           your roadmap, your acceptance probability, the offers we surface. It takes a couple of minutes.
         </p>
         <div className="mt-6 flex items-center justify-end gap-2">

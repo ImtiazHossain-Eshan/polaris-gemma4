@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Floating product-demo video — sits between the hero and the ecosystem
+ * Floating product-demo video - sits between the hero and the ecosystem
  * section. A premium glass frame around the Vimeo demo: aura glow behind,
  * spring entrance, gentle hover lift, fully responsive 16:9.
  *
  * Performance: the iframe is NOT rendered until the section scrolls into
- * view (or the user clicks the poster) — no layout shift because the
+ * view (or the user clicks the poster) - no layout shift because the
  * aspect-ratio box reserves the space. Playback starts muted+looped per
  * browser autoplay rules; native Vimeo controls stay visible so the user
  * can unmute with one click.
@@ -39,7 +39,7 @@ export function FloatingDemoVideo() {
       </div>
 
       <div className="relative mx-auto max-w-5xl px-6 pt-4 pb-24 sm:pb-28">
-        {/* Intro — short; the visual is the focus */}
+        {/* Intro - short; the visual is the focus */}
         <div className="text-center">
           <Reveal>
             <Eyebrow onDark>Product demo</Eyebrow>
@@ -52,7 +52,7 @@ export function FloatingDemoVideo() {
           </Reveal>
           <Reveal delay={0.12}>
             <p className="mt-4 mx-auto max-w-xl text-[15px] text-paper/65 leading-relaxed">
-              From confusion to a living admission roadmap — in minutes.
+              From confusion to a living admission roadmap - in minutes.
             </p>
           </Reveal>
         </div>
@@ -82,15 +82,15 @@ export function FloatingDemoVideo() {
               <span className="h-2.5 w-2.5 rounded-full bg-[#E8C757]/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#6B9E7B]/80" />
               <span className="ml-3 hidden sm:block flex-1 max-w-[260px] rounded-full bg-white/[0.06] px-3 py-1 text-[10.5px] text-paper/45 truncate">
-                polaris — product demo
+                polaris - product demo
               </span>
               <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-white/[0.07] px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] font-semibold text-paper/60">
                 <span className="h-1.5 w-1.5 rounded-full bg-aurora-400 pulse-dot" />
-                Muted — tap to unmute
+                Muted - tap to unmute
               </span>
             </div>
 
-            {/* 16:9 stage — reserved height, zero layout shift */}
+            {/* 16:9 stage - reserved height, zero layout shift */}
             <div className="relative aspect-video overflow-hidden rounded-2xl bg-[#1a0f0a]">
               {active ? (
                 <iframe

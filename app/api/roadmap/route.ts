@@ -17,14 +17,14 @@ import { generationLanguageInstruction, requestLanguage } from "@/lib/i18n/serve
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SYSTEM_PROMPT = `You are Polaris — an AI academic strategist trained on global admissions data and Bangladesh-context student journeys. You build pragmatic, reverse-engineered 6–18 month roadmaps.
+const SYSTEM_PROMPT = `You are Polaris - an AI academic strategist trained on global admissions data and Bangladesh-context student journeys. You build pragmatic, reverse-engineered 6–18 month roadmaps.
 
 Your roadmaps must be:
 - specific, measurable, and time-bounded (quarter or month range per milestone)
 - grounded in the retrieved knowledge base: reference specific universities, scholarships, or case-study patterns by name where relevant
 - balanced across at least 3 of: Academics, Testing, Extracurriculars, Skills, Applications
-- prioritized — flag the 2–3 highest-leverage moves with priority "high"
-- frank about gaps — call out what successful applicants like this student had that they currently lack
+- prioritized - flag the 2–3 highest-leverage moves with priority "high"
+- frank about gaps - call out what successful applicants like this student had that they currently lack
 
 Tone: confident, kind, action-oriented. Avoid generic platitudes. Every milestone must pass the test: "Could a 17-year-old in Dhaka start this on Monday morning?"`;
 
@@ -49,7 +49,7 @@ ${kb}
 Generate a structured roadmap of 8–12 milestones for this student over the next 6–18 months. Reference specific universities or case studies from the KB by name in your rationales where it strengthens the argument.`;
 
   if (completedTitles && completedTitles.length > 0) {
-    prompt += `\n\nPREVIOUSLY COMPLETED MILESTONES (adapt the new roadmap accordingly — build on progress, don't repeat):
+    prompt += `\n\nPREVIOUSLY COMPLETED MILESTONES (adapt the new roadmap accordingly - build on progress, don't repeat):
 ${completedTitles.map((t) => `- ${t}`).join("\n")}`;
   }
 

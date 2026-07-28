@@ -1,5 +1,5 @@
 /**
- * Roadmap v2 — tree/skill-map data model.
+ * Roadmap v2 - tree/skill-map data model.
  *
  * One live roadmap document per user. The tree is branches (categories)
  * holding leaf nodes (missions). Every node carries the full "how to finish
@@ -18,8 +18,8 @@ import { z } from "zod";
 export const EDUCATION_LEVELS = [
   "early-school",  // ~Class 1–5
   "middle-school", // ~Class 6–8
-  "ssc",           // Class 9–10 / O-Level — board exam pressure
-  "hsc",           // Class 11–12 / A-Level — admission-focused
+  "ssc",           // Class 9–10 / O-Level - board exam pressure
+  "hsc",           // Class 11–12 / A-Level - admission-focused
   "gap-applicant", // gap year / actively applying
 ] as const;
 export type EducationLevel = (typeof EDUCATION_LEVELS)[number];
@@ -125,7 +125,7 @@ export type ScoreEntry = {
 export type RoadmapNode = {
   id: string;
   title: string;
-  /** WHAT to do — 1–2 sentences. */
+  /** WHAT to do - 1–2 sentences. */
   description: string;
   /** WHY it matters for admissions/profile. */
   why: string;
@@ -137,7 +137,7 @@ export type RoadmapNode = {
   /** Phase index into the timeline (0-based). */
   phase: number;
   estimatedHoursPerWeek: number;
-  /** Task checklist — completing all ≈ completion criteria met. */
+  /** Task checklist - completing all ≈ completion criteria met. */
   tasks: NodeTask[];
   /** Topic tags drive resource matching + score adaptation ("sat-math"). */
   topics: string[];

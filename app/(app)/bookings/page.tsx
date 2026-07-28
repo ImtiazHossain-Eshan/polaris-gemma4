@@ -1,5 +1,5 @@
 /**
- * /bookings — the student's consultation sessions: upcoming, pending
+ * /bookings - the student's consultation sessions: upcoming, pending
  * payment, past, cancelled. Plan-independent like the rest of the
  * consultants feature.
  */

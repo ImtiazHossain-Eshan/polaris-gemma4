@@ -1,5 +1,5 @@
 /**
- * Consultant matching — explainable recommendations from the student's real
+ * Consultant matching - explainable recommendations from the student's real
  * state: roadmap config (goal, exams, weak areas), deadline pressure, and
  * profile (country, level). Never random advertising: every match carries
  * human-readable reasons, free resources are surfaced first, and matching
@@ -59,7 +59,7 @@ function wantedServices(ctx: MatchContext): Array<{ service: ServiceKey; reason:
     wants.push({
       service: "ielts-coaching",
       reason: exams.includes("IELTS")
-        ? "IELTS is in your roadmap scope — targeted coaching beats generic prep"
+        ? "IELTS is in your roadmap scope - targeted coaching beats generic prep"
         : "Your roadmap lists language-test work as a weak area",
       weight: 34,
     });
@@ -78,7 +78,7 @@ function wantedServices(ctx: MatchContext): Array<{ service: ServiceKey; reason:
   if (/scholarship|funding|aid/.test(goal + " " + deadlineBlob)) {
     wants.push({
       service: "scholarship-decision",
-      reason: "Scholarships appear in your goal or deadlines — aid letters are negotiable",
+      reason: "Scholarships appear in your goal or deadlines - aid letters are negotiable",
       weight: 26,
     });
   }
@@ -88,7 +88,7 @@ function wantedServices(ctx: MatchContext): Array<{ service: ServiceKey; reason:
     if (hints.some((h) => goal.includes(h))) {
       wants.push({
         service: "country-guidance",
-        reason: `Your goal mentions ${country} — first-hand guidance saves agency fees`,
+        reason: `Your goal mentions ${country} - first-hand guidance saves agency fees`,
         weight: 28,
       });
       break;

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Left navigation rail — dark-glass chrome to match the landing nav pill.
+ * Left navigation rail - dark-glass chrome to match the landing nav pill.
  * Reads the active route via usePathname and renders NAV / NAV_FOOTER
  * entries from `lib/nav.ts`. Plan-gated items render disabled with an
  * upgrade hint for users below the required tier.
@@ -37,7 +37,7 @@ export function LeftNav({
   const pathname = usePathname();
   const activeId = basePath ? (pathname.split("/")[2] || "roadmap") : pathname.split("/")[1];
 
-  // Mobile drawer state — below lg the nav slides over the content.
+  // Mobile drawer state - below lg the nav slides over the content.
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => { setMobileOpen(false); }, [pathname]); // close on navigation
   useEffect(() => {
@@ -48,7 +48,7 @@ export function LeftNav({
 
   return (
     <>
-    {/* Hamburger — mobile only */}
+    {/* Hamburger - mobile only */}
     <button
       onClick={() => setMobileOpen(true)}
       aria-label="Open navigation"
@@ -62,7 +62,7 @@ export function LeftNav({
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
 
-    {/* Backdrop — mobile only */}
+    {/* Backdrop - mobile only */}
     {mobileOpen && (
       <button
         aria-label="Close navigation"
@@ -82,7 +82,7 @@ export function LeftNav({
     >
       {/* Logo */}
       <div className="px-4 pt-5 pb-3 flex items-center gap-2.5">
-        <Link href={basePath || "/roadmap"} className="flex items-center gap-2.5">
+        <Link href="/" className="flex items-center gap-2.5" aria-label="Polaris home">
           <div className="h-7 w-7 rounded-full bg-paper text-ink flex items-center justify-center">
             <PolarisStar/>
           </div>
@@ -91,7 +91,7 @@ export function LeftNav({
         <PlanBadge plan={plan} />
       </div>
 
-      {/* Path switcher — inline, so the nav sections below flow naturally. */}
+      {/* Path switcher - inline, so the nav sections below flow naturally. */}
       <div className="px-3 pb-3">
         <PathSwitcher paths={paths} activePathId={activePathId} basePath={basePath} />
       </div>
@@ -105,7 +105,7 @@ export function LeftNav({
           {NAV_FOOTER.map(item => <Item key={item.id} item={item} activeId={activeId} plan={plan} basePath={basePath} small/>)}
         </Section>
 
-        {/* Streak card — real data via /api/streak, earned by meaningful work */}
+        {/* Streak card - real data via /api/streak, earned by meaningful work */}
         <StreakWidget demo={demo} />
       </nav>
 
@@ -191,7 +191,7 @@ function NavGlyph({ id }: { id: NavItem["id"] }) {
 }
 
 /**
- * PlanBadge — designed specifically for the LeftNav's dark-glass surface.
+ * PlanBadge - designed specifically for the LeftNav's dark-glass surface.
  * The generic Pill component's contrast values don't pop against the dark
  * glass background, so we ship a tuned variant here: solid gradient fill
  * for paid tiers + subtle dark-glass overlay for free.

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Hero — cinematic dark opener.
+ * Hero - cinematic dark opener.
  *
  * Layers (back to front): drifting warm light waves → star field →
  * perspective grid floor → headline + CTAs → floating 3D product mockup
@@ -69,7 +69,7 @@ export function LandingHero() {
       {/* ── Content ── */}
       <div className="relative mx-auto w-full max-w-7xl px-6 pt-28 sm:pt-32 pb-10 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-8 items-center">
-          {/* Left — message */}
+          {/* Left - message */}
           <div className="text-center lg:text-left">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -96,7 +96,7 @@ export function LandingHero() {
               transition={{ duration: 0.8, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
             >
               Polaris builds a personalized admission roadmap from your education
-              level, scores, deadlines, and target universities — then keeps
+              level, scores, deadlines, and target universities - then keeps
               adapting as you improve.
             </motion.p>
 
@@ -139,7 +139,7 @@ export function LandingHero() {
             </motion.div>
           </div>
 
-          {/* Right — floating product mockup */}
+          {/* Right - floating product mockup */}
           <motion.div
             initial={{ opacity: 0, y: 36, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -165,7 +165,7 @@ export function LandingHero() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Floating product mockup — glass browser with live app vignettes
+   Floating product mockup - glass browser with live app vignettes
    ═══════════════════════════════════════════════════════════════════════════ */
 
 function HeroProductMockup() {
@@ -196,7 +196,7 @@ function HeroProductMockup() {
               <div className="text-[10px] uppercase tracking-[0.2em] text-paper/40 mb-2">Roadmap</div>
               <MiniTree />
               <div className="mt-2.5 flex items-center justify-between text-[10.5px]">
-                <span className="text-paper/50">Admission sprint — week 6 of 24</span>
+                <span className="text-paper/50">Admission sprint - week 6 of 24</span>
                 <span className="text-aurora-300 font-medium">62%</span>
               </div>
               <div className="mt-1.5 h-1 rounded-full bg-white/[0.07] overflow-hidden">
@@ -209,14 +209,14 @@ function HeroProductMockup() {
               </div>
             </div>
 
-            {/* Right column — strategist + fit + deadline */}
+            {/* Right column - strategist + fit + deadline */}
             <div className="flex flex-col gap-3">
               <div className="rounded-xl bg-white/[0.04] border border-white/[0.07] p-3">
                 <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-paper/40 mb-2">
                   <span className="text-nova-300"><NorthStarMark s={11} /></span> Strategist
                 </div>
                 <div className="rounded-lg rounded-bl-sm bg-white/[0.07] px-2.5 py-2 text-[10.5px] leading-snug text-paper/80">
-                  Your SAT math is 60 below target — I moved two practice blocks
+                  Your SAT math is 60 below target - I moved two practice blocks
                   into this week.
                 </div>
                 <div className="mt-2 flex gap-1 pl-1">
@@ -242,7 +242,7 @@ function HeroProductMockup() {
         </motion.div>
       </FloatWrap>
 
-      {/* Satellite cards — float at different phases for depth */}
+      {/* Satellite cards - float at different phases for depth */}
       <FloatWrap
         amplitude={9}
         duration={6}
@@ -298,7 +298,7 @@ function SatelliteChip({
   );
 }
 
-/* Mini skill tree — paths draw in, leaves pulse */
+/* Mini skill tree - paths draw in, leaves pulse */
 function MiniTree() {
   const leaves = [
     { cx: 30, cy: 18, done: true },
@@ -362,7 +362,7 @@ function MiniTree() {
   );
 }
 
-/* Fit ring — animated stroke sweep */
+/* Fit ring - animated stroke sweep */
 function FitRingCard() {
   const r = 17;
   const c = 2 * Math.PI * r;

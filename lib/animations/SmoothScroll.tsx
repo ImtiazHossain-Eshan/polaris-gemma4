@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Routes where the document itself never scrolls — the (app) shell is locked
+// Routes where the document itself never scrolls - the (app) shell is locked
 // to the viewport and each column manages its own scroll context. Lenis must
 // stay OUT of these pages because it hijacks wheel events globally and would
 // break native scrolling inside <main>, the strategist rail, and the left nav.
@@ -16,7 +16,7 @@ const APP_PREFIX_RE =
   /^\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor|demo)(\/|$)/;
 
 /**
- * SmoothScroll — wraps children in a Lenis smooth-scroll context
+ * SmoothScroll - wraps children in a Lenis smooth-scroll context
  * and wires it into GSAP ScrollTrigger so both systems stay in sync.
  *
  * Disabled on app workspace routes (see APP_PREFIX_RE) where the page is

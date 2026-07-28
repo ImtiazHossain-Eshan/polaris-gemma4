@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Resources — a knowledge galaxy, not a blog grid. Concentric orbit rings
+ * Resources - a knowledge galaxy, not a blog grid. Concentric orbit rings
  * carry floating orbs (stories, scholarships, costs, SAT/IELTS), with one
  * spotlight story card in front.
  */
@@ -50,7 +50,7 @@ export function ResourcesDreamPreview() {
         <SectionIntro
           eyebrow="The knowledge hub"
           title={<>Learn from <Accent>real stories</Accent>, scholarships, costs, and resources<Dot /></>}
-          sub="Student journeys, scholarship databases, true cost breakdowns, and SAT/IELTS material — organized around where you are in your own journey."
+          sub="Student journeys, scholarship databases, true cost breakdowns, and SAT/IELTS material - organized around where you are in your own journey."
         />
 
         <div className="relative mt-14 mx-auto max-w-3xl">
@@ -121,12 +121,12 @@ export function ResourcesDreamPreview() {
                   </span>
                   <div>
                     <div className="text-[11px] uppercase tracking-[0.18em] text-ink-muted">Student story</div>
-                    <div className="text-[14.5px] font-bold text-ink">From Dhaka to Toronto — on a scholarship</div>
+                    <div className="text-[14.5px] font-bold text-ink">From Dhaka to Toronto - on a scholarship</div>
                   </div>
                 </div>
                 <p className="mt-3 text-[13px] leading-relaxed text-ink-dim">
                   How Nusrat planned 14 months of SAT prep, essays, and aid
-                  applications — and what she would do differently.
+                  applications - and what she would do differently.
                 </p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="inline-flex items-center gap-1.5 text-[11.5px] text-ink-muted">

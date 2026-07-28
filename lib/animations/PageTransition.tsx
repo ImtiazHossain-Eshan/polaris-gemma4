@@ -30,7 +30,7 @@ const pageVariants = {
 } as const;
 
 /**
- * PageTransition — Wrap page content for smooth entry/exit animations
+ * PageTransition - Wrap page content for smooth entry/exit animations
  * Uses Framer Motion's AnimatePresence for exit coordination.
  */
 export function PageTransition({ children }: { children: React.ReactNode }) {

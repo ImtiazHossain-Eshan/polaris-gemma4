@@ -1,5 +1,5 @@
 /**
- * DELETE /api/account/delete — permanently delete the signed-in user and
+ * DELETE /api/account/delete - permanently delete the signed-in user and
  * all associated data (profile, roadmaps, links). Auth-guarded; a user can
  * only delete their own account. Wraps the existing deleteUserCascade().
  */

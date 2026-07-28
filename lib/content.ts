@@ -11,7 +11,7 @@ import caseStudiesJson from "@/data/case-studies.json";
  * get the DB data (so admin edits go live); if the DB is unavailable we fall
  * back to the JSON so the site never breaks.
  *
- * RAG embeddings (lib/rag) intentionally still read the JSON — they're built
+ * RAG embeddings (lib/rag) intentionally still read the JSON - they're built
  * offline, so admin content edits won't change retrieval until re-embedded.
  */
 

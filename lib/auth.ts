@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 
 // On Vercel, force the canonical https URL even if NEXTAUTH_URL was left as a
-// localhost/http value — otherwise NextAuth writes a non-secure cookie that the
+// localhost/http value - otherwise NextAuth writes a non-secure cookie that the
 // (HTTPS) middleware can't read, bouncing users back to /signin after login.
 const onVercel = !!process.env.VERCEL;
 if (onVercel && process.env.VERCEL_URL) {

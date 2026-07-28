@@ -1,13 +1,13 @@
 /**
  * /api/integrations/[provider]
  *
- * POST   — connect / import.
+ * POST   - connect / import.
  *            codeforces: { handle }
  *            github:     { username, token? }  (token used transiently, never stored)
- * PUT    — re-sync a connected provider (public data only).
- * DELETE — revoke: removes the stored row + imported summaries.
+ * PUT    - re-sync a connected provider (public data only).
+ * DELETE - revoke: removes the stored row + imported summaries.
  *
- * OAuth providers (gcal/gdrive/facebook) don't connect here — see
+ * OAuth providers (gcal/gdrive/facebook) don't connect here - see
  * /api/integrations/oauth/[provider]. POSTing them returns the honest
  * requires_setup error instead of faking success.
  */
@@ -33,7 +33,7 @@ export const POST = withErrorHandling(async (req, ctx: { params: Promise<{ provi
   if (!def) return fail(404, "Unknown integration");
 
   if (def.baseStatus === "coming_soon") {
-    return fail(409, `${def.name} isn't available yet — ${def.comingSoonReason ?? "coming soon."}`);
+    return fail(409, `${def.name} isn't available yet - ${def.comingSoonReason ?? "coming soon."}`);
   }
   if (def.connectionMethod === "oauth") {
     if (!envReady(def)) {

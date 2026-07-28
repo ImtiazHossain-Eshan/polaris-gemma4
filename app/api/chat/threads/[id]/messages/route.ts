@@ -1,8 +1,8 @@
 /**
  * /api/chat/threads/[id]/messages
  *
- * GET  — list messages on a thread (oldest first).
- * POST — append a user OR assistant message. Used by the client to
+ * GET  - list messages on a thread (oldest first).
+ * POST - append a user OR assistant message. Used by the client to
  *        persist BOTH sides of an exchange after the streaming response
  *        completes. Body:
  *           { role: "user" | "assistant", text, sources?, providerId?,

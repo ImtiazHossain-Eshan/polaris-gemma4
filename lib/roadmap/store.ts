@@ -3,18 +3,18 @@
 /**
  * Roadmap ⇄ Strategist shared client store.
  *
- * One module-level external store imported by BOTH client islands — the
- * roadmap page (RoadmapPageClient) and the Strategist rail (AgentChat) —
+ * One module-level external store imported by BOTH client islands - the
+ * roadmap page (RoadmapPageClient) and the Strategist rail (AgentChat) -
  * so they read/write the SAME live state regardless of where they mount
  * in the tree:
  *
- *   doc            — the live RoadmapDoc (server is source of truth; every
+ *   doc            - the live RoadmapDoc (server is source of truth; every
  *                    fetch/mutation publishes the fresh doc here)
- *   selectedNodeId — the leaf the user is focused on (clicking a node,
+ *   selectedNodeId - the leaf the user is focused on (clicking a node,
  *                    opening its modal, or "Ask Strategist about this node")
- *   events         — recent roadmap events (NODE_SELECTED, SCORE_SUBMITTED,
+ *   events         - recent roadmap events (NODE_SELECTED, SCORE_SUBMITTED,
  *                    TASK_MARKED_DONE, ROADMAP_REBALANCED, RESOURCE_OPENED…)
- *   lastSyncAt     — timestamp of the last doc publish (drives the
+ *   lastSyncAt     - timestamp of the last doc publish (drives the
  *                    "Synced with Roadmap · updated Xs ago" indicator)
  *
  * Events are mirrored to sessionStorage so the full-page /strategist chat
@@ -135,7 +135,7 @@ export const roadmapStore = {
   },
 };
 
-/** React hook — re-renders on any store change. */
+/** React hook - re-renders on any store change. */
 export function useRoadmapStrategist(): StoreState {
   return useSyncExternalStore(roadmapStore.subscribe, roadmapStore.get, roadmapStore.get);
 }
@@ -153,7 +153,7 @@ export function findNode(doc: RoadmapDoc | null, nodeId: string | null):
   return null;
 }
 
-/** "Currently growing" node — the highest-priority current mission. */
+/** "Currently growing" node - the highest-priority current mission. */
 export function currentFocus(doc: RoadmapDoc | null) {
   if (!doc) return null;
   const currents = doc.branches.flatMap((b) =>
@@ -168,7 +168,7 @@ export function currentFocus(doc: RoadmapDoc | null) {
 export type Insight = {
   text: string;
   tone: "warn" | "good" | "info";
-  /** When set, the insight is actionable — "Apply to roadmap" runs an adapt with this reason. */
+  /** When set, the insight is actionable - "Apply to roadmap" runs an adapt with this reason. */
   applyReason?: string;
 };
 
@@ -187,7 +187,7 @@ export function deriveInsight(s: StoreState): Insight | null {
     return {
       text: `Your last ${weak.label} (${weak.value}/${weak.max}) is below target. I'd add focused remediation before advancing.`,
       tone: "warn",
-      applyReason: `Recent ${weak.label} was ${weak.value}/${weak.max} — add remedial focus on the matching topics and rebalance the upcoming phases.`,
+      applyReason: `Recent ${weak.label} was ${weak.value}/${weak.max} - add remedial focus on the matching topics and rebalance the upcoming phases.`,
     };
   }
 
@@ -201,7 +201,7 @@ export function deriveInsight(s: StoreState): Insight | null {
       return {
         text: `You're ahead in ${ahead.b.category} (${ahead.p}%) but behind in ${behind.b.category} (${behind.p}%). Shift this week's energy toward ${behind.b.title}.`,
         tone: "warn",
-        applyReason: `${behind.b.category} is far behind ${ahead.b.category} — rebalance upcoming phases to prioritize "${behind.b.title}".`,
+        applyReason: `${behind.b.category} is far behind ${ahead.b.category} - rebalance upcoming phases to prioritize "${behind.b.title}".`,
       };
     }
   }
@@ -209,7 +209,7 @@ export function deriveInsight(s: StoreState): Insight | null {
   // 3. Positive momentum.
   const overall = overallProgress(doc);
   if (overall >= 60) {
-    return { text: `Strong momentum — ${overall}% of the plan is grown. Keep the current pace and protect your streak.`, tone: "good" };
+    return { text: `Strong momentum - ${overall}% of the plan is grown. Keep the current pace and protect your streak.`, tone: "good" };
   }
   const focus = currentFocus(doc);
   if (focus) {
@@ -218,7 +218,7 @@ export function deriveInsight(s: StoreState): Insight | null {
   return null;
 }
 
-/** Roadmap-aware quick prompts for the chat — replaces static suggestions. */
+/** Roadmap-aware quick prompts for the chat - replaces static suggestions. */
 export function deriveQuickPrompts(s: StoreState): string[] {
   const doc = s.doc;
   if (!doc) {
@@ -280,7 +280,7 @@ export function recentEventLabels(): string[] {
   }
 }
 
-/* ─── deterministic node tip (modal "Strategist Tip" — no LLM round-trip) ─── */
+/* ─── deterministic node tip (modal "Strategist Tip" - no LLM round-trip) ─── */
 
 export function nodeTip(doc: RoadmapDoc | null, node: RoadmapNode | null): string | null {
   if (!doc || !node) return null;
@@ -290,17 +290,17 @@ export function nodeTip(doc: RoadmapDoc | null, node: RoadmapNode | null): strin
     node.scoreInputs.some((si) => si.key === sc.key),
   );
   if (related && related.value / related.max < 0.6) {
-    return `Your last ${related.label} was ${related.value}/${related.max} — work through the resources below before attempting the timed practice, and log a new score when you re-test.`;
+    return `Your last ${related.label} was ${related.value}/${related.max} - work through the resources below before attempting the timed practice, and log a new score when you re-test.`;
   }
   if (related && related.value / related.max >= 0.85) {
-    return `Your ${related.label} (${related.value}/${related.max}) is strong — move fast here and bank the extra time for your weaker branches.`;
+    return `Your ${related.label} (${related.value}/${related.max}) is strong - move fast here and bank the extra time for your weaker branches.`;
   }
   if (node.status === "locked") {
     return `This unlocks after the earlier missions in its branch. Skim the resources now so you hit the ground running.`;
   }
   if (node.progress > 0 && node.progress < 100) {
     const left = node.tasks.filter((t) => !t.done).length;
-    return `You're ${node.progress}% in with ${left} task${left === 1 ? "" : "s"} left. Finish "${node.tasks.find((t) => !t.done)?.text ?? "the next task"}" next — it's the shortest path to done.`;
+    return `You're ${node.progress}% in with ${left} task${left === 1 ? "" : "s"} left. Finish "${node.tasks.find((t) => !t.done)?.text ?? "the next task"}" next - it's the shortest path to done.`;
   }
   if (node.priority === "high") {
     return `This is a high-priority mission for your ${doc.config.targetGoal} goal. Block ${node.estimatedHoursPerWeek}h this week before anything optional.`;

@@ -1,5 +1,5 @@
 /**
- * /resources — the Admission Knowledge Hub.
+ * /resources - the Admission Knowledge Hub.
  *
  * Server page assembles the hub's real datasets:
  *   - anonymized composite admit case studies (data/case-studies.json)

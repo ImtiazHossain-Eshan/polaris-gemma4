@@ -1,5 +1,5 @@
 /**
- * Shared UI primitives + icon set for the (app) shell — ported 1:1 from the
+ * Shared UI primitives + icon set for the (app) shell - ported 1:1 from the
  * Polaris hi-fi prototype (Polaris App.html). Presentational only (no hooks),
  * so these are importable by both server and client components. Interactive
  * primitives (Segment, SearchField, Tip) live in ./interactive.tsx.
@@ -66,7 +66,7 @@ export function Pill({ tone = "polaris", soft = true, children, className }: { t
       : "bg-aurora-500 text-white",
     ink: soft
       // text-ink-dim already swaps to LIGHT in dark mode via the CSS-var palette.
-      // No dark:text-paper override — that would resolve to DARK on dark.
+      // No dark:text-paper override - that would resolve to DARK on dark.
       ? "bg-paper-deep text-ink-dim ring-ink-faint/40 dark:bg-white/[0.10] dark:ring-white/[0.18]"
       : "bg-ink text-white dark:bg-paper dark:text-ink",
     rose: soft

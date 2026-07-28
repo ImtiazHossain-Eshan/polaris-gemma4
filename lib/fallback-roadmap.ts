@@ -135,10 +135,10 @@ export function buildFallbackRoadmap(
 
   const gaps: string[] = [];
   if (profile.gpa < 3.9) gaps.push("Academic ceiling: successful admits typically had 3.9+ unweighted.");
-  if (!profile.ecs.includes("Research")) gaps.push("No research signal — case studies show original work as a frequent differentiator.");
-  if (!profile.ecs.includes("Olympiads")) gaps.push("No Olympiad / national competition — high-leverage differentiator for STEM.");
-  if (!profile.ecs.includes("Leadership")) gaps.push("Limited leadership signal — scholarships like Rhodes / Chevening weight this heavily.");
-  if (profile.ecs.length < 2) gaps.push("Narrow extracurricular footprint — aim for depth in 2 categories, not breadth across all six.");
+  if (!profile.ecs.includes("Research")) gaps.push("No research signal - case studies show original work as a frequent differentiator.");
+  if (!profile.ecs.includes("Olympiads")) gaps.push("No Olympiad / national competition - high-leverage differentiator for STEM.");
+  if (!profile.ecs.includes("Leadership")) gaps.push("Limited leadership signal - scholarships like Rhodes / Chevening weight this heavily.");
+  if (profile.ecs.length < 2) gaps.push("Narrow extracurricular footprint - aim for depth in 2 categories, not breadth across all six.");
 
   return {
     summary: `Over the next 6–18 months, focus on translating your current ${
@@ -266,10 +266,10 @@ function buildBengaliFallbackRoadmap(
 
   const gaps: string[] = [];
   if (profile.gpa < 3.9) gaps.push("একাডেমিক ঘাটতি: সফল আবেদনকারীদের ফল সাধারণত আরও শক্তিশালী।");
-  if (!profile.ecs.includes("Research")) gaps.push("গবেষণার প্রমাণ নেই—মৌলিক কাজ আবেদনকে আলাদা করতে পারে।");
-  if (!profile.ecs.includes("Olympiads")) gaps.push("অলিম্পিয়াড বা জাতীয় প্রতিযোগিতার প্রমাণ নেই—STEM প্রোফাইলে এটি গুরুত্বপূর্ণ হতে পারে।");
-  if (!profile.ecs.includes("Leadership")) gaps.push("নেতৃত্বের প্রমাণ সীমিত—বহু স্কলারশিপে বাস্তব নেতৃত্বকে গুরুত্ব দেওয়া হয়।");
-  if (profile.ecs.length < 2) gaps.push("সহশিক্ষা কার্যক্রম সীমিত—অনেক বিষয়ে ছড়িয়ে না গিয়ে দুটি ক্ষেত্রে গভীরতা গড়ুন।");
+  if (!profile.ecs.includes("Research")) gaps.push("গবেষণার প্রমাণ নেই-মৌলিক কাজ আবেদনকে আলাদা করতে পারে।");
+  if (!profile.ecs.includes("Olympiads")) gaps.push("অলিম্পিয়াড বা জাতীয় প্রতিযোগিতার প্রমাণ নেই-STEM প্রোফাইলে এটি গুরুত্বপূর্ণ হতে পারে।");
+  if (!profile.ecs.includes("Leadership")) gaps.push("নেতৃত্বের প্রমাণ সীমিত-বহু স্কলারশিপে বাস্তব নেতৃত্বকে গুরুত্ব দেওয়া হয়।");
+  if (profile.ecs.length < 2) gaps.push("সহশিক্ষা কার্যক্রম সীমিত-অনেক বিষয়ে ছড়িয়ে না গিয়ে দুটি ক্ষেত্রে গভীরতা গড়ুন।");
 
   return {
     summary: `আগামী ৬–১৮ মাসে আপনার বর্তমান ভিত্তিকে একটি প্রতিযোগিতামূলক আন্তর্জাতিক আবেদন প্রোফাইলে রূপ দিন। সর্বোচ্চ প্রভাবের কাজ হলো নিয়মিত পরীক্ষার প্রস্তুতি, একটি গভীর ${profile.ecs.includes("Research") ? "গবেষণা ফলাফল" : "গবেষণা বা প্রকাশিত পণ্য প্রকল্প"} এবং জাতীয় পর্যায়ের একটি প্রতিযোগিতা বা স্বীকৃতি।`,

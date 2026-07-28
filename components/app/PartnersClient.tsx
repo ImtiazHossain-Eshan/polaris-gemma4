@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Partners — the honest marketplace.
+ * Partners - the honest marketplace.
  *
  *   Hero + transparent commission disclosure
  *   Tabs: Matched for you · Score boosters · Application boosters ·
@@ -11,7 +11,7 @@
  *                 claim flow (real links only), save, add-to-roadmap,
  *                 Ask Strategist
  *
- * No invented codes, discounts, or affiliate links — the registry contains
+ * No invented codes, discounts, or affiliate links - the registry contains
  * only real student benefits, no-commission recommendations, and honest
  * coming-soon partnerships. Free options always surface first.
  */
@@ -25,6 +25,7 @@ import {
 } from "@/lib/partners/registry";
 import { matchOffers, sectionize, type MatchedOffer } from "@/lib/partners/matching";
 import { BrandLogo, type BrandKey } from "./BrandLogos";
+import { GemmaOfferRefresh } from "./GemmaOfferRefresh";
 import { Icon } from "./ui";
 import { cn } from "@/lib/cn";
 
@@ -133,7 +134,7 @@ export function PartnersClient({
           Tools matched to <span className="grad-text">your actual gaps</span>
         </h1>
         <p className="text-[12.5px] text-ink-dim mt-2 max-w-2xl leading-relaxed">
-          Recommendations come from your roadmap, scores, and deadlines — free options always first.
+          Recommendations come from your roadmap, scores, and deadlines - free options always first.
         </p>
       </motion.div>
 
@@ -144,6 +145,13 @@ export function PartnersClient({
         </span>
         <p className="text-[11.5px] text-ink-dim leading-relaxed">{PARTNER_DISCLOSURE}</p>
       </div>
+
+      <GemmaOfferRefresh
+        level={level}
+        roadmapTopics={roadmapTopics}
+        weakScores={weakScores}
+        deadlineTypesSoon={deadlineTypesSoon}
+      />
 
       {/* ─── Tabs ─── */}
       <div className="flex flex-wrap items-center gap-1.5 mb-5">
@@ -170,7 +178,7 @@ export function PartnersClient({
           <div className="font-serif text-[18px] font-bold text-ink">Nothing here yet</div>
           <p className="text-[12.5px] text-ink-dim mt-1.5 max-w-md mx-auto">
             {tab === "matched"
-              ? "Generate a roadmap and log scores — matches sharpen as Polaris learns your gaps."
+              ? "Generate a roadmap and log scores - matches sharpen as Polaris learns your gaps."
               : "Check the other tabs, or save offers to find them here."}
           </p>
         </div>
@@ -233,6 +241,7 @@ function OfferMark({ o, size = 42 }: { o: PartnerOffer; size?: number }) {
     : <span className="font-serif font-bold" style={{ fontSize: size * 0.4 }}>{o.partnerName[0]}</span>;
   return (
     <span
+      data-no-translate
       className="inline-flex items-center justify-center rounded-xl text-white shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_5px_14px_-6px_rgba(0,0,0,0.4)]"
       style={{ background: o.color, height: size, width: size }}
       aria-label={o.partnerName}
@@ -339,7 +348,7 @@ function SavedView({
       <section>
         <h2 className="font-serif text-[17px] font-bold text-ink mb-3">Saved offers <span className="text-[11px] font-mono text-ink-muted font-normal">· {savedMatches.length}</span></h2>
         {savedMatches.length === 0 ? (
-          <p className="text-[12.5px] text-ink-muted italic">Nothing saved yet — tap the bookmark on any offer.</p>
+          <p className="text-[12.5px] text-ink-muted italic">Nothing saved yet - tap the bookmark on any offer.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
             {savedMatches.map((m) => (
@@ -417,7 +426,7 @@ function OfferModal({
         onToast(`"${o.title}" worked into your roadmap`);
         onClose();
       } else {
-        onToast(d?.error ?? "Couldn't update the roadmap — try again");
+        onToast(d?.error ?? "Couldn't update the roadmap - try again");
       }
     } finally {
       setBusy(false);
@@ -433,7 +442,7 @@ function OfferModal({
 
   function requestPartner() {
     roadmapStore.emit("PARTNER_COMING_SOON_REQUESTED", `Requested partner "${o.title}"`);
-    onToast(`Noted — we'll prioritize ${o.title}`);
+    onToast(`Noted - we'll prioritize ${o.title}`);
     onClose();
   }
 
@@ -501,7 +510,7 @@ function OfferModal({
             </div>
           </section>
 
-          {/* code — only if a REAL one exists */}
+          {/* code - only if a REAL one exists */}
           {o.couponCode && (
             <div className="rounded-xl bg-nova-100/60 dark:bg-nova-400/10 ring-1 ring-inset ring-nova-400/40 px-4 py-3 flex items-center gap-3">
               <span className="text-[11px] font-bold text-nova-600 dark:text-nova-200">Code</span>

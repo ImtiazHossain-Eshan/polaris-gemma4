@@ -1,4 +1,4 @@
-/** POST /api/billing/subscription — { action: "cancel" | "resume" }. */
+/** POST /api/billing/subscription - { action: "cancel" | "resume" }. */
 
 import { z } from "zod";
 import { ok, withErrorHandling, parseJson, HttpError } from "@/lib/api/respond";

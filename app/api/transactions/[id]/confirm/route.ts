@@ -1,7 +1,7 @@
 /**
  * POST /api/transactions/[id]/confirm
  *
- * Simulates payment confirmation. Body: { otp? }  — only required for
+ * Simulates payment confirmation. Body: { otp? }  - only required for
  * mobile-wallet flows. Card flows confirm without an OTP.
  *
  * Outcomes:

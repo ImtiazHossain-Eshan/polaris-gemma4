@@ -1,5 +1,5 @@
 /**
- * /strategist — full-canvas Strategist. Streams the real /api/strategist SSE
+ * /strategist - full-canvas Strategist. Streams the real /api/strategist SSE
  * endpoint (with citations) via StrategistClient; the context strip + gap table
  * are derived from the student's real profile + the probability engine.
  */
@@ -23,7 +23,7 @@ const TARGET: Record<string, { tier: UniversityForModel["tier"]; rate: number; l
 export default async function StrategistPage() {
   const user = await requireSession();
 
-  // The AI Strategist is Pro/Elite — Free users get the upgrade screen,
+  // The AI Strategist is Pro/Elite - Free users get the upgrade screen,
   // never a degraded chat (the API enforces the same gate).
   if (!planMeets(user.plan, "pro")) {
     return <StrategistLockedPage />;
@@ -42,7 +42,7 @@ export default async function StrategistPage() {
     { k: "GPA", v: inputs.gpa.toFixed(2) },
     { k: "Target", v: target.label },
     { k: "Probability", v: `${probPct}%` },
-    { k: "Country", v: profile?.country ?? "—" },
+    { k: "Country", v: profile?.country ?? "-" },
   ];
 
   const gapRows: GapRow[] = [

@@ -1,7 +1,7 @@
 /**
  * /api/billing/methods
- *   GET  — saved payment methods
- *   POST — save a method { type, last4, brand? } (display-safe data only —
+ *   GET  - saved payment methods
+ *   POST - save a method { type, last4, brand? } (display-safe data only -
  *          never full numbers; sandbox mirror of a gateway token store)
  */
 

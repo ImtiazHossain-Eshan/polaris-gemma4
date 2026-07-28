@@ -2,15 +2,15 @@
  * PATCH /api/roadmap/v2/node/[id]
  *
  * Mutate one node of the live roadmap:
- *   { toggleTask?: taskId }        — flip a checklist item (progress derives)
- *   { note?: string }              — append a note
- *   { markDone?: true }            — complete the node (unlocks the next)
- *   { score?: { key, value } }     — record a test score; rule-based
+ *   { toggleTask?: taskId }        - flip a checklist item (progress derives)
+ *   { note?: string }              - append a note
+ *   { markDone?: true }            - complete the node (unlocks the next)
+ *   { score?: { key, value } }     - record a test score; rule-based
  *                                    adaptation runs immediately and is
  *                                    visible to the Strategist on its next
  *                                    message (shared doc).
  *
- * Returns the FULL updated doc — the tree and the Strategist read the same
+ * Returns the FULL updated doc - the tree and the Strategist read the same
  * state, so the client swaps it in wholesale.
  */
 

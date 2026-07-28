@@ -1,5 +1,5 @@
 /**
- * Community — message store + safety layer.
+ * Community - message store + safety layer.
  *
  * Server-enforced rules:
  *   • link/payment-handle guard (no URLs, no wallet numbers in chat)
@@ -17,7 +17,7 @@ export type DbCommunityMessage = {
   channel: string;
   userId: string;
   userName: string;
-  /** "student" | "mentor" | "admin" — drives the badge. */
+  /** "student" | "mentor" | "admin" - drives the badge. */
   authorRole: string;
   text: string;
   reportCount: number;
@@ -47,7 +47,7 @@ const AUTO_HIDE_REPORTS = 3;
 /** No URLs, no obvious wallet/payment solicitation. */
 export function violatesSafety(text: string): string | null {
   if (/(https?:\/\/|www\.)/i.test(text)) {
-    return "Links aren't allowed in community chat — describe the resource instead.";
+    return "Links aren't allowed in community chat - describe the resource instead.";
   }
   if (/(bkash|nagad|rocket)\s*(number|no\.?|account)?\s*[:\-]?\s*01\d{8,}/i.test(text) || /\b01\d{9}\b/.test(text)) {
     return "Payment numbers can't be shared in chat. Use verified consultant bookings instead.";

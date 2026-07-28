@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * StreakWidget — the real day streak, in the dark sidebar.
+ * StreakWidget - the real day streak, in the dark sidebar.
  *
- * Reads /api/streak (earned server-side by meaningful actions only — roadmap
+ * Reads /api/streak (earned server-side by meaningful actions only - roadmap
  * progress, scores, replans, weekly tasks, deadlines; refreshes never count).
  *
  * Compact card: energy flame (lit when today is earned) + last-14-day
@@ -198,7 +198,7 @@ function StreakDetail({ data, onClose }: { data: StreakDto; onClose: () => void 
             </h2>
             <p className="text-[11.5px] text-ink-muted mt-0.5">
               {data.todayDone
-                ? "Today is locked in — real work, not refreshes."
+                ? "Today is locked in - real work, not refreshes."
                 : "Complete one roadmap task, score, or deadline today to keep it alive."}
             </p>
           </div>

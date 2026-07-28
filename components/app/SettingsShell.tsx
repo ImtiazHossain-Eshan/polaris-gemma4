@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * SettingsShell — master-detail tab UI for /settings.
+ * SettingsShell - master-detail tab UI for /settings.
  *
  * The server page passes ALL sections pre-rendered as keyed slots; this
  * component holds the active tab state and shows only that section's
@@ -48,7 +48,7 @@ const NAV: SettingsNavItem[] = [
   { id: "data",          label: "Privacy & data" },
 ];
 
-/** Line icons per section — crisp SVGs, theme-aware via currentColor. */
+/** Line icons per section - crisp SVGs, theme-aware via currentColor. */
 const NAV_PATHS: Record<SettingsSectionId, string> = {
   "profile":       "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
   "security":      "M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4",
@@ -91,12 +91,20 @@ export function SettingsShell({
   const initial = isValidTab(search.get("tab")) ? (search.get("tab") as SettingsSectionId) : DEFAULT;
   const [active, setActive] = useState<SettingsSectionId>(initial);
 
-  // Keep the URL in sync (deep-linking) — but don't push scroll.
+  // Follow deep links from the account menu even when the settings shell is
+  // already mounted.
+  useEffect(() => {
+    const requested = search.get("tab");
+    if (isValidTab(requested)) setActive(requested);
+  }, [search]);
+
+  // Keep the URL in sync (deep-linking) - but don't push scroll.
   useEffect(() => {
     const next = new URLSearchParams(Array.from(search.entries()));
     if (next.get("tab") === active) return;
     next.set("tab", active);
-    router.replace(`${basePath || "/settings"}?${next.toString()}`, { scroll: false });
+    const settingsPath = basePath ? `${basePath}/settings` : "/settings";
+    router.replace(`${settingsPath}?${next.toString()}`, { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, basePath]);
 

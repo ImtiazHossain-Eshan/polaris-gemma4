@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * RoadmapPageClient — orchestrates the roadmap v2 experience.
+ * RoadmapPageClient - orchestrates the roadmap v2 experience.
  *
  * No doc → RoadmapSetup. Doc → header (title, phase timeline, adapt) +
  * RoadmapTree + RoadmapNodeModal. Every mutation swaps in the full updated
- * doc, which is the same doc the Strategist reads — both stay in sync by
+ * doc, which is the same doc the Strategist reads - both stay in sync by
  * construction.
  */
 
@@ -76,13 +76,13 @@ export function RoadmapPageClient({
       const r = await fetch(apiBase, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        // profileSeed makes the first roadmap double as onboarding — the
+        // profileSeed makes the first roadmap double as onboarding - the
         // server creates/updates the student profile from these answers.
         body: JSON.stringify({ ...config, profileSeed: seed }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) {
-        setGenErr(d?.error ?? "Generation failed — try again.");
+        setGenErr(d?.error ?? "Generation failed - try again.");
         return;
       }
       setDoc(d.doc as RoadmapDoc);
@@ -237,7 +237,7 @@ export function RoadmapPageClient({
               roadmapStore.setDoc(next);
               roadmapStore.emit("ROADMAP_REBALANCED", "Strategist re-planned the upcoming phases");
               setAdaptOpen(false);
-              setToast("Plan adapted — upcoming missions updated.");
+              setToast("Plan adapted - upcoming missions updated.");
             }}
           />
         )}
@@ -287,7 +287,7 @@ function AdaptModal({
         body: JSON.stringify(reason.trim() ? { reason: reason.trim() } : {}),
       });
       const d = await r.json().catch(() => ({}));
-      if (!r.ok) { setErr(d?.error ?? "Adaptation failed — try again."); return; }
+      if (!r.ok) { setErr(d?.error ?? "Adaptation failed - try again."); return; }
       onDone(d.doc as RoadmapDoc);
     } finally {
       setBusy(false);
@@ -315,7 +315,7 @@ function AdaptModal({
           onChange={(e) => setReason(e.target.value)}
           rows={3}
           maxLength={2000}
-          placeholder="Optional — e.g. “My SAT math mock was 600, focus there” or “Exams in 3 weeks, reduce the load”"
+          placeholder="Optional - e.g. “My SAT math mock was 600, focus there” or “Exams in 3 weeks, reduce the load”"
           className="w-full rounded-xl border border-polaris-200 bg-paper-card px-3 py-2.5 text-[13px] text-ink placeholder:text-ink-muted/60 focus:border-polaris-400 focus:outline-none resize-none dark:border-white/[0.14] dark:bg-paper-deep"
         />
         {err && <div className="mt-2 text-[12px] text-rose-600 dark:text-rose-300">{err}</div>}

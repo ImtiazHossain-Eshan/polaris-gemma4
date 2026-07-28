@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * PremiumSelect — the app-wide replacement for native <select>.
+ * PremiumSelect - the app-wide replacement for native <select>.
  *
  *   Trigger : glass pill, hover lift, focus ring, animated chevron,
  *             "active" treatment when a real filter is applied
@@ -14,7 +14,7 @@
  *             listbox + option roles, aria-activedescendant, outside-click
  *             and focus-loss close
  *
- * Theme-aware throughout — no white panels in dark mode.
+ * Theme-aware throughout - no white panels in dark mode.
  */
 
 import {
@@ -39,7 +39,7 @@ type Props = {
   onChange: (value: string) => void;
   /** Static prefix on the trigger, e.g. "Country" → "Country: USA". */
   label?: string;
-  /** Value treated as "no filter" — trigger stays quiet on it. Default "all". */
+  /** Value treated as "no filter" - trigger stays quiet on it. Default "all". */
   quietValue?: string;
   searchable?: boolean;
   size?: "sm" | "md";
@@ -297,7 +297,7 @@ export function PremiumSelect({
   );
 }
 
-/** Small colored dot — handy for difficulty/status option icons. */
+/** Small colored dot - handy for difficulty/status option icons. */
 export function OptionDot({ className }: { className?: string }) {
   return <span className={cn("h-2 w-2 rounded-full shrink-0", className)} aria-hidden />;
 }

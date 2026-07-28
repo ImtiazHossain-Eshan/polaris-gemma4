@@ -48,7 +48,7 @@ export default function SignUpPage() {
         return;
       }
 
-      // Students go straight to /roadmap — its first-time setup IS the
+      // Students go straight to /roadmap - its first-time setup IS the
       // onboarding (collects profile + generates the first roadmap in one
       // flow). Parents and partners head to /monitor.
       window.location.href = role === "student" ? "/roadmap" : "/monitor";

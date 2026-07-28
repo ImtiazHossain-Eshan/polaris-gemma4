@@ -56,7 +56,7 @@ function mission(input: Partial<RoadmapNode> & Pick<RoadmapNode, "id" | "title" 
 const stamp = new Date("2026-07-25T12:00:00.000Z");
 export const DEMO_ROADMAP_DOC: RoadmapDoc = {
   roadmapId: "polaris-demo-roadmap",
-  title: "CS — 730-day plan",
+  title: "CS - 730-day plan",
   config: {
     educationLevel: "hsc",
     currentYear: "Class 12",
