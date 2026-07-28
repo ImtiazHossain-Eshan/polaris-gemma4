@@ -1,26 +1,30 @@
 "use client";
 
 /**
- * Theme provider - toggles `data-theme="dark"` on <html> + persists in
- * localStorage. Scoped to the authenticated (app) workspace routes only;
- * the marketing/landing/auth pages always render light.
+ * Workspace theme provider. A single persisted preference controls every app
+ * route, while the marketing site keeps its intentional light presentation.
  */
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 type Theme = "light" | "dark";
+export type ThemePreference = Theme | "auto";
 
 const STORAGE_KEY = "polaris.theme";
+const PREFERENCE_KEY = "polaris.theme.preference";
 
-// Dark theme is only allowed inside these path prefixes (the (app) shell).
-// Everything else (landing, /pricing, /case-studies, /signin, /onboard, etc.)
-// stays light regardless of user preference.
 const APP_PREFIX_RE =
   /^\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor|demo)(\/|$)/;
 
-const ThemeCtx = createContext<{ theme: Theme; toggle: () => void; set: (t: Theme) => void }>({
+const ThemeCtx = createContext<{
+  theme: Theme;
+  preference: ThemePreference;
+  toggle: () => void;
+  set: (t: ThemePreference) => void;
+}>({
   theme: "light",
+  preference: "auto",
   toggle: () => {},
   set: () => {},
 });
@@ -28,40 +32,55 @@ const ThemeCtx = createContext<{ theme: Theme; toggle: () => void; set: (t: Them
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? "/";
   const isAppRoute = APP_PREFIX_RE.test(pathname);
-  const isDemoRoute = pathname === "/demo" || pathname.startsWith("/demo/");
   const [theme, setTheme] = useState<Theme>("light");
+  const [preference, setPreference] = useState<ThemePreference>("auto");
 
-  // Hydrate from localStorage / system preference on mount (client only).
-  // If we're on a marketing route, always force light and don't touch storage.
   useEffect(() => {
     if (!isAppRoute) {
       apply("light");
       setTheme("light");
       return;
     }
-    if (isDemoRoute) {
-      apply("dark");
-      setTheme("dark");
-      return;
-    }
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === "dark" || stored === "light") {
-      apply(stored);
-      setTheme(stored);
-      return;
-    }
-    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-    const initial: Theme = prefersDark ? "dark" : "light";
-    apply(initial);
-    setTheme(initial);
-  }, [isAppRoute, isDemoRoute]);
+
+    const savedPreference = localStorage.getItem(PREFERENCE_KEY) as ThemePreference | null;
+    const legacyTheme = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    const demoDefault = pathname === "/demo" || pathname.startsWith("/demo/");
+    const nextPreference: ThemePreference =
+      savedPreference === "light" || savedPreference === "dark" || savedPreference === "auto"
+        ? savedPreference
+        : legacyTheme === "light" || legacyTheme === "dark"
+          ? legacyTheme
+          : demoDefault
+            ? "dark"
+            : "auto";
+    const nextTheme = resolveTheme(nextPreference);
+
+    apply(nextTheme);
+    setTheme(nextTheme);
+    setPreference(nextPreference);
+    localStorage.setItem(STORAGE_KEY, nextTheme);
+
+    if (nextPreference !== "auto") return;
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const syncSystemTheme = () => {
+      const resolved: Theme = media?.matches ? "dark" : "light";
+      apply(resolved);
+      setTheme(resolved);
+      localStorage.setItem(STORAGE_KEY, resolved);
+    };
+    media?.addEventListener?.("change", syncSystemTheme);
+    return () => media?.removeEventListener?.("change", syncSystemTheme);
+  }, [isAppRoute, pathname]);
 
   const set = useCallback(
-    (t: Theme) => {
-      if (!isAppRoute) return; // never allow toggling theme outside the app shell
-      apply(t);
-      localStorage.setItem(STORAGE_KEY, t);
-      setTheme(t);
+    (nextPreference: ThemePreference) => {
+      if (!isAppRoute) return;
+      const nextTheme = resolveTheme(nextPreference);
+      apply(nextTheme);
+      localStorage.setItem(PREFERENCE_KEY, nextPreference);
+      localStorage.setItem(STORAGE_KEY, nextTheme);
+      setPreference(nextPreference);
+      setTheme(nextTheme);
     },
     [isAppRoute],
   );
@@ -70,7 +89,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     set(theme === "dark" ? "light" : "dark");
   }, [theme, set]);
 
-  return <ThemeCtx.Provider value={{ theme, toggle, set }}>{children}</ThemeCtx.Provider>;
+  return <ThemeCtx.Provider value={{ theme, preference, toggle, set }}>{children}</ThemeCtx.Provider>;
+}
+
+function resolveTheme(preference: ThemePreference): Theme {
+  if (preference === "light" || preference === "dark") return preference;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function apply(t: Theme) {
@@ -83,20 +107,22 @@ export function useTheme() {
   return useContext(ThemeCtx);
 }
 
-/**
- * Tiny inline script that runs BEFORE React hydration to prevent a flash
- * of unstyled light when the user prefers dark. Only honors the saved theme
- * on app routes - marketing/landing pages are always forced to light.
- */
+/** Set the resolved theme before hydration so app navigation never flashes. */
 export const THEME_PREFLIGHT_SCRIPT = `
 (function(){
   try {
     var p = location.pathname || '/';
     var isApp = /^\\/(strategist|dashboard|account|billing|connections|deadlines|family|partners|consultants|community|bookings|resources|roadmap|settings|transactions|universities|admin|monitor|demo)(\\/|$)/.test(p);
-    var t = p === '/demo' || p.indexOf('/demo/') === 0 ? 'dark' : 'light';
-    if (isApp && t !== 'dark') {
-      var s = localStorage.getItem('${STORAGE_KEY}');
-      t = s === 'dark' || s === 'light' ? s :
+    var t = 'light';
+    if (isApp) {
+      var pref = localStorage.getItem('${PREFERENCE_KEY}');
+      var saved = localStorage.getItem('${STORAGE_KEY}');
+      var demoDefault = p === '/demo' || p.indexOf('/demo/') === 0;
+      if (pref === 'dark' || pref === 'light') t = pref;
+      else if (pref === 'auto') t =
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      else if (saved === 'dark' || saved === 'light') t = saved;
+      else t = demoDefault ? 'dark' :
         (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     }
     document.documentElement.dataset.theme = t;

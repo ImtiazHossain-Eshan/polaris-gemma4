@@ -16,9 +16,9 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useTheme, type ThemePreference } from "@/components/app/ThemeProvider";
 
 const LS_NOTIFY = "polaris.prefs.notify";
-const LS_THEME = "polaris.prefs.theme";
 const LS_MARKETPLACE = "polaris.prefs.marketplace";
 
 type NotifyPrefs = {
@@ -33,8 +33,6 @@ const DEFAULT_NOTIFY: NotifyPrefs = {
   strategistInsights: true,
   familyDigest: true,
 };
-
-type Theme = "light" | "dark" | "auto";
 
 export function SettingsNotifications() {
   const [prefs, setPrefs] = useState<NotifyPrefs>(DEFAULT_NOTIFY);
@@ -83,24 +81,16 @@ export function SettingsNotifications() {
 }
 
 export function SettingsAppearance() {
-  const [theme, setTheme] = useState<Theme>("auto");
+  const { preference, set: setTheme } = useTheme();
   const [glass, setGlass] = useState<"soft" | "default" | "strong">("default");
 
   useEffect(() => {
     try {
-      const t = (localStorage.getItem(LS_THEME) as Theme | null) ?? "auto";
-      setTheme(t);
-      applyTheme(t);
       const g = (localStorage.getItem("polaris.prefs.glass") as typeof glass | null) ?? "default";
       setGlass(g);
+      document.documentElement.dataset.glass = g;
     } catch { /* ignore */ }
   }, []);
-
-  function pickTheme(t: Theme) {
-    setTheme(t);
-    try { localStorage.setItem(LS_THEME, t); } catch { /* ignore */ }
-    applyTheme(t);
-  }
 
   function pickGlass(g: typeof glass) {
     setGlass(g);
@@ -113,8 +103,8 @@ export function SettingsAppearance() {
       <div>
         <div className="text-[12.5px] font-medium text-ink mb-2">Theme</div>
         <Segment
-          value={theme}
-          onChange={(v) => pickTheme(v as Theme)}
+          value={preference}
+          onChange={(v) => setTheme(v as ThemePreference)}
           options={[
             { value: "light", label: "Light" },
             { value: "dark",  label: "Dark" },
@@ -122,7 +112,7 @@ export function SettingsAppearance() {
           ]}
         />
         <div className="mt-2 text-[11.5px] text-ink-muted">
-          The landing page is fully themed; workspace dark-mode coverage is rolling out incrementally.
+          Your choice stays active while you move between workspace pages.
         </div>
       </div>
 
@@ -243,13 +233,4 @@ function Segment<T extends string>({
       ))}
     </div>
   );
-}
-
-function applyTheme(t: Theme) {
-  const root = document.documentElement;
-  if (t === "auto") {
-    root.removeAttribute("data-theme");
-  } else {
-    root.dataset.theme = t;
-  }
 }

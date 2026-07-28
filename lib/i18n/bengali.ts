@@ -9,6 +9,7 @@
 import { BN_PRETRANSLATED } from "./bengali.pretranslated";
 import { BN_REVIEWED_OVERRIDES } from "./bengali.reviewed";
 import { BN_LANDING } from "./bengali.landing";
+import { BN_JUDGE_WORKSPACE } from "./bengali.judge";
 
 const BN_DIGITS: Record<string, string> = {
   "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪",
@@ -1159,6 +1160,8 @@ function dynamicBengali(text: string): string {
     .replace(/^(\d+)\s+yearly phases?$/i, (_m, n) => `${toBengaliDigits(n)}টি বার্ষিক ধাপ`)
     .replace(/^(\d+)\/(\d+)\s+missions done$/i, (_m, a, b) => `${toBengaliDigits(a)}/${toBengaliDigits(b)}টি মিশন সম্পন্ন`)
     .replace(/^(\d+)-day plan$/i, (_m, n) => `${toBengaliDigits(n)} দিনের প্ল্যান`)
+    .replace(/^(\d+)%\s+complete$/i, (_m, n) => `${toBengaliDigits(n)}% সম্পন্ন`)
+    .replace(/^(\d+)\s+facts?$/i, (_m, n) => `${toBengaliDigits(n)}টি তথ্য`)
     .replace(/^(\d+)\s+new signals?$/i, (_m, n) => `${toBengaliDigits(n)}টি নতুন সংকেত`);
 }
 
@@ -1177,7 +1180,7 @@ export function translateUiText(value: string): string {
     return value;
   }
 
-  const exact = BN_LANDING[text] ?? BN_UI[text] ?? BN_UI_SECONDARY[text] ?? BN_REVIEWED_OVERRIDES[text];
+  const exact = BN_JUDGE_WORKSPACE[text] ?? BN_LANDING[text] ?? BN_UI[text] ?? BN_UI_SECONDARY[text] ?? BN_REVIEWED_OVERRIDES[text];
   if (exact) return `${leading}${toBengaliDigits(exact)}${trailing}`;
 
   const translated = dynamicBengali(text);

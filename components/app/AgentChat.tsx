@@ -21,6 +21,11 @@ import {
   type RoadmapDoc,
 } from "@/lib/roadmap/store";
 import { cn } from "@/lib/cn";
+import {
+  appendDemoStrategistMessage,
+  ensureDemoStrategistThread,
+  getDemoStrategistThread,
+} from "@/lib/demo/strategist-history";
 
 type Props = {
   studentInitials: string;
@@ -80,9 +85,22 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
   // so it reads the cache before anything rewrites it).
   const [messages, setMessages] = useState<StrategistMessage[]>([]);
   useEffect(() => {
+    if (demo) {
+      const thread = getDemoStrategistThread();
+      if (thread?.messages.length) {
+        setMessages(thread.messages.map((message) => ({
+          id: message.id,
+          role: message.role === "user" ? "user" : "agent",
+          text: message.text,
+          sources: message.sources,
+          createdAt: message.createdAt,
+        })));
+      }
+      return;
+    }
     const cached = loadCachedThread();
     if (cached.length) setMessages(cached);
-  }, []);
+  }, [demo]);
   const [draft, setDraft] = useState("");
   const [streaming, setStreaming] = useState(false);
   // What the strategist is doing right now ("Searching the web…" etc).
@@ -326,8 +344,8 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
   }, [messages, streaming]);
 
   useEffect(() => {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50)));
-  }, [messages]);
+    if (!demo) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50)));
+  }, [messages, demo]);
 
   /* ─── Thread sync with the /strategist page ───
    * Both surfaces share one active thread (id in localStorage). The rail
@@ -338,7 +356,21 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
   const loadedThreadRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (demo) return;
+    if (demo) {
+      const thread = getDemoStrategistThread();
+      threadIdRef.current = thread?.id ?? null;
+      loadedThreadRef.current = thread?.id ?? null;
+      if (thread?.messages.length) {
+        setMessages(thread.messages.map((message) => ({
+          id: message.id,
+          role: message.role === "user" ? "user" : "agent",
+          text: message.text,
+          sources: message.sources,
+          createdAt: message.createdAt,
+        })));
+      }
+      return;
+    }
     const id = localStorage.getItem(ACTIVE_THREAD_KEY) || null;
     threadIdRef.current = id;
     if (!id || loadedThreadRef.current === id) return;
@@ -365,7 +397,12 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
 
   /** Create (or reuse) the shared thread; returns its id. */
   const ensureThread = useCallback(async (firstUserText: string): Promise<string | null> => {
-    if (demo) return null;
+    if (demo) {
+      const thread = ensureDemoStrategistThread(firstUserText, mode, "sidebar");
+      threadIdRef.current = thread.id;
+      loadedThreadRef.current = thread.id;
+      return thread.id;
+    }
     if (threadIdRef.current) return threadIdRef.current;
     try {
       const title = firstUserText.length > 60 ? firstUserText.slice(0, 57) + "…" : firstUserText;
@@ -386,7 +423,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
     } catch {
       return null;
     }
-  }, [demo]);
+  }, [demo, mode]);
 
   const persistMessage = useCallback(async (
     tid: string,
@@ -394,7 +431,15 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
     text: string,
     sources?: StrategistSource[],
   ) => {
-    if (demo || !text.trim()) return;
+    if (!text.trim()) return;
+    if (demo) {
+      appendDemoStrategistMessage(tid, {
+        role,
+        text,
+        sources: sources ?? [],
+      }, mode, "sidebar");
+      return;
+    }
     try {
       await fetch(`/api/chat/threads/${tid}/messages`, {
         method: "POST",
@@ -448,6 +493,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
           kind: "kb" as const,
         }));
         setMessages((items) => withLastAgent(items, (message) => ({ ...message, text: data.text, sources })));
+        if (tid) void persistMessage(tid, "assistant", data.text, sources);
         setRouteInfo({ provider: "Gemma 4", model: data.trace?.model || "Gemma 4", reason: "Competition demo route" });
         return;
       }

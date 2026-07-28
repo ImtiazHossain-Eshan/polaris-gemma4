@@ -49,6 +49,45 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
   </tr>
 </table>
 
+### Gemma 4 inside the execution loop
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/13-gemma-evidence-graph.png" alt="Gemma 4 Evidence-to-Action Graph" />
+      <br />
+      <strong>Evidence-to-Action Graph</strong><br />
+      Gemma 4 separates a student claim from its proof, identifies the missing verification, and returns the next evidence action.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/14-gemma-mock-exams.png" alt="Gemma 4 adaptive SAT and IELTS review" />
+      <br />
+      <strong>Adaptive mock review</strong><br />
+      Original questions are scored deterministically. Gemma 4 receives the weak skills and produces a bounded recovery plan.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/15-gemma-smart-routine.png" alt="Gemma 4 Smart Routine" />
+      <br />
+      <strong>Smart Routine</strong><br />
+      Natural-language schedule requests become validated, editable weekly blocks with manual control preserved.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/16-gemma-offer-radar.png" alt="Gemma 4 student Offer Radar" />
+      <br />
+      <strong>Offer Radar</strong><br />
+      Official offer records stay attached to their URLs while Gemma 4 explains eligibility and fit against the live roadmap.
+    </td>
+  </tr>
+</table>
+
+### One history across both Strategists
+
+![Shared main and side-panel Strategist conversation history](docs/assets/screenshots/18-shared-strategist-history.png)
+
+The full-page Strategist and the right-side Strategist now write to the same searchable history. Each public-demo thread records whether it was used in the main surface, the side panel, or both, and keeps its messages across refreshes in browser storage with an in-memory fallback.
+
 ### Settings and model transparency that work in the public demo
 
 <table>
@@ -142,7 +181,7 @@ The enforcement boundary lives in:
 
 ## Executed Kaggle notebook
 
-[`notebooks/polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) is an executed, judge-readable companion to the live app. It includes:
+[`notebooks/polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) is a 36-cell, fully executed, judge-readable technical companion to the live app. It includes:
 
 - the fixed Gemma 4 model allowlist and hidden-secret setup;
 - inspectable retrieval for a Bangladesh-context student;
@@ -150,7 +189,10 @@ The enforcement boundary lives in:
 - a Gemma 4 Smart Routine parse;
 - adaptive SAT review;
 - Bengali structured generation;
-- 8 automated contract checks with recorded outputs;
+- a full-product Gemma 4 responsibility map and provider audit;
+- roadmap synthesis and grounded Strategist memory examples;
+- Offer Radar provenance and shared conversation-state contracts;
+- 18 automated full-project checks with recorded outputs;
 - a direct mapping from notebook cells to live product surfaces.
 
 No credential value is stored in the notebook.
@@ -165,7 +207,7 @@ No credential value is stored in the notebook.
 | Transparent scoring | Produces directional university-fit estimates and factor contributions |
 | Zod and JSON Schema | Validate public inputs and structured model outputs |
 | MongoDB | Stores real account profiles, roadmaps, progress, and conversations |
-| Browser-local demo state | Makes public profile and settings controls functional without authentication |
+| Browser-local demo state | Keeps profile, settings, shared Strategist history, memory, and routines functional without authentication |
 
 ## Run locally
 
@@ -224,7 +266,7 @@ pnpm lint
 pnpm build
 ```
 
-The final responsive check covers the landing page, full-page Strategist, 416px right rail, Action Lab, functional profile/settings tabs, and English/Bengali workspace states.
+The final responsive check covers the landing video transition, persistent theme navigation, shared Strategist history, full-page Strategist, 416px right rail, Action Lab, functional profile/settings tabs, and English/Bengali workspace states.
 
 ## Responsible use
 

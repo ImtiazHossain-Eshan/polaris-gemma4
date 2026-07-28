@@ -15,6 +15,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
+import {
+  createDemoStrategistThread,
+  listDemoStrategistThreads,
+  removeDemoStrategistThread,
+  renameDemoStrategistThread,
+  subscribeDemoStrategistHistory,
+  type DemoStrategistMode,
+  type DemoStrategistSurface,
+} from "@/lib/demo/strategist-history";
 
 export type ThreadSummary = {
   id: string;
@@ -22,6 +31,8 @@ export type ThreadSummary = {
   messageCount: number;
   lastMessageAt: string;
   createdAt: string;
+  mode?: DemoStrategistMode;
+  surfaces?: DemoStrategistSurface[];
 };
 
 type Props = {
@@ -48,17 +59,18 @@ export function ChatHistoryRail({
   activeId, onSelect, onNew, collapsed, onToggleCollapse, reloadKey,
   width, onResize, resizing, onResizeStart, onResizeEnd, demo = false,
 }: Props) {
-  const [threads, setThreads] = useState<ThreadSummary[]>(demo ? [{
-    id: "demo-conversation", title: "Why am I at 41% for MIT?", messageCount: 2,
-    lastMessageAt: new Date().toISOString(), createdAt: new Date().toISOString(),
-  }] : []);
+  const [threads, setThreads] = useState<ThreadSummary[]>([]);
   const [loading, setLoading] = useState(!demo);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftTitle, setDraftTitle] = useState("");
 
   const load = useCallback(async () => {
-    if (demo) return;
+    if (demo) {
+      setThreads(toDemoSummaries());
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/chat/threads", { cache: "no-store" });
@@ -73,12 +85,20 @@ export function ChatHistoryRail({
 
   useEffect(() => { void load(); }, [load, reloadKey]);
 
+  useEffect(() => {
+    if (!demo) return;
+    const sync = () => setThreads(toDemoSummaries());
+    sync();
+    return subscribeDemoStrategistHistory(sync);
+  }, [demo]);
+
   async function rename(id: string, title: string) {
     const trimmed = title.trim();
     if (!trimmed) { setEditingId(null); return; }
     setThreads((prev) => prev.map((t) => t.id === id ? { ...t, title: trimmed } : t));
     setEditingId(null);
-    if (!demo) await fetch(`/api/chat/threads/${id}`, {
+    if (demo) renameDemoStrategistThread(id, trimmed);
+    else await fetch(`/api/chat/threads/${id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ title: trimmed }),
@@ -88,8 +108,14 @@ export function ChatHistoryRail({
   async function remove(id: string) {
     if (!confirm("Delete this conversation? This cannot be undone.")) return;
     setThreads((prev) => prev.filter((t) => t.id !== id));
-    if (!demo) await fetch(`/api/chat/threads/${id}`, { method: "DELETE" }).catch(() => { /* ignore */ });
-    if (activeId === id) onNew();
+    if (demo) removeDemoStrategistThread(id);
+    else await fetch(`/api/chat/threads/${id}`, { method: "DELETE" }).catch(() => { /* ignore */ });
+    if (activeId === id) {
+      if (demo) {
+        const next = listDemoStrategistThreads()[0] ?? createDemoStrategistThread("general", "main");
+        onNew(next.id);
+      } else onNew();
+    }
   }
 
   function createNew() {
@@ -97,16 +123,8 @@ export function ChatHistoryRail({
       onNew();
       return;
     }
-    const now = new Date().toISOString();
-    const id = `demo-${Date.now()}`;
-    setThreads((previous) => [{
-      id,
-      title: "New conversation",
-      messageCount: 0,
-      lastMessageAt: now,
-      createdAt: now,
-    }, ...previous]);
-    onNew(id);
+    const thread = createDemoStrategistThread("general", "main");
+    onNew(thread.id);
   }
 
   const filtered = useMemo(() => {
@@ -219,10 +237,16 @@ export function ChatHistoryRail({
                         type="button"
                         onClick={() => onSelect(t.id)}
                         onDoubleClick={() => { setEditingId(t.id); setDraftTitle(t.title); }}
-                        className="w-full text-left px-2.5 py-1.5 text-[12.5px] text-ink truncate"
+                        className="w-full text-left px-2.5 py-2 pr-14 text-ink"
                         title={t.title}
                       >
-                        {t.title}
+                        <span className="block truncate text-[12.5px] font-medium">{t.title}</span>
+                        {t.surfaces?.length ? (
+                          <span className="mt-0.5 flex items-center gap-1 text-[9.5px] uppercase tracking-[0.12em] text-ink-muted">
+                            {surfaceLabel(t.surfaces)}
+                            {t.mode ? <><span aria-hidden>&middot;</span><span>{t.mode}</span></> : null}
+                          </span>
+                        ) : null}
                       </button>
                     )}
                     {!isEditing && (
@@ -324,6 +348,22 @@ function ResizeHandle({
 }
 
 /* ─── helpers ─── */
+function toDemoSummaries(): ThreadSummary[] {
+  return listDemoStrategistThreads().map((thread) => ({
+    id: thread.id,
+    title: thread.title,
+    messageCount: thread.messages.length,
+    lastMessageAt: thread.lastMessageAt,
+    createdAt: thread.createdAt,
+    mode: thread.mode,
+    surfaces: thread.surfaces,
+  }));
+}
+
+function surfaceLabel(surfaces: DemoStrategistSurface[]) {
+  if (surfaces.includes("main") && surfaces.includes("sidebar")) return "Main + side panel";
+  return surfaces.includes("sidebar") ? "Side panel" : "Main Strategist";
+}
 function bucketByDate(threads: ThreadSummary[]): Record<string, ThreadSummary[]> {
   const now = Date.now();
   const day = 24 * 60 * 60 * 1000;

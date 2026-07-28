@@ -32,6 +32,12 @@ import { MarkdownMessage, type CitationSource } from "./MarkdownMessage";
 import { ChatHistoryRail } from "./ChatHistoryRail";
 import { CompactModelPicker, type CmpRouteMode } from "./CompactModelPicker";
 import { cn } from "@/lib/cn";
+import {
+  appendDemoStrategistMessage,
+  ensureDemoStrategistThread,
+  getDemoStrategistThread,
+  selectDemoStrategistThread,
+} from "@/lib/demo/strategist-history";
 
 type Tier = "free" | "paid" | "local";
 type Mode = "general" | "research" | "study" | "coding";
@@ -159,10 +165,12 @@ export function StrategistClient({
   // Keep the shared key in sync so the right-rail picks up this conversation.
   useEffect(() => {
     try {
-      if (threadId) localStorage.setItem(ACTIVE_THREAD_KEY, threadId);
-      else localStorage.removeItem(ACTIVE_THREAD_KEY);
+      if (threadId) {
+        localStorage.setItem(ACTIVE_THREAD_KEY, threadId);
+        if (demo) selectDemoStrategistThread(threadId);
+      } else localStorage.removeItem(ACTIVE_THREAD_KEY);
     } catch { /* ignore */ }
-  }, [threadId]);
+  }, [threadId, demo]);
   const [railCollapsed, setRailCollapsed] = useState(false);
   const [threadsReloadKey, setThreadsReloadKey] = useState(0);
   const [railWidth, setRailWidth] = useState(260);
@@ -304,7 +312,26 @@ export function StrategistClient({
 
   // Load messages when threadId changes.
   useEffect(() => {
-    if (demo) return;
+    if (demo) {
+      const thread = getDemoStrategistThread(threadId);
+      if (!thread || thread.messages.length === 0) {
+        setMessages([{
+          id: "seed",
+          role: "agent",
+          text: `I'm grounded in your profile, your roadmap, your saved memories, and the live web. Ask me to turn any gap into a plan.`,
+          sources: [],
+          gap: true,
+        }]);
+        return;
+      }
+      setMessages(thread.messages.map((message) => ({
+        id: message.id,
+        role: message.role === "user" ? "user" : "agent",
+        text: message.text,
+        sources: message.sources,
+      })));
+      return;
+    }
     if (!threadId) {
       // Fresh session - reset to seed.
       setMessages([{
@@ -337,7 +364,12 @@ export function StrategistClient({
 
   // Create or reuse a thread for the current send.
   const ensureThread = useCallback(async (firstUserText: string): Promise<string | null> => {
-    if (demo) return null;
+    if (demo) {
+      const thread = ensureDemoStrategistThread(firstUserText, mode, "main");
+      setThreadId(thread.id);
+      setThreadsReloadKey((key) => key + 1);
+      return thread.id;
+    }
     if (threadId) return threadId;
     try {
       const title = firstUserText.length > 60 ? firstUserText.slice(0, 57) + "…" : firstUserText;
@@ -356,7 +388,7 @@ export function StrategistClient({
       }
     } catch { /* swallow */ }
     return null;
-  }, [threadId, demo]);
+  }, [threadId, demo, mode]);
 
   // Persist a user or assistant message.
   const persistMessage = useCallback(async (
@@ -365,7 +397,15 @@ export function StrategistClient({
     text: string,
     extras: Partial<{ sources: WebSource[]; providerId: string; modelId: string; mode: Mode }> = {},
   ) => {
-    if (demo) return;
+    if (demo) {
+      appendDemoStrategistMessage(tid, {
+        role,
+        text,
+        sources: extras.sources ?? [],
+      }, mode, "main");
+      setThreadsReloadKey((key) => key + 1);
+      return;
+    }
     try {
       await fetch(`/api/chat/threads/${tid}/messages`, {
         method: "POST",
@@ -374,7 +414,7 @@ export function StrategistClient({
       });
       setThreadsReloadKey((k) => k + 1);
     } catch { /* best-effort */ }
-  }, [demo]);
+  }, [demo, mode]);
 
   function startNewChat(nextThreadId?: string) {
     setThreadId(nextThreadId ?? null);
