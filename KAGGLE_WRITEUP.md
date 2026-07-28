@@ -1,5 +1,7 @@
 # Polaris: A Gemma 4 North Star for Global Education
 
+**Team:** Imtiaz Hossain · Mofftasim Hossain Sayem
+
 ## Turning a Bangladeshi student's ambition into an evidence-grounded plan they can start this week
 
 ### The problem
@@ -25,6 +27,8 @@ Judges can use the public `/demo` workspace without creating an account or enter
 
 The entire public workspace can switch between English and Bengali. Navigation, generated roadmap content, validation messages, fallback guidance, and Strategist answers follow the selected language while proper names and standard admissions acronyms remain intact.
 
+Action Lab extends the roadmap beyond chat. Its **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time and shows what should change. The **Evidence-to-Action Graph** separates a student's claim from proof, identifies the remaining gap, and produces the next measurable verification step. Students can also take original English IELTS/SAT mock questions, receive a Gemma-powered adaptive review, build a weekly routine manually or from natural language, and watch curated official exam lessons without leaving Polaris.
+
 ### Why Gemma 4 is core
 
 Templates can say "improve your GPA" or "join an extracurricular." The difficult part is deciding what matters most for this student, resolving trade-offs across several admissions dimensions, and grounding recommendations in relevant evidence. Gemma 4 performs that central reasoning and synthesis.
@@ -36,15 +40,21 @@ Gemma 4 powers every generative feature:
 1. structured roadmap generation;
 2. the streaming academic Strategist;
 3. research synthesis over retrieved evidence;
-4. durable student-memory extraction.
+4. Decision Twin scenario analysis and Evidence Graph auditing;
+5. adaptive mock-exam review and natural-language routine parsing;
+6. durable student-memory extraction.
 
 There is one model registry entry and one provider adapter. Model IDs are selected from a server-side constant; client values and old saved preferences cannot override it. No other LLM or generative foundation model is used. Optional Tavily search only retrieves public snippets. BM25 retrieval, probability scoring, and the clearly labeled offline planner are deterministic algorithms.
 
 ### Technical architecture
 
-The request path is:
+The core request path is:
 
 `Student form -> Zod validation -> BM25 retrieval -> prompt + flat JSON schemas -> parallel Gemma 4 stages -> structured roadmap -> interactive UI`
+
+Action Lab follows the same boundary:
+
+`Changed constraint, claim, exam result, or routine request -> validation -> compact Gemma 4 schema -> deterministic normalization -> editable UI`
 
 Our knowledge base contains curated documents covering universities, scholarships, admissions principles, and accepted-student patterns. A deterministic BM25 implementation ranks the most relevant documents and places the top evidence in Gemma 4's context. This design makes retrieval inspectable, fast, and independent of another generative model.
 
@@ -63,6 +73,8 @@ The same repository also contains the account-backed product. The public workspa
 **Local realism.** Prompts explicitly require actions a student in Dhaka can begin on Monday, accounting for resource and access constraints instead of assuming a US counseling ecosystem.
 
 **Evidence plus judgment.** Retrieval supplies facts and patterns; Gemma 4 converts them into a coherent strategy. Neither component alone solves the problem.
+
+**Decision-to-evidence loop.** Students can test a possible decision, see how priorities move, convert the new goal into verifiable evidence, and place the next action directly into a weekly routine.
 
 ### Technical challenges
 
@@ -91,7 +103,9 @@ We would add source freshness checks, university-specific evidence packs, Bangla
 ### Links
 
 - **Live app and demo:** https://polaris-gemma4.vercel.app/demo
+- **Action Lab:** https://polaris-gemma4.vercel.app/demo/action-lab
 - **Public repository:** https://github.com/ImtiazHossain-Eshan/polaris-gemma4
+- **Executed notebook:** `notebooks/polaris_gemma4_decision_lab.ipynb`
 - **Model:** Gemma 4 via the official Google Gen AI SDK
 
 Polaris turns open-model intelligence into something a student can use: a north star, a sequence of next steps, and a reason to begin now.

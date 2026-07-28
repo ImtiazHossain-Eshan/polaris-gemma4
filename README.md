@@ -11,7 +11,11 @@
 <p align="center">
   <a href="https://polaris-gemma4.vercel.app/demo">Open the live demo</a>
   ·
+  <a href="https://polaris-gemma4.vercel.app/demo/action-lab">Try Action Lab</a>
+  ·
   <a href="KAGGLE_WRITEUP.md">Read the project writeup</a>
+  ·
+  <a href="notebooks/polaris_gemma4_decision_lab.ipynb">Open the executed notebook</a>
   ·
   <a href="docs/ARCHITECTURE.md">Explore the architecture</a>
 </p>
@@ -69,6 +73,20 @@ The roadmap connects long-term goals to priorities, milestones, deadlines, and v
 
 The interface, roadmap content, error states, fallback guidance, navigation, and Strategist responses support Bengali end to end. Proper names and standard admissions acronyms remain unchanged where translation would reduce clarity.
 
+### Action Lab: decisions become evidence
+
+[Open Action Lab](https://polaris-gemma4.vercel.app/demo/action-lab) to use five connected tools in the same judge workspace:
+
+| Tool | What it does | Gemma 4's role |
+| --- | --- | --- |
+| Decision Twin | Stress-tests a changed score, deadline, budget, country, or available study time | Rebalances the plan and explains the trade-off |
+| Evidence-to-Action Graph | Converts an application claim into proof, a readable signal, a gap, and the next verification step | Audits evidence without treating unsupported claims as facts |
+| IELTS and SAT Mock Exams | Runs original English practice questions with immediate scoring | Produces a focused review from the student's answers |
+| Smart Routine | Adds, edits, and removes weekly study blocks manually or from natural language | Parses requests such as “Add math practice Monday from 9 to 10 pm” into validated schedule data |
+| Video Learning | Embeds official IELTS and SAT lessons and recommends the next lesson by goal | Connects learning intent to a focused video sequence |
+
+The executed [`polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) reproduces the Decision Twin and Evidence Graph pipeline with visible model outputs, retrieval results, Bengali generation, and automated engineering checks. No credential value is stored in the notebook.
+
 ## How Gemma 4 powers Polaris
 
 Gemma 4 is the only generative model in the application. It is not an optional chat layer: it performs the central planning and synthesis work.
@@ -79,7 +97,7 @@ flowchart LR
   B --> C["BM25 evidence retrieval"]
   C --> D["Gemma 4 reasoning"]
   D --> E["Schema and response validation"]
-  E --> F["Roadmap, Strategist, and memory"]
+  E --> F["Roadmap, Action Lab, Strategist, and routine"]
   D -. "Unavailable" .-> G["Clearly labeled deterministic fallback"]
 ```
 
@@ -87,6 +105,10 @@ flowchart LR
 - **Strategist guidance:** the model receives the student's profile, current roadmap, workspace context, and top retrieved evidence. It returns readable Markdown, measurable next steps, and source-aware guidance.
 - **Research synthesis:** deterministic retrieval supplies facts and candidate evidence; Gemma 4 compares and explains them in the student's context.
 - **Student memory:** after a conversation, Gemma 4 can extract durable preferences and commitments so later advice remains consistent.
+- **Decision Twin:** Gemma 4 compares a changed constraint with the complete student profile, then returns a compact before/after planning explanation.
+- **Evidence Graph:** Gemma 4 separates a student's claim from supplied proof and proposes a measurable verification path.
+- **Adaptive exam review:** deterministic scoring stays auditable; Gemma 4 turns incorrect answers into a concise study focus.
+- **Natural-language routine:** Gemma 4 converts free-form scheduling requests into a strict day, time, title, and category schema before the user confirms the block.
 - **Auditable enforcement:** the server allowlists Gemma 4 model IDs, registers one generative provider, and ignores client-supplied provider choices. If Gemma is unavailable, Polaris never switches to another language model.
 
 The main enforcement points are [`lib/llm/gemma.ts`](lib/llm/gemma.ts), [`lib/llm/providers/registry.ts`](lib/llm/providers/registry.ts), and [`lib/llm/router.ts`](lib/llm/router.ts).
@@ -113,6 +135,7 @@ The judge workspace includes:
 - personalized roadmap and replanning;
 - full-page and side-panel Strategist experiences;
 - deadlines, university discovery, probability signals, and scenario exploration;
+- Decision Twin, Evidence-to-Action Graph, English IELTS/SAT mock exams, Smart Routine, and official video learning;
 - resources, scholarships, integrations, partners, consultants, community, and family views;
 - complete English and Bengali operation;
 - visible Gemma 4 model and retrieval traces;
@@ -156,9 +179,12 @@ The public `/demo` route does not require MongoDB or authentication.
 ```text
 app/demo/                    Public, account-free product workspace
 app/api/demo/                Rate-limited roadmap and Strategist APIs
+app/api/action-lab/          Decision, evidence, exam review, and routine API
 app/api/roadmap/             Account-backed roadmap API
 components/                  Product interface and interaction components
 data/                        Curated university, scholarship, and case-study evidence
+notebooks/                   Executed Gemma 4 Kaggle companion notebook
+lib/action-lab/              Typed Action Lab contracts, exams, and video catalog
 lib/i18n/                    English and Bengali localization
 lib/llm/                     Gemma 4 client, provider, and routing boundary
 lib/ml/                      Transparent admissions-fit scoring
@@ -171,6 +197,7 @@ docs/ARCHITECTURE.md         Detailed request flow and compliance notes
 
 ```bash
 pnpm exec tsc --noEmit
+pnpm lint
 pnpm build
 ```
 
@@ -180,4 +207,9 @@ Polaris provides planning support, not admission guarantees. Fit estimates are d
 
 ## Project
 
-Built by **Imtiaz Hossain Eshan** for the **Build with Gemma: ML, AI, Deep Learning & NLP Community Hackathon** in Bangladesh.
+Built for the **Build with Gemma: ML, AI, Deep Learning & NLP Community Hackathon** in Bangladesh.
+
+### Team
+
+- **Imtiaz Hossain**
+- **Mofftasim Hossain Sayem**

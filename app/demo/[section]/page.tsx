@@ -11,6 +11,7 @@ import { ConnectionsClient } from "@/components/app/ConnectionsClient";
 import { ConsultantsClient } from "@/components/app/ConsultantsClient";
 import { CommunityClient } from "@/components/app/CommunityClient";
 import { StrategistClient, type GapRow } from "@/components/app/StrategistClient";
+import { ActionLabClient } from "@/components/app/ActionLabClient";
 import { BookingsClient } from "@/components/app/BookingsClient";
 import { BillingClient } from "@/components/app/BillingClient";
 import { TransactionsClient } from "@/components/app/TransactionsClient";
@@ -24,7 +25,7 @@ import {
   DEMO_DEADLINES, DEMO_TRANSACTIONS, DEMO_USER,
 } from "@/lib/demo/polaris";
 
-const SECTIONS = new Set(["strategist", "deadlines", "universities", "resources", "connections", "partners", "consultants", "community", "family", "bookings", "billing", "transactions", "settings"]);
+const SECTIONS = new Set(["strategist", "deadlines", "universities", "resources", "action-lab", "connections", "partners", "consultants", "community", "family", "bookings", "billing", "transactions", "settings"]);
 const VALID_TIERS: UniversityForModel["tier"][] = ["elite", "top10", "top50", "top100", "top200"];
 
 export function generateStaticParams() { return [...SECTIONS].map((section) => ({ section })); }
@@ -37,6 +38,7 @@ export default async function DemoSectionPage({ params }: { params: Promise<{ se
   const universities = (universitiesJson as Array<Record<string, unknown>>).map(toUniProfile);
   if (section === "universities") return <UniversitiesClient universities={universities.filter((item) => item.id && VALID_TIERS.includes(item.tier))} initialInputs={{ gpa: 3.8, testPercentile: 84, ecCount: 3, research: 1 }} />;
   if (section === "resources") return <ResourcesClient caseStudies={caseStudiesJson as HubCaseStudy[]} scholarships={scholarshipsJson as HubScholarship[]} universities={universities.filter((item) => item.admissions !== null)} level="hsc" />;
+  if (section === "action-lab") return <ActionLabClient />;
   if (section === "partners") return <PartnersClient level="hsc" roadmapTopics={["SAT", "IELTS", "research", "portfolio", "essays", "scholarships"]} weakScores={[{ key: "research", label: "Research evidence", ratio: 0.2 }, { key: "testing", label: "Testing", ratio: 0.48 }]} deadlineTypesSoon={["test-exam", "scholarship", "essay"]} eliteUniIds={universities.filter((item) => item.tier === "elite" || item.tier === "top10").map((item) => item.id)} />;
   if (section === "deadlines") return <DeadlinesClient initial={DEMO_DEADLINES} demo />;
   if (section === "connections") return <ConnectionsClient initial={DEMO_CONNECTIONS} demo />;

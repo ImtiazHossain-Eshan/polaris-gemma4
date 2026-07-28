@@ -17,6 +17,7 @@ export type NavItemId =
   | "deadlines"
   | "universities"
   | "resources"
+  | "action-lab"
   | "connections"
   | "partners"
   | "consultants"

@@ -8,6 +8,7 @@
 
 import { BN_PRETRANSLATED } from "./bengali.pretranslated";
 import { BN_REVIEWED_OVERRIDES } from "./bengali.reviewed";
+import { BN_LANDING } from "./bengali.landing";
 
 const BN_DIGITS: Record<string, string> = {
   "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪",
@@ -1176,7 +1177,7 @@ export function translateUiText(value: string): string {
     return value;
   }
 
-  const exact = BN_UI[text] ?? BN_UI_SECONDARY[text] ?? BN_REVIEWED_OVERRIDES[text];
+  const exact = BN_LANDING[text] ?? BN_UI[text] ?? BN_UI_SECONDARY[text] ?? BN_REVIEWED_OVERRIDES[text];
   if (exact) return `${leading}${toBengaliDigits(exact)}${trailing}`;
 
   const translated = dynamicBengali(text);
