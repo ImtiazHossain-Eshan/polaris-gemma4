@@ -1,5 +1,5 @@
 /**
- * Optional non-generative web retrieval for the Strategist. Tavily retrieves
+ * Non-generative web retrieval for the Strategist. Retrieval supplies
  * evidence; Gemma 4 remains the only model that synthesizes an answer.
  */
 
@@ -9,54 +9,125 @@ export type WebSearchResult = {
   snippet: string;
 };
 
+function decodeHtml(value: string): string {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, "\"")
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function directResultUrl(rawHref: string): string | null {
+  try {
+    const decoded = decodeHtml(rawHref);
+    const href = decoded.startsWith("//") ? `https:${decoded}` : decoded;
+    const url = new URL(href);
+    if (url.hostname.endsWith("duckduckgo.com")) {
+      const target = url.searchParams.get("uddg");
+      if (!target) return null;
+      const targetUrl = new URL(target);
+      return ["http:", "https:"].includes(targetUrl.protocol) ? targetUrl.toString() : null;
+    }
+    return ["http:", "https:"].includes(url.protocol) ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
- * Best-effort Tavily search. Returns [] when the key is missing or the
- * request fails - callers should treat web search as additive context, not
- * a hard dependency.
+ * No-key fallback used when Tavily is not configured. DuckDuckGo provides
+ * ordinary search-result retrieval only; it does not generate or summarize
+ * content. Gemma 4 still performs every relevance and credibility decision.
+ */
+async function publicHtmlSearch(query: string, maxResults: number): Promise<WebSearchResult[]> {
+  try {
+    const endpoint = new URL("https://html.duckduckgo.com/html/");
+    endpoint.searchParams.set("q", query);
+    const response = await fetch(endpoint, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (compatible; PolarisStudentResearch/1.0)",
+        "accept-language": "en-US,en;q=0.8",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) return [];
+    const html = await response.text();
+    const links = [...html.matchAll(/class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)];
+    const snippets = [...html.matchAll(/class="result__snippet"[^>]*>([\s\S]*?)<\/(?:a|div)>/gi)];
+    const results: WebSearchResult[] = [];
+    const seen = new Set<string>();
+    for (let index = 0; index < links.length && results.length < maxResults; index += 1) {
+      const url = directResultUrl(links[index][1]);
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      results.push({
+        title: decodeHtml(links[index][2]),
+        url,
+        snippet: decodeHtml(snippets[index]?.[1] ?? ""),
+      });
+    }
+    return results;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Best-effort retrieval. Tavily is preferred when configured; the public
+ * HTML fallback keeps live evidence available in a zero-setup judge demo.
  */
 export async function tavilySearch(
   query: string,
   opts: { maxResults?: number; depth?: "basic" | "advanced" } = {},
 ): Promise<WebSearchResult[]> {
   const key = process.env.TAVILY_API_KEY;
-  if (!key) return [];
-  try {
-    const res = await fetch("https://api.tavily.com/search", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        api_key: key,
-        query,
-        search_depth: opts.depth ?? "basic",
-        max_results: opts.maxResults ?? 5,
-        include_answer: false,
-      }),
-    });
-    if (!res.ok) return [];
-    const data = (await res.json()) as {
-      results?: Array<{ title: string; url: string; content: string }>;
-    };
-    return (data.results ?? []).map((r) => ({
-      title: r.title,
-      url: r.url,
-      snippet: r.content,
-    }));
-  } catch {
-    return [];
+  if (key) {
+    try {
+      const res = await fetch("https://api.tavily.com/search", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          api_key: key,
+          query,
+          search_depth: opts.depth ?? "basic",
+          max_results: opts.maxResults ?? 5,
+          include_answer: false,
+        }),
+      });
+      if (!res.ok) throw new Error("Tavily request failed");
+      const data = (await res.json()) as {
+        results?: Array<{ title: string; url: string; content: string }>;
+      };
+      return (data.results ?? []).map((result) => ({
+        title: result.title,
+        url: result.url,
+        snippet: result.content,
+      }));
+    } catch {
+      // Fall through to the no-key public retrieval path.
+    }
   }
+  return publicHtmlSearch(query, opts.maxResults ?? 5);
 }
 
 /** Returns a short, citation-friendly label for a URL (just the bare host). */
 export function shortDomain(url: string): string {
   try {
-    const u = new URL(url);
-    return u.hostname.replace(/^www\./, "");
+    const parsed = new URL(url);
+    return parsed.hostname.replace(/^www\./, "");
   } catch {
     return url.slice(0, 32);
   }
 }
 
-/** True when at least one web-search backend is configured. */
+/** True when the preferred Tavily backend is configured. */
 export function hasWebSearchKey(): boolean {
   return !!process.env.TAVILY_API_KEY;
 }
