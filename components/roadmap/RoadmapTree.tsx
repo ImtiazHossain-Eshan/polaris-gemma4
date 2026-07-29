@@ -45,7 +45,10 @@ export function RoadmapTree({
   });
 
   return (
-    <div className="relative">
+    <div className="relative isolate overflow-hidden rounded-[34px] border border-polaris-500/10 bg-gradient-to-b from-paper-card/35 via-transparent to-paper-card/25 px-2 py-8 sm:px-5">
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_15%,rgba(196,125,78,.17),transparent_24%),radial-gradient(circle_at_82%_42%,rgba(91,140,109,.14),transparent_26%),linear-gradient(rgba(196,125,78,.055)_1px,transparent_1px),linear-gradient(90deg,rgba(196,125,78,.055)_1px,transparent_1px)] [background-size:auto,auto,44px_44px,44px_44px]" />
+      <motion.div aria-hidden className="pointer-events-none absolute left-[12%] top-20 h-2 w-2 rounded-full bg-polaris-400 shadow-[0_0_22px_rgba(196,125,78,.9)]" animate={{ y: [0, 20, 0], opacity: [.35, 1, .35] }} transition={{ duration: 5, repeat: Infinity }} />
+      <motion.div aria-hidden className="pointer-events-none absolute right-[16%] top-[38%] h-2.5 w-2.5 rounded-full bg-aurora-400 shadow-[0_0_24px_rgba(91,140,109,.9)]" animate={{ y: [0, -24, 0], x: [0, 9, 0] }} transition={{ duration: 7, repeat: Infinity }} />
       {/* Trunk */}
       <div className="absolute top-[120px] bottom-6 left-6 lg:left-1/2 lg:-translate-x-1/2 w-[3px] rounded-full bg-paper-deep overflow-hidden" aria-hidden>
         <motion.div
@@ -65,6 +68,8 @@ export function RoadmapTree({
       >
         <div className="relative">
           <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-polaris-400/25 via-nova-400/20 to-aurora-400/25 blur-xl animate-pulse" style={{ animationDuration: "4s" }} />
+          <motion.span aria-hidden className="absolute -inset-8 rounded-full border border-dashed border-polaris-400/25" animate={{ rotate: 360 }} transition={{ duration: 22, repeat: Infinity, ease: "linear" }} />
+          <motion.span aria-hidden className="absolute -inset-14 rounded-full border border-aurora-400/10" animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} />
           <CrownRing pct={overall} />
         </div>
         <div className="mt-3 app-glass rounded-2xl px-5 py-2.5 text-center max-w-md">
@@ -164,7 +169,7 @@ function BranchRow({
 
       {/* Panel */}
       <div className={cn(side === "right" && "lg:col-start-2", "lg:px-[10%] py-2", side === "left" ? "lg:pr-[10%] lg:pl-4" : "lg:pl-[10%] lg:pr-4")}>
-        <div className="app-glass rounded-3xl p-5 relative overflow-hidden group">
+        <div className="app-glass rounded-3xl p-5 relative overflow-hidden group transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_70px_-34px_rgba(196,125,78,.55)] [transform-style:preserve-3d] before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/[0.035] before:to-transparent before:opacity-0 hover:before:opacity-100">
           {/* top accent */}
           <div className={cn("absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r", tone.bar)} />
           <div className="flex items-center gap-2.5 mb-1">

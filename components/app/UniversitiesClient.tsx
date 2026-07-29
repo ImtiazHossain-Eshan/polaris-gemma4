@@ -1,5 +1,7 @@
 "use client";
 
+import { GemmaDiscoveryRefresh } from "@/components/app/GemmaDiscoveryRefresh";
+
 /**
  * Universities - premium discovery + fit engine.
  *
@@ -199,6 +201,8 @@ export function UniversitiesClient({
           <Icon.spark size={13} /> Scenario lab
         </button>
       </motion.div>
+
+      <GemmaDiscoveryRefresh surface="universities" defaultQuery="Universities with strong financial aid, computer science, and realistic options for a Bangladeshi student" />
 
       {/* ─── Scenario lab (what-if sliders drive every fit chip live) ─── */}
       <AnimatePresence initial={false}>

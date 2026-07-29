@@ -188,10 +188,11 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   const parsed = bodySchema.safeParse(await parseJson(req));
   if (!parsed.success) return fail(400, lang === "bn" ? "অনুরোধের তথ্য সঠিক নয়।" : "Invalid Action Lab request.");
   const body = parsed.data;
+  const overrideKey = req.headers.get("x-polaris-gemma-key");
 
   if (body.kind === "decision") {
     let result = decisionFallback(body, lang);
-    if (hasGemmaKey()) {
+    if (hasGemmaKey(overrideKey)) {
       const text = await generateGemmaText({
         system: `You are the compact decision engine inside Polaris. ${generationLanguageInstruction(lang)} Return short fields only. Each focus field must be under 14 words. Never promise admission. Gemma 4 is the only generative model used.`,
         contents: `Baseline: SAT ${body.currentScore}, target ${body.targetScore}, ${body.weeklyHours} hours/week, budget BDT ${body.budgetBdt}, country ${body.targetCountry}. Change: ${body.event}. Current planning indicator: 41. Give three terse planning focuses.`,
@@ -199,6 +200,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
         temperature: 0.2,
         maxOutputTokens: 650,
         thinkingLevel: "minimal",
+        apiKey: overrideKey,
       });
       if (text) {
         try {
@@ -227,7 +229,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 
   if (body.kind === "evidence") {
     let result = evidenceFallback(body, lang);
-    if (hasGemmaKey()) {
+    if (hasGemmaKey(overrideKey)) {
       const text = await generateGemmaText({
         system: `You are the evidence auditor inside Polaris. ${generationLanguageInstruction(lang)} Return short fields only. Do not mark an unsupported claim as verified. Gemma 4 is the only generative model used.`,
         contents: `Claim: ${body.claim}\nProof type: ${body.proofType}\nProof detail: ${body.proofDetail || "Not supplied"}`,
@@ -235,6 +237,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
         temperature: 0.15,
         maxOutputTokens: 450,
         thinkingLevel: "minimal",
+        apiKey: overrideKey,
       });
       if (text) {
         try {
@@ -259,7 +262,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 
   if (body.kind === "routine") {
     let result = routineFallback(body);
-    if (hasGemmaKey()) {
+    if (hasGemmaKey(overrideKey)) {
       const text = await generateGemmaText({
         system: "Convert one instruction into one weekly schedule block. Use 24-hour HH:MM time. Keep the title under five English words. Gemma 4 is the only generative model used.",
         contents: `Instruction: ${body.instruction}\nExisting:\n${body.existing.map((item) => `${item.day} ${item.start}-${item.end}: ${item.title}`).join("\n") || "None"}`,
@@ -267,6 +270,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
         temperature: 0.05,
         maxOutputTokens: 300,
         thinkingLevel: "minimal",
+        apiKey: overrideKey,
       });
       if (text) {
         try {
@@ -297,13 +301,14 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     ? "Review each missed skill, then complete one untimed set before repeating it under time pressure."
     : "Review the missed skill, record why each distractor was wrong, and repeat a short timed set tomorrow.";
   let source: "gemma4" | "deterministic-fallback" = "deterministic-fallback";
-  if (hasGemmaKey()) {
+  if (hasGemmaKey(overrideKey)) {
     const generated = await generateGemmaText({
       system: "You are a precise exam coach. Respond in clear English in under 80 words with a three-step prescription. This is unofficial practice. Gemma 4 is the only generative model used.",
       contents: `${body.exam} practice: ${body.score}/${body.total}. Weak skills: ${body.weakSkills.join(", ") || "none"}.`,
       temperature: 0.2,
       maxOutputTokens: 220,
       thinkingLevel: "minimal",
+      apiKey: overrideKey,
     });
     if (generated) {
       feedback = generated;

@@ -16,6 +16,14 @@ import type {
   RoutineSuggestion,
 } from "@/lib/action-lab/types";
 import { cn } from "@/lib/cn";
+import { gemmaHeaders } from "@/lib/gemma/browser-key";
+import {
+  GemmaEssayStudio,
+  GemmaExamStudio,
+  GemmaKeyCard,
+  GemmaNotesStudio,
+  GemmaVideoLearning,
+} from "@/components/app/GemmaStudioPanels";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as const;
 
@@ -39,6 +47,8 @@ const COPY = {
       exam: ["Mock Exams", "IELTS and SAT practice"],
       routine: ["Smart Routine", "Gemma + manual planning"],
       learn: ["Video Learning", "Curated official lessons"],
+      notes: ["Knowledge Notes", "Feedback becomes memory"],
+      essay: ["Essay Studio", "Write, reflect, refine"],
     },
     gemmaReady: "Gemma 4 reasoning layer",
   },
@@ -52,6 +62,8 @@ const COPY = {
       exam: ["মক পরীক্ষা", "IELTS ও SAT অনুশীলন"],
       routine: ["স্মার্ট রুটিন", "Gemma ও ম্যানুয়াল পরিকল্পনা"],
       learn: ["ভিডিও লার্নিং", "নির্বাচিত অফিসিয়াল পাঠ"],
+      notes: ["নলেজ নোট", "প্রতিক্রিয়া থেকে স্মৃতি"],
+      essay: ["রচনা স্টুডিও", "লিখুন, ভাবুন, উন্নত করুন"],
     },
     gemmaReady: "Gemma 4 বিশ্লেষণ ব্যবস্থা",
   },
@@ -87,7 +99,7 @@ const INITIAL_EVIDENCE: EvidenceResult = {
 function postAction<T>(body: Record<string, unknown>): Promise<T> {
   return fetch("/api/action-lab", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...gemmaHeaders() },
     body: JSON.stringify(body),
   }).then(async (response) => {
     if (!response.ok) {
@@ -102,6 +114,14 @@ export function ActionLabClient() {
   const { lang } = useLang();
   const copy = COPY[lang];
   const [tab, setTab] = useState<ActionLabTab>("decision");
+  useEffect(() => {
+    const saved = window.sessionStorage.getItem("polaris.actionLab.tab") as ActionLabTab | null;
+    if (saved && Object.prototype.hasOwnProperty.call(copy.tabs, saved)) setTab(saved);
+  }, [copy.tabs]);
+  const chooseTab = (id: ActionLabTab) => {
+    setTab(id);
+    try { window.sessionStorage.setItem("polaris.actionLab.tab", id); } catch {}
+  };
 
   return (
     <div className="relative min-h-full overflow-hidden">
@@ -166,14 +186,14 @@ export function ActionLabClient() {
           </div>
         </header>
 
-        <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl border border-ink-faint/20 bg-paper-card/80 p-2 shadow-card backdrop-blur-xl md:grid-cols-5">
+        <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl border border-ink-faint/20 bg-paper-card/80 p-2 shadow-card backdrop-blur-xl md:grid-cols-4 xl:grid-cols-7">
           {(Object.keys(copy.tabs) as ActionLabTab[]).map((id) => {
             const [label, hint] = copy.tabs[id];
             return (
               <button
                 key={id}
                 type="button"
-                onClick={() => setTab(id)}
+                onClick={() => chooseTab(id)}
                 className={cn(
                   "relative rounded-xl px-3 py-3 text-left transition-colors",
                   tab === id ? "text-paper" : "text-ink-dim hover:bg-paper-deep/60 hover:text-ink",
@@ -193,6 +213,13 @@ export function ActionLabClient() {
           })}
         </div>
 
+        <details className="group mb-5 ml-auto max-w-xl rounded-2xl border border-aurora-500/15 bg-paper-card/65 p-2 open:shadow-card">
+          <summary className="cursor-pointer list-none px-2 py-1 text-right text-[10.5px] font-semibold text-aurora-700 dark:text-aurora-100">
+            {lang === "bn" ? "নিজের Gemma API key ব্যবহার করুন" : "Use your own Gemma API key"}
+          </summary>
+          <div className="mt-2"><GemmaKeyCard lang={lang} compact /></div>
+        </details>
+
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
@@ -203,9 +230,11 @@ export function ActionLabClient() {
           >
             {tab === "decision" && <DecisionTwin lang={lang} />}
             {tab === "evidence" && <EvidenceGraph lang={lang} />}
-            {tab === "exam" && <ExamStudio />}
+            {tab === "exam" && <GemmaExamStudio lang={lang} />}
             {tab === "routine" && <RoutineStudio lang={lang} />}
-            {tab === "learn" && <VideoLearning />}
+            {tab === "learn" && <GemmaVideoLearning lang={lang} />}
+            {tab === "notes" && <GemmaNotesStudio lang={lang} />}
+            {tab === "essay" && <GemmaEssayStudio lang={lang} />}
           </motion.div>
         </AnimatePresence>
       </div>

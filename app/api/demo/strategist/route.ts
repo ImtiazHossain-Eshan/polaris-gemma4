@@ -19,6 +19,7 @@ type DemoStrategistBody = {
   section?: unknown;
   profile?: unknown;
   roadmapSummary?: unknown;
+  knowledgeNotes?: unknown;
 };
 
 function clientId(req: NextRequest): string {
@@ -66,6 +67,7 @@ export const POST = withErrorHandling(async (req) => {
   const message = typeof body.message === "string" ? body.message.trim() : "";
   const section = typeof body.section === "string" ? body.section.slice(0, 40) : "roadmap";
   const roadmapSummary = typeof body.roadmapSummary === "string" ? body.roadmapSummary.slice(0, 900) : "";
+  const knowledgeNotes = typeof body.knowledgeNotes === "string" ? body.knowledgeNotes.slice(0, 5000) : "";
   if (message.length < 2 || message.length > 1200) {
     return fail(400, language === "bn" ? "বার্তাটি ২ থেকে ১২০০ অক্ষরের মধ্যে হতে হবে।" : "Message must be between 2 and 1200 characters.");
   }
@@ -73,14 +75,16 @@ export const POST = withErrorHandling(async (req) => {
   const hits = await searchDocs(`${section} ${message}`, null, 4);
   const evidence = hits.map((hit, index) => `[${index + 1}] ${hit.title}: ${hit.text.slice(0, 650)}`).join("\n\n");
   let text: string | null = null;
+  const overrideKey = req.headers.get("x-polaris-gemma-key");
 
-  if (hasGemmaKey()) {
+  if (hasGemmaKey(overrideKey)) {
     text = await generateGemmaText({
       system: `You are Polaris, an academic strategist for ambitious students in Bangladesh. ${generationLanguageInstruction(language)} Give a direct, realistic answer grounded in the supplied evidence. Use clean Markdown with 2-4 short paragraphs or bullets. Use tables only when they make a comparison clearer. For math, use valid LaTeX inside \\(...\\) for inline formulas or \\[...\\] for display formulas, and explain every formula in plain language. Never output raw LaTeX commands without delimiters. Be specific, budget-aware, and measurable. Never promise admission. Gemma 4 is the only generative model in this application.`,
-      contents: `CURRENT WORKSPACE: ${section}\nROADMAP CONTEXT: ${roadmapSummary || "Starter demo roadmap"}\n\nEVIDENCE\n${evidence}\n\nSTUDENT QUESTION\n${message}`,
+      contents: `CURRENT WORKSPACE: ${section}\nROADMAP CONTEXT: ${roadmapSummary || "Starter demo roadmap"}\nLEARNER KNOWLEDGE NOTES:\n${knowledgeNotes || "None saved"}\n\nEVIDENCE\n${evidence}\n\nSTUDENT QUESTION\n${message}`,
       temperature: 0.35,
       maxOutputTokens: 850,
       thinkingLevel: "minimal",
+      apiKey: overrideKey,
     });
   }
 

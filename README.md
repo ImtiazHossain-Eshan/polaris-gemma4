@@ -28,7 +28,7 @@ The competition workspace is public. Judges can use every feature without creati
 
 ### A living roadmap
 
-![Personalized Polaris academic roadmap](docs/assets/screenshots/01-roadmap.png)
+![Animated Polaris roadmap constellation](docs/assets/screenshots/gemma-roadmap-constellation.png)
 
 The roadmap connects a long-term goal to phases, milestones, deadlines, evidence, and visible progress. The Gemma 4 Strategist stays synchronized with the active mission instead of acting like a separate chatbot.
 
@@ -41,10 +41,10 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
       Profile context, retrieved sources, roadmap state, model trace, and one concrete next move in a compact command surface.
     </td>
     <td width="50%">
-      <img src="docs/assets/screenshots/08-action-lab.png" alt="Polaris Decision Twin inside Action Lab" />
+      <img src="docs/assets/screenshots/gemma-action-lab.png" alt="Polaris Gemma 4 Action Lab" />
       <br />
       <strong>Action Lab</strong><br />
-      Decision Twin, Evidence Graph, mock exams, Smart Routine, and official video learning in one workspace.
+      Decision Twin, Evidence Graph, fresh Gemma mocks, Smart Routine, video discovery, knowledge notes, and Essay Studio in one workspace.
     </td>
   </tr>
 </table>
@@ -54,33 +54,58 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
 <table>
   <tr>
     <td width="50%">
-      <img src="docs/assets/screenshots/13-gemma-evidence-graph.png" alt="Gemma 4 Evidence-to-Action Graph" />
+      <img src="docs/assets/screenshots/gemma-mock-generator.png" alt="Gemma 4 fresh SAT and IELTS mock generator" />
       <br />
-      <strong>Evidence-to-Action Graph</strong><br />
-      Gemma 4 separates a student claim from its proof, identifies the missing verification, and returns the next evidence action.
+      <strong>Fresh mock generation and grading</strong><br />
+      Gemma 4 creates a new original three-question IELTS or SAT diagnostic for the selected section and difficulty. Deterministic scoring stays auditable, then Gemma 4 diagnoses the error pattern and prescribes the next practice block.
     </td>
     <td width="50%">
-      <img src="docs/assets/screenshots/14-gemma-mock-exams.png" alt="Gemma 4 adaptive SAT and IELTS review" />
+      <img src="docs/assets/screenshots/gemma-essay-notes.png" alt="Gemma 4 day-by-day essay workspace" />
       <br />
-      <strong>Adaptive mock review</strong><br />
-      Original questions are scored deterministically. Gemma 4 receives the weak skills and produces a bounded recovery plan.
+      <strong>Essay Studio and knowledge notes</strong><br />
+      Drafts autosave in the browser. Gemma 4 gives voice-preserving feedback, creates outlines, and turns saved feedback into reusable knowledge for both Strategist surfaces.
     </td>
   </tr>
   <tr>
     <td width="50%">
+      <img src="docs/assets/screenshots/13-gemma-evidence-graph.png" alt="Gemma 4 Evidence-to-Action Graph" />
+      <br />
+      <strong>Evidence-to-Action Graph</strong><br />
+      Gemma 4 separates a student claim from its proof, identifies missing verification, and returns the next evidence action.
+    </td>
+    <td width="50%">
       <img src="docs/assets/screenshots/15-gemma-smart-routine.png" alt="Gemma 4 Smart Routine" />
       <br />
       <strong>Smart Routine</strong><br />
-      Natural-language schedule requests become validated, editable weekly blocks with manual control preserved.
-    </td>
-    <td width="50%">
-      <img src="docs/assets/screenshots/16-gemma-offer-radar.png" alt="Gemma 4 student Offer Radar" />
-      <br />
-      <strong>Offer Radar</strong><br />
-      Official offer records stay attached to their URLs while Gemma 4 explains eligibility and fit against the live roadmap.
+      Natural-language schedule requests become validated, editable weekly blocks while manual control remains available.
     </td>
   </tr>
 </table>
+
+### Evidence-grounded discovery that can refresh
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/gemma-university-refresh.png" alt="Gemma 4 university discovery refresh" />
+      <br />
+      <strong>University and resource refresh</strong><br />
+      Students can ask Gemma 4 to synthesize new recommendations from retrieved evidence. The contract prohibits invented rankings, costs, offers, admission rates, and outcomes.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/gemma-case-studies.png" alt="Gemma 4 case study pattern discovery" />
+      <br />
+      <strong>Case-study pattern finder</strong><br />
+      Gemma 4 turns evidence-backed student paths into relevant patterns and a specific next action without changing official institution names.
+    </td>
+  </tr>
+</table>
+
+### Bengali mock generation and feedback
+
+![Bengali Gemma 4 mock generator](docs/assets/screenshots/gemma-mock-generator-bengali.png)
+
+The new generation surfaces follow the same Bengali contract as the Strategist. Ordinary headings, instructions, explanations, errors, and actions use natural Bengali. Official names and established exam abbreviations such as Gemma, IELTS, SAT, and GPA remain unchanged.
 
 ### One history across both Strategists
 
@@ -99,7 +124,7 @@ The full-page Strategist and the right-side Strategist now write to the same sea
       Profile, curriculum, scores, goals, target tier, and activities persist safely on the judge's device.
     </td>
     <td width="50%">
-      <img src="docs/assets/screenshots/11-settings-gemma-usage.png" alt="Gemma 4 usage audit in Polaris settings" />
+      <img src="docs/assets/screenshots/gemma-settings-usage.png" alt="Gemma 4 usage audit in Polaris settings" />
       <br />
       <strong>Visible Gemma 4 usage</strong><br />
       Every generative surface is listed with its purpose. No second language model is registered in the runtime.
@@ -111,7 +136,7 @@ The full-page Strategist and the right-side Strategist now write to the same sea
 
 <table>
   <tr>
-    <td width="33%"><img src="docs/assets/screenshots/03-universities.png" alt="Explainable university fit workspace" /><br /><strong>University fit</strong><br />Transparent factors and scenario testing.</td>
+    <td width="33%"><img src="docs/assets/screenshots/gemma-university-refresh.png" alt="Explainable university fit and Gemma refresh" /><br /><strong>University fit</strong><br />Transparent factors, scenario testing, and evidence-grounded Gemma refresh.</td>
     <td width="33%"><img src="docs/assets/screenshots/04-deadlines.png" alt="Risk-aware deadline calendar" /><br /><strong>Risk-aware deadlines</strong><br />Urgency windows and task tracking.</td>
     <td width="33%"><img src="docs/assets/screenshots/05-resources.png" alt="Admissions knowledge hub" /><br /><strong>Knowledge hub</strong><br />Scholarships, costs, exams, and student paths.</td>
   </tr>
@@ -135,10 +160,12 @@ Polaris does not stop at generating advice. It creates an execution loop:
 
 1. **Decide:** Decision Twin stress-tests a changed score, deadline, budget, country, or available study time.
 2. **Prove:** Evidence-to-Action Graph separates a claim from proof and names the missing verification.
-3. **Practise:** IELTS and SAT mini mocks score original questions deterministically, then Gemma 4 creates the recovery focus.
+3. **Practise:** Gemma 4 creates fresh IELTS or SAT questions for the selected section and difficulty. Deterministic scoring remains inspectable, and Gemma 4 produces rapid skill feedback.
 4. **Schedule:** Smart Routine converts plain language into a validated, editable weekly block.
-5. **Learn:** Curated IELTS and SAT lessons play inside the workspace with related official resources.
-6. **Adapt:** New evidence, completed work, and deadline changes flow back into the roadmap.
+5. **Learn:** Curated IELTS and SAT lessons play inside the workspace, and Gemma 4 refreshes recommendations by exam section.
+6. **Remember:** Feedback can become a reusable note shared by both Strategist surfaces and Essay Studio.
+7. **Write:** Essay Studio keeps a day-by-day draft and asks Gemma 4 for ethical, voice-preserving improvement.
+8. **Adapt:** New evidence, completed work, and deadline changes flow back into the animated roadmap.
 
 This makes Gemma 4 part of the student's operating system, not an isolated text box.
 
@@ -166,8 +193,13 @@ flowchart LR
 | Research mode | Student question and ranked official evidence | Compare evidence in the student's context | Source allowlist and visible citations |
 | Decision Twin | Baseline plan plus one changed constraint | Explain what moves and why | Strict probability, risk, focus, action, and evidence contract |
 | Evidence Graph | Claim, proof type, and supplied detail | Identify signal, gap, next action, and verification | Unsupported claims never become verified automatically |
-| Mock exam review | Deterministic score and weak skills | Produce a concise three-step recovery plan | Original questions, auditable scoring, bounded response length |
+| Mock generation and grading | Exam, official section, difficulty, answers, and validated question set | Create fresh original questions and diagnose the answer pattern | Three-question contract, four-option validation, bounded answer index, deterministic score |
 | Smart Routine | Natural-language schedule request and existing blocks | Parse day, time, title, and category | Day and category enums, 24-hour time checks, editable confirmation |
+| Video refresh | Exam section and retrieved learning evidence | Curate credible lesson targets and explain relevance | No invented direct URLs; title, channel, reason, and search-query validation |
+| Knowledge notes | Student note and optional feedback | Create a compact summary, key concepts, and next actions | Browser-local storage, user deletion, bounded context injection |
+| Essay Studio | Prompt, draft, and selected saved notes | Diagnose, outline, or refine while preserving voice | No fabricated achievements, browser autosave, clear ethical boundary |
+| Discovery refresh | Ranked university, resource, or case-study evidence | Synthesize relevant options and specific next actions | No invented rankings, costs, offers, rates, or outcomes |
+| Personal Gemma key | Optional tab-scoped credential | Extend a judge or student session using the same Gemma 4 allowlist | Session storage only, never persisted or logged |
 | Student offer radar | Retrieved official offer pages | Summarize eligibility and why an offer fits | Official URL validation, timestamps, and visible model trace |
 | Student memory | Completed conversation and explicit preferences | Extract durable goals, constraints, and preferences | User-visible memory controls with add, forget, and clear actions |
 
@@ -181,15 +213,17 @@ The enforcement boundary lives in:
 
 ## Executed Kaggle notebook
 
-[`notebooks/polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) is a 36-cell, fully executed, judge-readable technical companion to the live app. It includes:
+[`notebooks/polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) is a 46-cell, fully executed, judge-readable technical companion to the live app. It includes:
 
 - the fixed Gemma 4 model allowlist and hidden-secret setup;
 - inspectable retrieval for a Bangladesh-context student;
 - structured Decision Twin and Evidence Graph outputs;
 - a Gemma 4 Smart Routine parse;
-- adaptive SAT review;
+- live Gemma 4 mock-generation and grading contracts for IELTS and SAT;
+- section-aware Gemma 4 video discovery;
+- knowledge-note and ethical Essay Studio contracts;
 - Bengali structured generation;
-- a full-product Gemma 4 responsibility map and provider audit;
+- a 15-surface Gemma 4 responsibility map and provider audit;
 - roadmap synthesis and grounded Strategist memory examples;
 - Offer Radar provenance and shared conversation-state contracts;
 - 18 automated full-project checks with recorded outputs;
@@ -245,7 +279,8 @@ The public `/demo` route does not require MongoDB, authentication, or payment co
 ```text
 app/demo/                    Public judge workspace
 app/api/demo/                Public roadmap and Strategist APIs
-app/api/action-lab/          Decision, evidence, exam, and routine contracts
+app/api/action-lab/          Decision, evidence, and routine contracts
+app/api/gemma-studio/       Mock, grading, video, notes, essay, and discovery contracts
 components/app/              Product workspace and model response surfaces
 components/demo/             Browser-local public demo controls
 data/                        Curated university, scholarship, and case-study evidence
@@ -266,7 +301,7 @@ pnpm lint
 pnpm build
 ```
 
-The final responsive check covers the landing video transition, persistent theme navigation, shared Strategist history, full-page Strategist, 416px right rail, Action Lab, functional profile/settings tabs, and English/Bengali workspace states.
+The final responsive check covers live Gemma mock generation, search navigation, family invite creation, the animated roadmap, discovery refresh surfaces, shared Strategist knowledge, 1180px and 1600px layouts, and English/Bengali workspace states.
 
 ## Responsible use
 

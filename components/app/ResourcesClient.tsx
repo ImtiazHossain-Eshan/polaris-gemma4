@@ -1,5 +1,7 @@
 "use client";
 
+import { GemmaDiscoveryRefresh } from "@/components/app/GemmaDiscoveryRefresh";
+
 /**
  * Resources - the Admission Knowledge Hub.
  *
@@ -168,6 +170,8 @@ export function ResourcesClient({
           </div>
         </div>
       </motion.div>
+
+      <GemmaDiscoveryRefresh surface="resources" defaultQuery="Scholarships, official exam preparation, costs, and application guides for Bangladeshi students" />
 
       {/* ─── Sections ─── */}
       <AnimatePresence mode="wait">

@@ -1,4 +1,4 @@
-export type ActionLabTab = "decision" | "evidence" | "exam" | "routine" | "learn";
+export type ActionLabTab = "decision" | "evidence" | "exam" | "routine" | "learn" | "notes" | "essay";
 
 export type DecisionInput = {
   event: string;

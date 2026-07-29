@@ -23,7 +23,8 @@ export function getGemmaModelId(): GemmaModelId {
     : DEFAULT_GEMMA_MODEL;
 }
 
-function getKey(): string | null {
+function getKey(override?: string | null): string | null {
+  if (override?.trim()) return override.trim();
   // GEMINI_API_KEY remains a compatibility alias because Google AI Studio
   // issues the credential. It serves Gemma 4 exclusively in Polaris.
   return (
@@ -34,13 +35,13 @@ function getKey(): string | null {
   );
 }
 
-export function gemmaClient(): GoogleGenAI | null {
-  const apiKey = getKey();
+export function gemmaClient(override?: string | null): GoogleGenAI | null {
+  const apiKey = getKey(override);
   return apiKey ? new GoogleGenAI({ apiKey }) : null;
 }
 
-export function hasGemmaKey(): boolean {
-  return !!getKey();
+export function hasGemmaKey(override?: string | null): boolean {
+  return !!getKey(override);
 }
 
 export type GemmaTextRequest = {
@@ -51,13 +52,14 @@ export type GemmaTextRequest = {
   responseJsonSchema?: unknown;
   thinkingLevel?: "minimal" | "high";
   abortSignal?: AbortSignal;
+  apiKey?: string | null;
 };
 
 /** One audited non-streaming entry point used by roadmap and memory jobs. */
 export async function generateGemmaText(
   request: GemmaTextRequest,
 ): Promise<string | null> {
-  const client = gemmaClient();
+  const client = gemmaClient(request.apiKey);
   if (!client) return null;
 
   const response = await client.models.generateContent({

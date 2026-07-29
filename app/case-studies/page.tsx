@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/cn";
+import { GemmaDiscoveryRefresh } from "@/components/app/GemmaDiscoveryRefresh";
 
 type CaseStudy = {
   id: string;
@@ -111,6 +112,8 @@ export default function CaseStudiesPage() {
         </div>
 
         <div className="mt-3 text-xs text-ink-muted">{filtered.length} case studies</div>
+
+        <div className="mt-5"><GemmaDiscoveryRefresh surface="case-studies" defaultQuery="Evidence-backed admission patterns for students from Bangladesh and South Asia" compact /></div>
 
         {/* Cards */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">

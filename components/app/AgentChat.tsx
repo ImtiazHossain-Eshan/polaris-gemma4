@@ -8,6 +8,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gemmaHeaders, getBrowserKnowledgeNotes } from "@/lib/gemma/browser-key";
 import { usePathname } from "next/navigation";
 import { Avatar, Tag } from "./ui";
 import { QuotaModal, resetHintFrom, type QuotaState } from "./QuotaModal";
@@ -207,7 +208,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
     const t = setTimeout(() => {
       void fetch("/api/account/model-pref", {
         method: "PUT",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({
           choice: model === "auto" ? "auto" : model,
           mode: routeMode,
@@ -308,7 +309,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
       }
       const r = await fetch("/api/roadmap/v2/adapt", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({ reason }),
       });
       const d = await r.json().catch(() => ({}));
@@ -408,7 +409,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
       const title = firstUserText.length > 60 ? firstUserText.slice(0, 57) + "…" : firstUserText;
       const res = await fetch("/api/chat/threads", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({ title }),
       });
       if (!res.ok) return null;
@@ -443,7 +444,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
     try {
       await fetch(`/api/chat/threads/${tid}/messages`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({ role, text, ...(sources?.length ? { sources } : {}), mode }),
       });
     } catch { /* best-effort */ }
@@ -477,11 +478,12 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
         setThinking("Consulting Gemma 4…");
         const response = await fetch("/api/demo/strategist", {
           method: "POST",
-          headers: { "content-type": "application/json" },
+          headers: { "content-type": "application/json", ...gemmaHeaders() },
           body: JSON.stringify({
             message: text,
             section: pathnameForSync.split("/")[2] || "roadmap",
             roadmapSummary: JSON.stringify(strategistContextPayload(roadmapStore.get())),
+            knowledgeNotes: getBrowserKnowledgeNotes(),
           }),
           signal: ctrl.signal,
         });
@@ -513,7 +515,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
       }
       const res = await fetch("/api/strategist", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify(body),
         signal: ctrl.signal,
       });

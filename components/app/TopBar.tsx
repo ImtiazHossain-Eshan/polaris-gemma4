@@ -18,12 +18,13 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { KBD, Avatar, Pill } from "./ui";
+import { Avatar, Pill } from "./ui";
 import { useTheme } from "./ThemeProvider";
 import { useRoadmapStrategist } from "@/lib/roadmap/store";
 import { getMissingFields } from "@/lib/profile";
 import { cn } from "@/lib/cn";
 import { useLang } from "@/lib/i18n/LangProvider";
+import { WorkspaceSearch } from "@/components/app/WorkspaceSearch";
 
 const TITLES: Record<string, { eyebrow: string; title: string }> = {
   roadmap:      { eyebrow: "Workspace", title: "Roadmap" },
@@ -48,7 +49,6 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
   const path = usePathname();
   const id = basePath ? (path.split("/")[2] || "roadmap") : (path.split("/")[1] || "roadmap");
   const t = TITLES[id] ?? TITLES.roadmap;
-  const [search, setSearch] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
@@ -151,17 +151,7 @@ export function TopBar({ basePath = "", demoUser }: TopBarProps = {}) {
         </div>
 
         {/* search */}
-        <label className="flex-1 max-w-[420px] sm:ml-6 flex items-center gap-2 h-9 px-3 rounded-xl bg-white/[0.06] ring-1 ring-inset ring-white/[0.10] text-paper/70 transition-all focus-within:ring-polaris-400/70 focus-within:bg-white/[0.09] focus-within:shadow-[0_0_0_3px_rgba(196,125,78,0.16),0_4px_16px_-6px_rgba(196,125,78,0.25)]">
-          <SearchGlyph />
-          <input
-            id="top-search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Ask or search…"
-            className="bg-transparent text-[13px] placeholder-paper/40 text-paper outline-none flex-1 min-w-0"
-          />
-          <span className="hidden md:inline-flex"><KBD>⌘K</KBD></span>
-        </label>
+        <WorkspaceSearch basePath={basePath} lang={lang} />
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
                     <Link href={basePath || "/roadmap"} className="hidden md:inline-flex h-8 px-3 rounded-lg text-[13px] font-medium items-center gap-1.5 bg-white/[0.06] ring-1 ring-inset ring-white/[0.10] text-paper hover:bg-white/[0.10] hover:-translate-y-px transition-all">

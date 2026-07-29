@@ -15,7 +15,7 @@ import { ActionLabClient } from "@/components/app/ActionLabClient";
 import { BookingsClient } from "@/components/app/BookingsClient";
 import { BillingClient } from "@/components/app/BillingClient";
 import { TransactionsClient } from "@/components/app/TransactionsClient";
-import { DemoFamily } from "@/components/demo/DemoFamily";
+import { LiveFamily } from "@/components/demo/LiveFamily";
 import { DemoSettingsClient } from "@/components/demo/DemoSettingsClient";
 import { toUniProfile } from "@/lib/admissions";
 import type { UniversityForModel } from "@/lib/ml/probability";
@@ -43,7 +43,7 @@ export default async function DemoSectionPage({ params }: { params: Promise<{ se
   if (section === "connections") return <ConnectionsClient initial={DEMO_CONNECTIONS} demo />;
   if (section === "consultants") return <ConsultantsClient consultants={DEMO_CONSULTANTS} matches={DEMO_CONSULTANT_MATCHES} initialOpenId={null} demo basePath="/demo" />;
   if (section === "community") return <CommunityClient initialChannel="general" me={{ id: DEMO_USER.id, name: DEMO_USER.name, role: "student" }} demo />;
-  if (section === "family") return <DemoFamily />;
+  if (section === "family") return <LiveFamily />;
   if (section === "bookings") return <BookingsClient initial={DEMO_BOOKINGS} demo basePath="/demo" />;
   if (section === "strategist") return <StrategistClient studentName={DEMO_USER.name} initials={DEMO_USER.initials} grade={DEMO_USER.grade} contextRows={[{ k: "GPA", v: "3.80" }, { k: "Target", v: "Elite-tier" }, { k: "Probability", v: "41%" }, { k: "Country", v: "Bangladesh" }]} gapRows={GAPS} eyebrow="Strategist · grounded · Elite-tier target" demo />;
   if (section === "transactions") return <div className="px-4 sm:px-6 lg:px-8 py-5 lg:py-7 max-w-[1000px] mx-auto"><Header eyebrow="Account" title="Transactions" blurb="Every payment with its live status, reference id, and printable receipt."/><TransactionsClient rows={DEMO_TRANSACTIONS} userName={DEMO_USER.name} userEmail={DEMO_USER.email}/></div>;

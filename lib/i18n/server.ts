@@ -1,6 +1,8 @@
 import type { Lang } from "./strings";
 
 export function requestLanguage(request: Request): Lang {
+  const explicit = request.headers.get("x-polaris-language");
+  if (explicit === "bn" || explicit === "en") return explicit;
   const cookie = request.headers.get("cookie") ?? "";
   const match = cookie.match(/(?:^|;\s*)polaris\.lang=(en|bn)(?:;|$)/);
   return match?.[1] === "bn" ? "bn" : "en";

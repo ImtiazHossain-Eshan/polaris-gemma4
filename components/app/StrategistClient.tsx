@@ -24,6 +24,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { gemmaHeaders, getBrowserKnowledgeNotes } from "@/lib/gemma/browser-key";
 import type { StrategistChunk } from "@/lib/strategist/schemas";
 import { Card, Pill, Tag, Avatar, Icon } from "./ui";
 import { QuotaModal, resetHintFrom, type QuotaState } from "./QuotaModal";
@@ -259,7 +260,7 @@ export function StrategistClient({
     const t = setTimeout(() => {
       void fetch("/api/account/model-pref", {
         method: "PUT",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({
           choice: model === "auto" ? "auto" : model,
           mode: routeMode,
@@ -375,7 +376,7 @@ export function StrategistClient({
       const title = firstUserText.length > 60 ? firstUserText.slice(0, 57) + "…" : firstUserText;
       const res = await fetch("/api/chat/threads", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({ title }),
       });
       if (!res.ok) return null;
@@ -409,7 +410,7 @@ export function StrategistClient({
     try {
       await fetch(`/api/chat/threads/${tid}/messages`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify({ role, text, ...extras }),
       });
       setThreadsReloadKey((k) => k + 1);
@@ -484,8 +485,8 @@ export function StrategistClient({
         setThinking("Consulting Gemma 4…");
         const response = await fetch("/api/demo/strategist", {
           method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ message: text, section: "strategist", roadmapSummary: JSON.stringify(strategistContextPayload(roadmapStore.get())) }),
+          headers: { "content-type": "application/json", ...gemmaHeaders() },
+          body: JSON.stringify({ message: text, section: "strategist", roadmapSummary: JSON.stringify(strategistContextPayload(roadmapStore.get())), knowledgeNotes: getBrowserKnowledgeNotes() }),
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data?.error || "The Strategist is temporarily unavailable.");
@@ -502,7 +503,7 @@ export function StrategistClient({
 
       const res = await fetch("/api/strategist", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...gemmaHeaders() },
         body: JSON.stringify(body),
       });
       const rem = res.headers.get("X-RateLimit-Remaining");

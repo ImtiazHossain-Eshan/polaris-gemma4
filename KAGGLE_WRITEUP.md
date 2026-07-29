@@ -23,11 +23,13 @@ Polaris is an AI academic strategist powered exclusively by Gemma 4. A student p
 
 This output is structured data, not an unbounded chat response. Polaris renders it as an interactive plan that can later be tracked, adapted, and discussed with the streaming Strategist.
 
-Judges can use the public `/demo` workspace without creating an account or entering payment details. It begins with a complete, realistic Bangladesh-student roadmap, supports live replanning, and exposes model traces and retrieved sources. Every user-facing area is available from the same workspace: the roadmap, Strategist, deadlines, university fit, resources, connections, partners, consultants, community, family, bookings, access ledger, and settings.
+Judges can use the public `/demo` workspace without creating an account or entering payment details. It begins with a complete, realistic Bangladesh-student roadmap, supports live replanning, and exposes model traces and retrieved sources.
 
 The entire public workspace can switch between English and Bengali. Navigation, generated roadmap content, validation messages, fallback guidance, and Strategist answers follow the selected language while proper names and standard admissions acronyms remain intact.
 
-Action Lab extends the roadmap beyond chat. Its **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time and shows what should change. The **Evidence-to-Action Graph** separates a student's claim from proof, identifies the remaining gap, and produces the next measurable verification step. Students can also take original English IELTS/SAT mock questions, receive a Gemma-powered adaptive review, build a weekly routine manually or from natural language, and watch curated official exam lessons without leaving Polaris.
+Action Lab extends the roadmap beyond chat. Its **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time. The **Evidence-to-Action Graph** separates a student's claim from proof and produces the next measurable verification step. Gemma 4 also creates fresh IELTS or SAT diagnostics for the selected official section and difficulty, reviews answer patterns after deterministic scoring, refreshes section-aware learning videos, converts natural-language routine requests into editable blocks, and supports day-by-day essay improvement.
+
+Students can turn feedback into browser-local knowledge notes. Both the full-page Strategist and right-side Strategist read the same saved notes and conversation history. Gemma 4 discovery controls can refresh university, resource, and case-study recommendations under contracts that prohibit invented rankings, costs, offers, rates, or outcomes. A functional family workspace creates revocable, browser-local read-only invitation links. An optional personal Gemma API key is stored only for the current browser tab and never persisted or logged.
 
 ### Why Gemma 4 is core
 
@@ -35,14 +37,9 @@ Templates can say "improve your GPA" or "join an extracurricular." The difficult
 
 We use the hosted `gemma-4-26b-a4b-it` model through Google's official `@google/genai` SDK. The optional `gemma-4-31b-it` configuration is also allowlisted. Minimal thinking keeps the public roadmap responsive; high thinking is reserved for Deep Strategist requests. Internal thoughts are never exposed.
 
-Gemma 4 powers every generative feature:
+Gemma 4 powers all 15 generative responsibilities: roadmap planning, both synchronized Strategists, research synthesis, Decision Twin, Evidence Graph, fresh mock generation, mock feedback, Smart Routine parsing, video discovery, knowledge-note synthesis, ethical essay coaching, university and resource discovery, case-study pattern extraction, Offer Radar, and durable memory extraction.
 
-1. structured roadmap generation;
-2. the streaming academic Strategist;
-3. research synthesis over retrieved evidence;
-4. Decision Twin scenario analysis and Evidence Graph auditing;
-5. adaptive mock-exam review and natural-language routine parsing;
-6. durable student-memory extraction.
+These are not decorative AI labels. Each surface sends a distinct validated contract to Gemma 4 and returns either schema-checked structured data or safely rendered Markdown. Scoring, retrieval, validation, and browser storage remain deterministic and inspectable.
 
 There is one model registry entry and one provider adapter. Model IDs are selected from a server-side constant; client values and old saved preferences cannot override it. No other LLM or generative foundation model is used. Optional Tavily search only retrieves public snippets. BM25 retrieval, probability scoring, and the clearly labeled offline planner are deterministic algorithms.
 
@@ -54,7 +51,7 @@ The core request path is:
 
 Action Lab follows the same boundary:
 
-`Changed constraint, claim, exam result, or routine request -> validation -> compact Gemma 4 schema -> deterministic normalization -> editable UI`
+`Constraint, claim, exam request, routine, note, essay, or discovery query -> validation -> compact Gemma 4 schema -> deterministic normalization -> bilingual editable UI`
 
 Our knowledge base contains curated documents covering universities, scholarships, admissions principles, and accepted-student patterns. A deterministic BM25 implementation ranks the most relevant documents and places the top evidence in Gemma 4's context. This design makes retrieval inspectable, fast, and independent of another generative model.
 
@@ -62,7 +59,6 @@ Gemma 4 receives a Bangladesh-context system instruction, the normalized profile
 
 The public API is server-side, schema-validated, rate-limited, and keeps credentials out of the browser. If the model API is temporarily unavailable, a deterministic heuristic roadmap preserves the demo flow and is visibly labeled "Offline fallback"; it is never represented as Gemma output.
 
-The same repository also contains the account-backed product. The public workspace safely isolates judge interactions in browser-local state while reusing real university data, the transparent probability engine, resource hub, partner matching logic, and public Gemma 4 endpoints.
 
 ### What is innovative
 
@@ -74,7 +70,7 @@ The same repository also contains the account-backed product. The public workspa
 
 **Evidence plus judgment.** Retrieval supplies facts and patterns; Gemma 4 converts them into a coherent strategy. Neither component alone solves the problem.
 
-**Decision-to-evidence loop.** Students can test a possible decision, see how priorities move, convert the new goal into verifiable evidence, and place the next action directly into a weekly routine.
+**Decision-to-evidence loop.** Students can test a decision, see how priorities move, prove a claim, practise with a fresh model-generated diagnostic, save the lesson as knowledge, improve an essay, and schedule the next action. Gemma 4 stays inside the entire execution loop.
 
 ### Technical challenges
 
@@ -98,7 +94,7 @@ Polaris does not guarantee admission and says so explicitly. Retrieved material 
 
 ### What comes next
 
-We would add source freshness checks, university-specific evidence packs, Bangla voice input, calendar exports, mentor review, and outcome-based evaluation with consenting students. We also want to compare generated plans against counselor rubrics and measure whether recommendations remain feasible over time.
+We would add stronger source-freshness automation, university-specific evidence packs, Bangla voice input, calendar synchronization, verified family accounts, mentor review, and outcome-based evaluation with consenting students. We also want to compare generated plans against counselor rubrics and measure whether recommendations remain feasible over time.
 
 ### Links
 
