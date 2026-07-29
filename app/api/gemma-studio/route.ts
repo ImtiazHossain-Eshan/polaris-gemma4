@@ -179,7 +179,7 @@ async function gemmaJson(
       temperature: 0.4,
       maxOutputTokens,
       thinkingLevel: "minimal",
-      abortSignal: AbortSignal.timeout(24000),
+      abortSignal: AbortSignal.timeout(45000),
       apiKey,
     });
     return text ? parseObject(text) : null;
@@ -233,7 +233,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
           temperature: 0.3,
           maxOutputTokens: 850,
           thinkingLevel: "minimal",
-          abortSignal: AbortSignal.timeout(15000),
+          abortSignal: AbortSignal.timeout(30000),
           apiKey,
         }).catch(() => null)
       : null;
@@ -269,7 +269,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
           temperature: 0.35,
           maxOutputTokens: 2600,
           thinkingLevel: "minimal",
-          abortSignal: AbortSignal.timeout(15000),
+          abortSignal: AbortSignal.timeout(30000),
           apiKey,
         }).catch(() => null)
       : null;
@@ -287,7 +287,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
           temperature: 0.25,
           maxOutputTokens: 700,
           thinkingLevel: "minimal",
-          abortSignal: AbortSignal.timeout(15000),
+          abortSignal: AbortSignal.timeout(30000),
           apiKey,
         }).catch(() => null)
       : null;
