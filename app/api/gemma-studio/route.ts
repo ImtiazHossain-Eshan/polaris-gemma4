@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { z } from "zod";
-import { generateGemmaText, getGemmaModelId, hasGemmaKey } from "@/lib/llm/gemma";
+import { generateGemmaText, generateGemmaVisionText, getGemmaModelId, hasGemmaKey } from "@/lib/llm/gemma";
+import { LEARNING_VIDEOS } from "@/lib/action-lab/data";
 import { searchDocs } from "@/lib/rag/search";
 import { rateLimit, rateLimitHeaders } from "@/lib/ratelimit";
 import { fail, parseJson, withErrorHandling } from "@/lib/api/respond";
@@ -12,6 +13,7 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const questionSchema = z.object({
   id: z.string(),
@@ -46,6 +48,15 @@ const bodySchema = z.discriminatedUnion("kind", [
     section: z.string().min(2).max(50),
   }),
   z.object({
+    kind: z.literal("essay-ocr"),
+    imageBase64: z.string().min(100).max(3_800_000),
+    mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+  }),
+  z.object({
+    kind: z.literal("essay-translate"),
+    text: z.string().min(5).max(12000),
+    fromLanguage: z.enum(["bn", "en", "mixed"]),
+  }),  z.object({
     kind: z.literal("essay"),
     prompt: z.string().min(2).max(500),
     draft: z.string().min(20).max(12000),
@@ -81,7 +92,17 @@ function questionJson(index: number) {
   } as const;
 }
 
-const VIDEO_FIELDS = ["title", "channel", "reason", "searchQuery"] as const;
+const ESSAY_OCR_JSON = {
+  type: "object",
+  properties: {
+    detectedLanguage: { type: "string" },
+    title: { type: "string" },
+    transcription: { type: "string" },
+    uncertainText: { type: "string" },
+  },
+  required: ["detectedLanguage", "title", "transcription", "uncertainText"],
+} as const;
+const VIDEO_FIELDS = ["reason"] as const;
 const VIDEO_JSON = {
   type: "object",
   properties: Object.fromEntries(Array.from({ length: 3 }, (_, i) => i + 1).flatMap((index) => VIDEO_FIELDS.map((field) => [`v${index}_${field}`, { type: "string" }]))),
@@ -149,14 +170,12 @@ function flatQuestions(value: Record<string, unknown> | null, exam: "IELTS" | "S
   })).filter((item) => item.prompt && item.options.every(Boolean) && item.explanation);
 }
 
-function flatVideos(value: Record<string, unknown> | null) {
+function flatVideos(value: Record<string, unknown> | null, candidates: typeof LEARNING_VIDEOS) {
   if (!value) return [];
-  return Array.from({ length: 3 }, (_, i) => i + 1).map((index) => ({
-    title: String(value[`v${index}_title`] || ""),
-    channel: String(value[`v${index}_channel`] || ""),
-    reason: String(value[`v${index}_reason`] || ""),
-    searchQuery: String(value[`v${index}_searchQuery`] || ""),
-  })).filter((item) => item.title && item.channel && item.searchQuery);
+  return candidates.slice(0, 3).flatMap((video, index) => {
+    const reason = String(value[`v${index + 1}_reason`] || "").trim();
+    return reason ? [{ ...video, reason }] : [];
+  });
 }
 
 function flatDiscovery(value: Record<string, unknown> | null) {
@@ -215,15 +234,19 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
       ? "IELTS sections are Listening, Reading, Writing, and Speaking."
       : "Digital SAT sections are Reading and Writing, or Math.";
     const system = `You create original, unofficial practice questions. ${languageRule} Keep IELTS and SAT names in English. ${sectionRules} Never reproduce copyrighted official questions. answer is a zero-based index from 0 to 3. All question prompts, passages, options, skill names, and explanations must stay in English because IELTS and SAT are English-language tests. The surrounding interface and later coaching feedback may follow the selected language. Gemma 4 is the only generative model.`;
-    const generatedParts = await Promise.all(
-      [1, 2, 3].map((index) => gemmaJson(
-        req,
-        system,
-        `Create question ${index} of a three-question ${body.difficulty} ${body.exam} diagnostic for ${body.section}. Use a distinct skill focus. Fill every q${index}_ field. Return only the JSON object. Keep the passage under 45 words, every option under 12 words, and the explanation under 25 words.`,
-        questionJson(index),
-        1100,
-      )),
+    const createQuestion = (index: number, retry = false) => gemmaJson(
+      req,
+      system,
+      `${retry ? "Retry with an especially compact complete object. " : ""}Create question ${index} of a three-question ${body.difficulty} ${body.exam} diagnostic for ${body.section}. Use a distinct skill focus. Fill every q${index}_ field exactly once and close the JSON object. Keep the passage under 35 words, every option under 9 words, and the explanation under 18 words.`,
+      questionJson(index),
+      retry ? 1600 : 1400,
     );
+    const generatedParts = await Promise.all([1, 2, 3].map((index) => createQuestion(index)));
+    const missingIndexes = generatedParts.flatMap((part, index) => part ? [] : [index]);
+    if (missingIndexes.length) {
+      const retries = await Promise.all(missingIndexes.map((index) => createQuestion(index + 1, true)));
+      missingIndexes.forEach((partIndex, retryIndex) => { generatedParts[partIndex] = retries[retryIndex]; });
+    }
     const generated = generatedParts.reduce<Record<string, unknown>>(
       (combined, part) => part ? Object.assign(combined, part) : combined,
       {},
@@ -258,23 +281,90 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   }
 
   if (body.kind === "videos") {
+    const candidates = LEARNING_VIDEOS.filter((video) => video.exam === body.exam && video.topic === body.section);
+    if (!candidates.length) return fail(422, lang === "bn" ? "এই বিভাগের জন্য কোনো যাচাই করা ভিডিও নেই।" : "No verified videos are available for this section.");
     const hits = await searchDocs(`${body.exam} ${body.section} official lesson video practice`, null, 8);
-    const evidence = hits.map((item, index) => `[${index + 1}] ${item.title}: ${item.text.slice(0, 500)} (${item.source})`).join("\n");
+    const evidence = hits.map((item, index) => `[${index + 1}] ${item.title}: ${item.text.slice(0, 350)} (${item.source})`).join("\n");
+    const catalog = candidates.map((video) => `${video.id} | ${video.title} | ${video.source}`).join("\n");
     const generated = await gemmaJson(
       req,
-      `You are a credible learning-content curator. ${languageRule} Recommend established or official education channels. Do not invent direct URLs. Return precise YouTube search queries. Gemma 4 is the only generative model.`,
-      `Return exactly 3 distinct recommendations for ${body.exam} ${body.section}. Fill every v1, v2, and v3 field. Evidence:\n${evidence.slice(0, 3000)}`,
+      `You are a credible learning-content curator. ${languageRule} Use only the verified candidate catalog. Explain why each listed lesson fits the requested exam skill. Gemma 4 is the only generative model.`,
+      `Review the first three verified videos for ${body.exam} ${body.section}. Return one concise, specific reason for each in v1_reason, v2_reason, and v3_reason, in the same order as the catalog.\nVERIFIED CATALOG:\n${catalog}\nEVIDENCE:\n${evidence.slice(0, 2200)}`,
       VIDEO_JSON,
-      1050,
+      800,
     );
-    const liveRecommendations = flatVideos(generated);
-    const recommendations = liveRecommendations.length === 3 ? liveRecommendations : [
-      { title: `${body.exam} ${body.section} guided lesson`, channel: body.exam === "SAT" ? "Khan Academy" : "British Council", reason: lang === "bn" ? "এই section-এর মূল skill অনুশীলনের জন্য।" : "A focused lesson for the selected section.", searchQuery: `${body.exam} ${body.section} official practice lesson` },
-    ];
+    const liveRecommendations = flatVideos(generated, candidates);
+    const recommendations = liveRecommendations.length === 3
+      ? liveRecommendations
+      : candidates.slice(0, 3).map((video) => ({ ...video, reason: lang === "bn" ? "এই বিভাগের জন্য আগে থেকে যাচাই করা পাঠ।" : "A verified lesson for the selected section." }));
     const source = liveRecommendations.length === 3 ? "gemma4" : "deterministic-fallback";
     return Response.json({ recommendations, source, model: source === "gemma4" ? getGemmaModelId() : "none" });
   }
 
+  if (body.kind === "essay-ocr") {
+    if (!live) {
+      return fail(503, lang === "bn" ? "হাতের লেখা পড়তে একটি Gemma API key প্রয়োজন।" : "A Gemma API key is required to read handwriting.");
+    }
+    const generated = await generateGemmaVisionText({
+      system: "You are the handwriting transcription layer in Polaris. Gemma 4 is the only generative model. Transcribe the student's essay faithfully. Preserve the original language, paragraph breaks, punctuation, spelling, and wording. Support Bengali, English, and mixed Bengali-English handwriting. Never translate, improve, summarize, or invent missing words. Mark unreadable fragments as [অস্পষ্ট] for Bengali text or [unclear] for English text.",
+      prompt: "Read the handwritten essay in this image. Return detectedLanguage as bn, en, or mixed; a short title based only on visible text; the complete verbatim transcription; and a concise uncertainText note listing any unclear fragments. Return only the requested JSON object.",
+      imageBase64: body.imageBase64,
+      mimeType: body.mimeType,
+      responseJsonSchema: ESSAY_OCR_JSON,
+      maxOutputTokens: 5000,
+      abortSignal: AbortSignal.timeout(50000),
+      apiKey,
+    }).catch((error) => {
+      console.warn("[gemma-studio] handwriting extraction failed", error instanceof Error ? error.message : "unknown error");
+      return null;
+    });
+    if (!generated) {
+      return fail(502, lang === "bn" ? "Gemma ছবিটি পড়তে পারেনি। পরিষ্কার আলোতে আবার ছবি তুলুন।" : "Gemma could not read the image. Retake it in clear light and try again.");
+    }
+    let parsed: Record<string, unknown>;
+    try {
+      parsed = parseObject(generated);
+    } catch {
+      return fail(502, lang === "bn" ? "Gemma-এর লেখা সম্পূর্ণ পাওয়া যায়নি। আবার চেষ্টা করুন।" : "Gemma returned an incomplete transcription. Please try again.");
+    }
+    const transcription = String(parsed.transcription || "").trim();
+    if (transcription.length < 5) {
+      return fail(422, lang === "bn" ? "ছবিতে পাঠযোগ্য রচনা পাওয়া যায়নি।" : "No readable essay was found in the image.");
+    }
+    const rawLanguage = String(parsed.detectedLanguage || "").toLowerCase();
+    const detectedLanguage = rawLanguage.includes("mix")
+      ? "mixed"
+      : rawLanguage.includes("bn") || rawLanguage.includes("bangla") || rawLanguage.includes("bengali")
+        ? "bn"
+        : "en";
+    return Response.json({
+      text: transcription,
+      title: String(parsed.title || (detectedLanguage === "bn" ? "হাতের লেখা রচনা" : "Handwritten essay")),
+      detectedLanguage,
+      uncertainText: String(parsed.uncertainText || ""),
+      source: "gemma4",
+      model: getGemmaModelId(),
+    });
+  }
+
+  if (body.kind === "essay-translate") {
+    if (!live) {
+      return fail(503, lang === "bn" ? "অনুবাদের জন্য একটি Gemma API key প্রয়োজন।" : "A Gemma API key is required for translation.");
+    }
+    const generated = await generateGemmaText({
+      system: "You are a faithful academic translator. Gemma 4 is the only generative model. Translate the student's Bengali or mixed-language essay into natural English. Preserve meaning, paragraph breaks, names, facts, uncertainty markers, and the student's voice. Do not improve arguments, add achievements, summarize, or remove content. Return only the English translation.",
+      contents: `SOURCE LANGUAGE: ${body.fromLanguage}\n\nESSAY:\n${body.text}`,
+      temperature: 0.15,
+      maxOutputTokens: 5000,
+      thinkingLevel: "minimal",
+      abortSignal: AbortSignal.timeout(45000),
+      apiKey,
+    }).catch(() => null);
+    if (!generated) {
+      return fail(502, lang === "bn" ? "Gemma এখন অনুবাদ সম্পন্ন করতে পারেনি। আবার চেষ্টা করুন।" : "Gemma could not complete the translation. Please try again.");
+    }
+    return Response.json({ text: generated, source: "gemma4", model: getGemmaModelId() });
+  }
   if (body.kind === "essay") {
     const generated = live
       ? await generateGemmaText({

@@ -44,7 +44,7 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
       <img src="docs/assets/screenshots/gemma-action-lab.png" alt="Polaris Gemma 4 Action Lab" />
       <br />
       <strong>Action Lab</strong><br />
-      Decision Twin, Evidence Graph, fresh Gemma mocks, Smart Routine, video discovery, knowledge notes, and Essay Studio in one workspace.
+      Decision Twin, Evidence Graph, fresh Gemma mocks, Smart Routine, video discovery, knowledge notes, and a multimodal Essay Studio in one workspace.
     </td>
   </tr>
 </table>
@@ -82,6 +82,29 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
   </tr>
 </table>
 
+### Section-aware video learning inside Polaris
+
+![Gemma 4 section-aware in-app video learning](docs/assets/screenshots/gemma-video-learning.png)
+
+Each IELTS and Digital SAT section begins with its own verified starter playlist. Clicking a lesson changes and starts the privacy-enhanced embedded player. Refresh with Gemma uses retrieved evidence to explain and surface three verified lessons for the selected skill without inventing a direct video URL.
+### Handwriting to a bilingual essay draft
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/screenshots/gemma-handwriting-essay.png" alt="Gemma 4 extracting a handwritten Bengali and English essay" />
+      <br />
+      <strong>Gemma 4 multimodal transcription</strong><br />
+      A student can photograph or upload a handwritten Bengali, English, or mixed-language essay. The browser resizes the active image, sends it only to Gemma 4, and never stores the image in the draft collection.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/screenshots/gemma-handwriting-bengali.png" alt="Bengali Gemma 4 handwriting and essay workflow" />
+      <br />
+      <strong>Bengali first, English by choice</strong><br />
+      Gemma first preserves the original language and paragraph structure. A separate control creates a faithful English translation that the student can keep as another named draft. New drafts never overwrite earlier work.
+    </td>
+  </tr>
+</table>
 ### Evidence-grounded discovery that can refresh
 
 <table>
@@ -162,9 +185,9 @@ Polaris does not stop at generating advice. It creates an execution loop:
 2. **Prove:** Evidence-to-Action Graph separates a claim from proof and names the missing verification.
 3. **Practise:** Gemma 4 creates fresh IELTS or SAT questions for the selected section and difficulty. Deterministic scoring remains inspectable, and Gemma 4 produces rapid skill feedback.
 4. **Schedule:** Smart Routine converts plain language into a validated, editable weekly block.
-5. **Learn:** Curated IELTS and SAT lessons play inside the workspace, and Gemma 4 refreshes recommendations by exam section.
+5. **Learn:** Every IELTS and SAT section starts with its own verified in-app playlist. Gemma 4 refreshes three relevant lessons, and every lesson card switches and starts the embedded player without redirecting the student.
 6. **Remember:** Feedback can become a reusable note shared by both Strategist surfaces and Essay Studio.
-7. **Write:** Essay Studio keeps a day-by-day draft and asks Gemma 4 for ethical, voice-preserving improvement.
+7. **Scan and write:** Gemma 4 transcribes Bengali, English, or mixed handwriting, offers an explicit English translation, and supports ethical, voice-preserving improvement across multiple named drafts.
 8. **Adapt:** New evidence, completed work, and deadline changes flow back into the animated roadmap.
 
 This makes Gemma 4 part of the student's operating system, not an isolated text box.
@@ -198,6 +221,8 @@ flowchart LR
 | Video refresh | Exam section and retrieved learning evidence | Curate credible lesson targets and explain relevance | No invented direct URLs; title, channel, reason, and search-query validation |
 | Knowledge notes | Student note and optional feedback | Create a compact summary, key concepts, and next actions | Browser-local storage, user deletion, bounded context injection |
 | Essay Studio | Prompt, draft, and selected saved notes | Diagnose, outline, or refine while preserving voice | No fabricated achievements, browser autosave, clear ethical boundary |
+| Handwriting extraction | Resized JPEG, PNG, or WebP image | Faithfully transcribe Bengali, English, or mixed handwriting | Strict multimodal schema, MIME and size bounds, original-language-first policy, image never stored |
+| Essay translation | Reviewed Bengali or mixed transcription | Produce a faithful English version without inventing or improving facts | Separate user-triggered request, editable result, optional save as a new named draft |
 | Discovery refresh | Ranked university, resource, or case-study evidence | Synthesize relevant options and specific next actions | No invented rankings, costs, offers, rates, or outcomes |
 | Personal Gemma key | Optional tab-scoped credential | Extend a judge or student session using the same Gemma 4 allowlist | Session storage only, never persisted or logged |
 | Student offer radar | Retrieved official offer pages | Summarize eligibility and why an offer fits | Official URL validation, timestamps, and visible model trace |
@@ -205,7 +230,7 @@ flowchart LR
 
 The enforcement boundary lives in:
 
-- [`lib/llm/gemma.ts`](lib/llm/gemma.ts), which allowlists Gemma 4 model IDs and owns generation;
+- [`lib/llm/gemma.ts`](lib/llm/gemma.ts), which allowlists Gemma 4 model IDs and owns text plus multimodal generation;
 - [`lib/llm/providers/registry.ts`](lib/llm/providers/registry.ts), which registers the single generative provider;
 - [`lib/llm/router.ts`](lib/llm/router.ts), which rejects unsupported routing choices;
 - [`app/api/action-lab/route.ts`](app/api/action-lab/route.ts), which validates every structured Action Lab response;
@@ -213,7 +238,7 @@ The enforcement boundary lives in:
 
 ## Executed Kaggle notebook
 
-[`notebooks/polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) is a 46-cell, fully executed, judge-readable technical companion to the live app. It includes:
+[`notebooks/polaris_gemma4_decision_lab.ipynb`](notebooks/polaris_gemma4_decision_lab.ipynb) is a 52-cell, fully executed, judge-readable technical companion to the live app. It includes:
 
 - the fixed Gemma 4 model allowlist and hidden-secret setup;
 - inspectable retrieval for a Bangladesh-context student;
@@ -221,9 +246,9 @@ The enforcement boundary lives in:
 - a Gemma 4 Smart Routine parse;
 - live Gemma 4 mock-generation and grading contracts for IELTS and SAT;
 - section-aware Gemma 4 video discovery;
-- knowledge-note and ethical Essay Studio contracts;
-- Bengali structured generation;
-- a 15-surface Gemma 4 responsibility map and provider audit;
+- knowledge-note, multi-draft Essay Studio, and image-privacy contracts;
+- Bengali structured generation and Bengali-first handwritten essay extraction;
+- a 17-surface Gemma 4 responsibility map and provider audit;
 - roadmap synthesis and grounded Strategist memory examples;
 - Offer Radar provenance and shared conversation-state contracts;
 - 18 automated full-project checks with recorded outputs;
@@ -280,7 +305,7 @@ The public `/demo` route does not require MongoDB, authentication, or payment co
 app/demo/                    Public judge workspace
 app/api/demo/                Public roadmap and Strategist APIs
 app/api/action-lab/          Decision, evidence, and routine contracts
-app/api/gemma-studio/       Mock, grading, video, notes, essay, and discovery contracts
+app/api/gemma-studio/       Mock, video, notes, multimodal essay, translation, and discovery contracts
 components/app/              Product workspace and model response surfaces
 components/demo/             Browser-local public demo controls
 data/                        Curated university, scholarship, and case-study evidence

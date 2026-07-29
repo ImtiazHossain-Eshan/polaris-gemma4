@@ -1,4 +1,4 @@
-import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+import { createPartFromBase64, GoogleGenAI, ThinkingLevel } from "@google/genai";
 
 /**
  * Competition compliance boundary.
@@ -88,6 +88,50 @@ export async function generateGemmaText(
   return response.text?.trim() || null;
 }
 
+export type GemmaVisionRequest = {
+  system: string;
+  prompt: string;
+  imageBase64: string;
+  mimeType: "image/jpeg" | "image/png" | "image/webp";
+  maxOutputTokens?: number;
+  responseJsonSchema?: unknown;
+  abortSignal?: AbortSignal;
+  apiKey?: string | null;
+};
+
+/** Audited multimodal entry point for Gemma 4 handwriting extraction. */
+export async function generateGemmaVisionText(
+  request: GemmaVisionRequest,
+): Promise<string | null> {
+  const client = gemmaClient(request.apiKey);
+  if (!client) return null;
+
+  const response = await client.models.generateContent({
+    model: getGemmaModelId(),
+    contents: [
+      createPartFromBase64(request.imageBase64, request.mimeType),
+      { text: request.prompt },
+    ],
+    config: {
+      systemInstruction: request.system,
+      temperature: 0.1,
+      maxOutputTokens: request.maxOutputTokens ?? 4096,
+      thinkingConfig: {
+        thinkingLevel: ThinkingLevel.MINIMAL,
+        includeThoughts: false,
+      },
+      ...(request.responseJsonSchema
+        ? {
+            responseMimeType: "application/json",
+            responseJsonSchema: request.responseJsonSchema,
+          }
+        : {}),
+      ...(request.abortSignal ? { abortSignal: request.abortSignal } : {}),
+    },
+  });
+
+  return response.text?.trim() || null;
+}
 export type RoadmapMilestone = {
   quarter: string;
   category: "Academics" | "Testing" | "Extracurriculars" | "Skills" | "Applications";

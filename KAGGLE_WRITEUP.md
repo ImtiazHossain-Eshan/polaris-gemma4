@@ -1,6 +1,6 @@
 # Polaris: A Gemma 4 North Star for Global Education
 
-**Team:** Imtiaz Hossain · Mofftasim Hossain Sayem
+**Team:** Imtiaz Hossain & Mofftasim Hossain Sayem
 
 ## Turning a Bangladeshi student's ambition into an evidence-grounded plan they can start this week
 
@@ -27,7 +27,7 @@ Judges can use the public `/demo` workspace without creating an account or enter
 
 The entire public workspace can switch between English and Bengali. Navigation, generated roadmap content, validation messages, fallback guidance, and Strategist answers follow the selected language while proper names and standard admissions acronyms remain intact.
 
-Action Lab extends the roadmap beyond chat. Its **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time. The **Evidence-to-Action Graph** separates a student's claim from proof and produces the next measurable verification step. Gemma 4 also creates fresh IELTS or SAT diagnostics for the selected official section and difficulty, reviews answer patterns after deterministic scoring, refreshes section-aware learning videos, converts natural-language routine requests into editable blocks, and supports day-by-day essay improvement.
+Action Lab extends the roadmap beyond chat. Its **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time. The **Evidence-to-Action Graph** separates a student's claim from proof and produces the next measurable verification step. Gemma 4 also creates fresh IELTS or SAT diagnostics, reviews answer patterns after deterministic scoring, refreshes verified in-app lesson playlists by exam section, converts routine requests into editable blocks, and supports day-by-day essay improvement. Students can upload Bengali, English, or mixed handwritten essays for faithful Gemma 4 transcription, then explicitly request an English translation and save it as a separate named draft.
 
 Students can turn feedback into browser-local knowledge notes. Both the full-page Strategist and right-side Strategist read the same saved notes and conversation history. Gemma 4 discovery controls can refresh university, resource, and case-study recommendations under contracts that prohibit invented rankings, costs, offers, rates, or outcomes. A functional family workspace creates revocable, browser-local read-only invitation links. An optional personal Gemma API key is stored only for the current browser tab and never persisted or logged.
 
@@ -37,7 +37,7 @@ Templates can say "improve your GPA" or "join an extracurricular." The difficult
 
 We use the hosted `gemma-4-26b-a4b-it` model through Google's official `@google/genai` SDK. The optional `gemma-4-31b-it` configuration is also allowlisted. Minimal thinking keeps the public roadmap responsive; high thinking is reserved for Deep Strategist requests. Internal thoughts are never exposed.
 
-Gemma 4 powers all 15 generative responsibilities: roadmap planning, both synchronized Strategists, research synthesis, Decision Twin, Evidence Graph, fresh mock generation, mock feedback, Smart Routine parsing, video discovery, knowledge-note synthesis, ethical essay coaching, university and resource discovery, case-study pattern extraction, Offer Radar, and durable memory extraction.
+Gemma 4 powers all 17 generative surfaces: roadmap planning, both synchronized Strategists, research, Decision Twin, Evidence Graph, mock generation and grading, verified video learning, knowledge notes, essay coaching, handwriting extraction, essay translation, university and resource discovery, case studies, Smart Routine, Offer Radar, and student memory.
 
 These are not decorative AI labels. Each surface sends a distinct validated contract to Gemma 4 and returns either schema-checked structured data or safely rendered Markdown. Scoring, retrieval, validation, and browser storage remain deterministic and inspectable.
 
@@ -51,7 +51,7 @@ The core request path is:
 
 Action Lab follows the same boundary:
 
-`Constraint, claim, exam request, routine, note, essay, or discovery query -> validation -> compact Gemma 4 schema -> deterministic normalization -> bilingual editable UI`
+`Constraint, claim, exam request, routine, note, essay image, or discovery query -> validation -> compact Gemma 4 schema -> deterministic normalization -> bilingual editable UI`
 
 Our knowledge base contains curated documents covering universities, scholarships, admissions principles, and accepted-student patterns. A deterministic BM25 implementation ranks the most relevant documents and places the top evidence in Gemma 4's context. This design makes retrieval inspectable, fast, and independent of another generative model.
 
@@ -70,7 +70,7 @@ The public API is server-side, schema-validated, rate-limited, and keeps credent
 
 **Evidence plus judgment.** Retrieval supplies facts and patterns; Gemma 4 converts them into a coherent strategy. Neither component alone solves the problem.
 
-**Decision-to-evidence loop.** Students can test a decision, see how priorities move, prove a claim, practise with a fresh model-generated diagnostic, save the lesson as knowledge, improve an essay, and schedule the next action. Gemma 4 stays inside the entire execution loop.
+**Decision-to-evidence loop.** Students can test a decision, prove a claim, practise with a fresh model-generated diagnostic, play a relevant lesson in-app, turn handwritten work into a bilingual draft, save feedback as knowledge, and schedule the next action. Gemma 4 stays inside the entire execution loop.
 
 ### Technical challenges
 
