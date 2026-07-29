@@ -292,6 +292,29 @@ html.lenis body {
 }
 *::-webkit-scrollbar-corner { background: transparent; }
 
+
+/* Workspace pages own their scroll regions. Hide the browser page scrollbar
+   there so only Polaris app scrollbars are visible. */
+html:has(.polaris-workspace-shell),
+html:has(.polaris-workspace-shell) body {
+  height: 100%;
+  overflow: hidden;
+  scrollbar-width: none;
+}
+html:has(.polaris-workspace-shell)::-webkit-scrollbar,
+html:has(.polaris-workspace-shell) body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+@supports (height: 100dvh) {
+  .polaris-workspace-shell { height: 100dvh; }
+}
+@media (max-width: 767px) {
+  .polaris-workspace-shell {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* Consistent product scrollers for nested workspaces and floating controls. */
 .polaris-scrollbar {
   scrollbar-width: thin;
@@ -327,9 +350,8 @@ html.lenis body {
   background: linear-gradient(180deg, rgba(220, 158, 106, 0.9), rgba(157, 103, 65, 0.82));
   background-clip: padding-box;
 }
-/* Always show the vertical scrollbar so layout doesn't jump between long /
-   short pages. */
-html { scrollbar-gutter: stable; }
+/* Prevent sideways page drift; product panes own their vertical scroll. */
+html { overflow-x: hidden; }
 
 /* ─── Workspace glass utilities ───
    Used by TopBar, LeftNav, AgentChat, TaskPanel, KPI cards. Driven by the

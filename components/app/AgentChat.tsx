@@ -630,14 +630,14 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
 
     <aside
       ref={asideRef}
-      style={{ width: railWidth, maxWidth: "94vw" }}
+      style={{ width: railWidth, maxWidth: "min(94vw, 520px)" }}
       className={cn(
         // h-full + min-h-0 fills the parent column exactly; overflow-hidden so
         // only the inner messages region scrolls. Locked into the flex shell,
         // never moves when the main pane scrolls.
         "app-glass-dark shrink-0 border-l border-white/[0.06] flex flex-col min-h-0 overflow-hidden text-paper",
         // Desktop (xl+): static column. Below xl: fixed right overlay drawer.
-        "fixed inset-y-0 right-0 z-50 h-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+        "fixed inset-y-0 right-0 z-50 h-[100dvh] transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
         "xl:static xl:translate-x-0 xl:z-auto xl:relative",
         !resizing && "xl:transition-[width] xl:duration-300",
         mobileOpen ? "translate-x-0" : "translate-x-full xl:translate-x-0",
@@ -1151,7 +1151,7 @@ function RailResizeHandle({
       role="separator"
       aria-orientation="vertical"
       title="Drag to resize · double-click to reset"
-      className="group absolute top-0 left-0 h-full w-1.5 cursor-col-resize select-none z-20 flex items-center justify-center"
+      className="group absolute top-0 left-0 hidden h-full w-1.5 cursor-col-resize select-none z-20 items-center justify-center xl:flex"
     >
       <span
         className={cn(

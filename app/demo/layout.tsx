@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
   return (
     <DemoWorkspaceSeed>
-      <div className="h-screen flex bg-bg overflow-hidden" data-agent-open="true">
+      <div className="polaris-workspace-shell h-[100dvh] min-h-0 flex bg-bg overflow-hidden" data-agent-open="true">
         <LeftNav
           plan={DEMO_USER.plan}
           studentName={DEMO_USER.name}

@@ -334,6 +334,8 @@ Polaris provides planning support, not admission guarantees. Fit estimates are d
 
 ## Team
 
+**Team name:** Arcane
+
 Built for the **Build with Gemma: ML, AI, Deep Learning & NLP Community Hackathon** in Bangladesh.
 
 - **Imtiaz Hossain**

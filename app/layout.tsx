@@ -42,7 +42,7 @@ const banglaSerif = Noto_Serif_Bengali({
 export const metadata: Metadata = {
   title: "Polaris | Your AI North Star for Academic Strategy",
   description:
-    "Polaris is a fully autonomous AI academic strategist. Reverse-engineer a competitive university application profile from school to graduate school.",
+    "Polaris by Team Arcane is a Gemma 4 academic strategist for bilingual, evidence-grounded global education planning.",
 };
 
 export default function RootLayout({

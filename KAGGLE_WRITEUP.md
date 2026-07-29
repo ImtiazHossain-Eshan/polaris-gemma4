@@ -1,6 +1,8 @@
 # Polaris: A Gemma 4 North Star for Global Education
 
-**Team:** Imtiaz Hossain & Mofftasim Hossain Sayem
+**Team:** Arcane
+
+**Members:** Imtiaz Hossain & Mofftasim Hossain Sayem
 
 ## A Bengali-first Gemma 4 strategist that helps students start early, prove progress, and turn global education goals into weekly action.
 

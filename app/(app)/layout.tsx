@@ -62,7 +62,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     // Each column owns its own scroll context (LeftNav, main, AgentChat) so
     // the strategist rail stays pinned at full height regardless of how far
     // the roadmap / deadlines / universities scroll inside the middle pane.
-    <div className="h-screen flex bg-bg overflow-hidden" data-agent-open="true">
+    <div className="polaris-workspace-shell h-[100dvh] min-h-0 flex bg-bg overflow-hidden" data-agent-open="true">
       <LeftNav
         plan={user.plan}
         studentName={user.name}
