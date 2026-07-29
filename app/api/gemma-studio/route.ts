@@ -68,11 +68,18 @@ const bodySchema = z.discriminatedUnion("kind", [
 type Body = z.infer<typeof bodySchema>;
 
 const QUESTION_FIELDS = ["skill", "passage", "prompt", "o1", "o2", "o3", "o4", "answer", "explanation"] as const;
-const QUESTION_JSON = {
-  type: "object",
-  properties: Object.fromEntries(Array.from({ length: 3 }, (_, i) => i + 1).flatMap((index) => QUESTION_FIELDS.map((field) => [`q${index}_${field}`, { type: field === "answer" ? "integer" : "string" }]))),
-  required: Array.from({ length: 3 }, (_, i) => i + 1).flatMap((index) => QUESTION_FIELDS.map((field) => `q${index}_${field}`)),
-} as const;
+function questionJson(index: number) {
+  return {
+    type: "object",
+    properties: Object.fromEntries(
+      QUESTION_FIELDS.map((field) => [
+        `q${index}_${field}`,
+        { type: field === "answer" ? "integer" : "string" },
+      ]),
+    ),
+    required: QUESTION_FIELDS.map((field) => `q${index}_${field}`),
+  } as const;
+}
 
 const VIDEO_FIELDS = ["title", "channel", "reason", "searchQuery"] as const;
 const VIDEO_JSON = {
@@ -176,7 +183,7 @@ async function gemmaJson(
       system,
       contents,
       responseJsonSchema: schema,
-      temperature: 0.4,
+      temperature: 0.2,
       maxOutputTokens,
       thinkingLevel: "minimal",
       abortSignal: AbortSignal.timeout(45000),
@@ -207,12 +214,19 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     const sectionRules = body.exam === "IELTS"
       ? "IELTS sections are Listening, Reading, Writing, and Speaking."
       : "Digital SAT sections are Reading and Writing, or Math.";
-    const generated = await gemmaJson(
-      req,
-      `You create original, unofficial practice questions. ${languageRule} Keep IELTS and SAT names in English. ${sectionRules} Never reproduce copyrighted official questions. answer is a zero-based index from 0 to 3. All question prompts, passages, options, skill names, and explanations must stay in English because IELTS and SAT are English-language tests. The surrounding interface and later coaching feedback may follow the selected language. Gemma 4 is the only generative model.`,
-      `Create exactly 3 ${body.difficulty} ${body.exam} questions for ${body.section}. Use distinct skills. Fill every q1, q2, and q3 field. Keep each passage under 70 words and each explanation under 40 words.`,
-      QUESTION_JSON,
-      1500,
+    const system = `You create original, unofficial practice questions. ${languageRule} Keep IELTS and SAT names in English. ${sectionRules} Never reproduce copyrighted official questions. answer is a zero-based index from 0 to 3. All question prompts, passages, options, skill names, and explanations must stay in English because IELTS and SAT are English-language tests. The surrounding interface and later coaching feedback may follow the selected language. Gemma 4 is the only generative model.`;
+    const generatedParts = await Promise.all(
+      [1, 2, 3].map((index) => gemmaJson(
+        req,
+        system,
+        `Create question ${index} of a three-question ${body.difficulty} ${body.exam} diagnostic for ${body.section}. Use a distinct skill focus. Fill every q${index}_ field. Return only the JSON object. Keep the passage under 45 words, every option under 12 words, and the explanation under 25 words.`,
+        questionJson(index),
+        1100,
+      )),
+    );
+    const generated = generatedParts.reduce<Record<string, unknown>>(
+      (combined, part) => part ? Object.assign(combined, part) : combined,
+      {},
     );
     const liveQuestions = flatQuestions(generated, body.exam, body.section, body.difficulty);
     const questions = liveQuestions.length === 3 ? liveQuestions : fallbackQuestions(body.exam, body.section, body.difficulty).slice(0, 3);
