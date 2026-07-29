@@ -2,106 +2,94 @@
 
 **Team:** Imtiaz Hossain & Mofftasim Hossain Sayem
 
-## Turning a Bangladeshi student's ambition into an evidence-grounded plan they can start this week
+## A Bengali-first Gemma 4 strategist that helps students start early, prove progress, and turn global education goals into weekly action.
 
-### The problem
+### The moment the roadmap arrives too late
 
-A motivated student can search for "how to get into a top university" and receive thousands of results. That abundance is part of the problem. Requirements, scholarships, deadlines, case studies, and generic advice are scattered across sources. Students with access to experienced counselors can turn those fragments into a strategy; many students in Bangladesh cannot.
+A Bangladeshi student completes HSC, opens a scholarship page, and discovers that the strongest application was supposed to begin years earlier. The test score needs months of preparation. The application asks for sustained projects, leadership, and proof of impact. Important deadlines are already close. The ambition was always there; the roadmap arrived too late.
 
-The result is not a lack of ambition. It is misallocated effort: collecting certificates instead of developing depth, preparing for tests too late, overlooking scholarship timelines, or targeting universities without understanding profile gaps.
+That gap begins long before university applications. A student in Class 5, 7, or 8 may have curiosity and potential but no connected view of Olympiads, hackathons, community projects, English preparation, scholarships, or future deadlines. Search results provide fragments. Families with experienced counselors can turn those fragments into a sequence; many students cannot.
 
-We asked a practical question: **Can an open model act as a strategic reasoning layer, not merely a chatbot, and turn a small student snapshot into a measurable, locally realistic roadmap?**
+The result is often misallocated effort: collecting certificates instead of building depth, preparing for IELTS or SAT too late, missing funding windows, or targeting universities without understanding the evidence their profile still needs.
 
-### Our solution
+We asked: **Can an open model become a strategic reasoning layer that helps a student start earlier, adapt honestly, and turn a distant goal into the next measurable week?**
 
-Polaris is an AI academic strategist powered exclusively by Gemma 4. A student provides their current stage, intended degree, academic standing, target university tier, and existing extracurricular strengths. Polaris retrieves relevant evidence from a curated knowledge base and asks Gemma 4 to produce:
+### What we built
 
-- a concise strategic diagnosis;
-- 3-5 honest profile gaps;
-- an 8-12 step roadmap across the next 6-18 months;
-- a priority, rationale, and measurable success criterion for every step.
+Polaris is a bilingual academic strategist powered exclusively by Gemma 4. A student provides their stage, intended degree, academic standing, goals, constraints, and current activities. Polaris retrieves relevant evidence and asks Gemma 4 to create a structured diagnosis and an 8 to 12 step roadmap across the next 6 to 18 months. Every milestone includes a priority, rationale, deadline, and measurable success criterion.
 
-This output is structured data, not an unbounded chat response. Polaris renders it as an interactive plan that can later be tracked, adapted, and discussed with the streaming Strategist.
+The result is not an unbounded chat transcript. It is a living roadmap that can be tracked, replanned, and discussed with a synchronized Strategist. Judges can open the public workspace without an account, card, or payment. English and Bengali are supported across navigation, roadmap content, forms, errors, and generated guidance, while official names and established acronyms remain unchanged.
 
-Judges can use the public `/demo` workspace without creating an account or entering payment details. It begins with a complete, realistic Bangladesh-student roadmap, supports live replanning, and exposes model traces and retrieved sources.
+Polaris follows the student after planning:
 
-The entire public workspace can switch between English and Bengali. Navigation, generated roadmap content, validation messages, fallback guidance, and Strategist answers follow the selected language while proper names and standard admissions acronyms remain intact.
+- **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time and explains what should move.
+- **Evidence-to-Action Graph** separates a claim from proof, identifies missing verification, and proposes the next evidence action.
+- **Mock Exams** uses Gemma 4 to generate fresh IELTS or Digital SAT questions by section and difficulty. Scoring is deterministic; Gemma 4 diagnoses the answer pattern and recommends the next practice block.
+- **Smart Routine** converts a request such as “add mathematics practice from 9 to 10 pm” into a validated, editable weekly schedule.
+- **Video Learning** starts with verified section-specific playlists. Gemma 4 refreshes relevant lessons and the selected video plays inside Polaris.
+- **Knowledge Notes** turns feedback into reusable memory shared by the full-page and side-panel Strategists.
+- **Essay Studio** supports multiple named drafts, ethical improvement, and voice-preserving feedback. Gemma 4 can transcribe Bengali, English, or mixed handwritten essays from an uploaded image, preserve Bengali first, and create an English translation only when requested.
+- **Discovery refresh** helps students explore universities, resources, offers, and case-study patterns under contracts that prohibit invented rankings, costs, admission rates, offers, or outcomes.
+- **Family workspace** creates revocable, browser-local read-only invitation links so a student can share progress without surrendering control.
 
-Action Lab extends the roadmap beyond chat. Its **Decision Twin** stress-tests a changed score, deadline, budget, country, or weekly study time. The **Evidence-to-Action Graph** separates a student's claim from proof and produces the next measurable verification step. Gemma 4 also creates fresh IELTS or SAT diagnostics, reviews answer patterns after deterministic scoring, refreshes verified in-app lesson playlists by exam section, converts routine requests into editable blocks, and supports day-by-day essay improvement. Students can upload Bengali, English, or mixed handwritten essays for faithful Gemma 4 transcription, then explicitly request an English translation and save it as a separate named draft.
+### Why Gemma 4 is essential
 
-Students can turn feedback into browser-local knowledge notes. Both the full-page Strategist and right-side Strategist read the same saved notes and conversation history. Gemma 4 discovery controls can refresh university, resource, and case-study recommendations under contracts that prohibit invented rankings, costs, offers, rates, or outcomes. A functional family workspace creates revocable, browser-local read-only invitation links. An optional personal Gemma API key is stored only for the current browser tab and never persisted or logged.
+A template can say “improve your GPA.” The hard problem is deciding whether this student should prioritize a test, a flagship project, research evidence, or a scholarship deadline, then revising that decision when a constraint changes. Gemma 4 performs that central reasoning and synthesis.
 
-### Why Gemma 4 is core
+Polaris uses the hosted `gemma-4-26b-a4b-it` model through Google's official `@google/genai` SDK. `gemma-4-31b-it` is also allowlisted. Fast requests use minimal thinking; deeper Strategist analysis uses a higher reasoning setting. Internal thoughts are never shown.
 
-Templates can say "improve your GPA" or "join an extracurricular." The difficult part is deciding what matters most for this student, resolving trade-offs across several admissions dimensions, and grounding recommendations in relevant evidence. Gemma 4 performs that central reasoning and synthesis.
+Gemma 4 powers 17 generative responsibilities across the product: roadmap planning, both synchronized Strategists, research, Decision Twin, Evidence Graph, mock generation and review, video learning, knowledge notes, essay coaching, handwriting extraction, essay translation, university and resource discovery, case studies, Smart Routine, Offer Radar, and student memory.
 
-We use the hosted `gemma-4-26b-a4b-it` model through Google's official `@google/genai` SDK. The optional `gemma-4-31b-it` configuration is also allowlisted. Minimal thinking keeps the public roadmap responsive; high thinking is reserved for Deep Strategist requests. Internal thoughts are never exposed.
-
-Gemma 4 powers all 17 generative surfaces: roadmap planning, both synchronized Strategists, research, Decision Twin, Evidence Graph, mock generation and grading, verified video learning, knowledge notes, essay coaching, handwriting extraction, essay translation, university and resource discovery, case studies, Smart Routine, Offer Radar, and student memory.
-
-These are not decorative AI labels. Each surface sends a distinct validated contract to Gemma 4 and returns either schema-checked structured data or safely rendered Markdown. Scoring, retrieval, validation, and browser storage remain deterministic and inspectable.
-
-There is one model registry entry and one provider adapter. Model IDs are selected from a server-side constant; client values and old saved preferences cannot override it. No other LLM or generative foundation model is used. Optional Tavily search only retrieves public snippets. BM25 retrieval, probability scoring, and the clearly labeled offline planner are deterministic algorithms.
+Each surface has a distinct validated contract. The server returns schema-checked data or safely rendered Markdown. Retrieval, scoring, validation, and storage remain deterministic and inspectable. There is one provider adapter and one model allowlist. No other LLM or generative foundation model is used.
 
 ### Technical architecture
 
-The core request path is:
+The roadmap request path is:
 
-`Student form -> Zod validation -> BM25 retrieval -> prompt + flat JSON schemas -> parallel Gemma 4 stages -> structured roadmap -> interactive UI`
+`Student profile -> Zod validation -> BM25 retrieval -> Gemma 4 structured reasoning -> schema validation -> interactive roadmap`
 
 Action Lab follows the same boundary:
 
-`Constraint, claim, exam request, routine, note, essay image, or discovery query -> validation -> compact Gemma 4 schema -> deterministic normalization -> bilingual editable UI`
+`Student action or evidence -> validation -> compact Gemma 4 contract -> deterministic normalization -> bilingual editable UI`
 
-Our knowledge base contains curated documents covering universities, scholarships, admissions principles, and accepted-student patterns. A deterministic BM25 implementation ranks the most relevant documents and places the top evidence in Gemma 4's context. This design makes retrieval inspectable, fast, and independent of another generative model.
+A curated knowledge base covers universities, scholarships, admissions principles, and student patterns. A deterministic BM25 implementation ranks the most relevant documents and places the strongest evidence into Gemma 4's context. This keeps retrieval fast, reproducible, and independent of another foundation model.
 
-Gemma 4 receives a Bangladesh-context system instruction, the normalized profile, retrieved evidence, and flat response schemas. A compact diagnosis runs first, then eight one-milestone flat-schema stages run in parallel. Only malformed stages receive a small targeted retry. This avoids nested-output truncation and stays within the hosted free-tier input-token budget while producing one typed eight-step roadmap.
+Roadmap generation uses a compact diagnosis followed by flat milestone stages that can run in parallel. Only malformed stages receive a targeted retry. This reduces truncation, controls token use, and produces typed milestones instead of brittle free-form text.
 
-The public API is server-side, schema-validated, rate-limited, and keeps credentials out of the browser. If the model API is temporarily unavailable, a deterministic heuristic roadmap preserves the demo flow and is visibly labeled "Offline fallback"; it is never represented as Gemma output.
+The API is server-side, rate-limited, and keeps credentials out of the browser. An optional personal Gemma key stays only in session storage and is never persisted or logged. When the hosted model is temporarily unavailable, an explicitly labeled deterministic fallback preserves the interface flow without pretending to be Gemma output.
 
+### What is different
 
-### What is innovative
+**From information to timing.** Polaris is designed to reach students before the final application year and connect long-term opportunities to work they can begin now.
 
-**From conversation to commitment.** The primary artifact is not a chat transcript; it is an operational roadmap with dates, priorities, and success metrics.
+**From conversation to commitment.** The main artifact is an operational roadmap with dates, priorities, evidence, and success metrics.
 
-**Auditable model policy.** The UI says which model ran, the API returns a trace, and the server has a single-model allowlist. Judges can verify meaningful Gemma 4 integration directly in code.
+**From advice to an execution loop.** A student can decide, prove, practise, schedule, learn, write, remember, and adapt inside one system.
 
-**Local realism.** Prompts explicitly require actions a student in Dhaka can begin on Monday, accounting for resource and access constraints instead of assuming a US counseling ecosystem.
+**Local realism.** Prompts require actions a student in Bangladesh can realistically begin, rather than assuming access to an expensive counseling ecosystem.
 
-**Evidence plus judgment.** Retrieval supplies facts and patterns; Gemma 4 converts them into a coherent strategy. Neither component alone solves the problem.
+**Auditable model policy.** The interface exposes the active Gemma 4 model and sources; the repository and executed notebook show the single-model boundary and response contracts.
 
-**Decision-to-evidence loop.** Students can test a decision, prove a claim, practise with a fresh model-generated diagnostic, play a relevant lesson in-app, turn handwritten work into a bilingual draft, save feedback as knowledge, and schedule the next action. Gemma 4 stays inside the entire execution loop.
+### Challenges and what we learned
 
-### Technical challenges
+Reliable roadmap cards required more discipline than ordinary chat. We replaced variable prose with strict schemas and boundary validation. To avoid another model for embeddings, we implemented inspectable BM25 retrieval with length normalization and title weighting. To satisfy the one-model rule, we removed alternate model adapters and reject unsupported routing choices. To keep the public workspace resilient, interactions persist locally, model requests are bounded, and fallbacks are honest.
 
-**Meeting the one-model rule in an existing product foundation.** Polaris previously had a flexible provider abstraction. For this sprint, we removed every alternate adapter and local-model endpoint, replaced the registry with Gemma 4 only, and made the router ignore stale client preferences. This created a simple, auditable compliance boundary.
+The biggest lesson was that useful guidance needs memory and proof. A recommendation becomes more valuable when the system remembers why it was made, what evidence would verify it, and how the next decision should change after new progress.
 
-**Reliable UI output from a reasoning model.** Natural language varied too much for roadmap cards. We moved generation behind a strict JSON schema and validate at the API boundary. The interface can now depend on milestone categories, priorities, and metrics.
+### Impact, limits, and next steps
 
-**Retrieval without another foundation model.** To avoid a separate embedding model and improve reproducibility, we implemented BM25 with length normalization and title weighting. It produces useful, inspectable source rankings with no extra AI dependency.
+Polaris can help students recognize gaps earlier and spend scarce time on higher-leverage work. It can give parents and teachers a shared plan instead of disconnected advice. The same architecture could support scholarship discovery, public-university preparation, vocational pathways, and university-to-career transitions.
 
-**A demo that survives hackathon conditions.** The all-access workspace avoids database and checkout setup, starts with a complete plan, persists interactions locally, rate-limits model requests, and has an honest deterministic fallback. The prototype remains useful even if network capacity fluctuates.
+Polaris does not guarantee admission. Fit estimates are directional, source freshness matters, and high-stakes choices should be checked with teachers, counselors, and official sources. The scoring system excludes demographic proxies.
 
-### Potential impact
-
-Polaris can help students spend scarce time on higher-leverage work and recognize gaps earlier, particularly where professional counseling is inaccessible. It can also give parents and teachers a shared, concrete plan instead of disconnected recommendations.
-
-The architecture is adaptable beyond elite admissions. A localized knowledge base could support scholarship discovery, public-university preparation, vocational pathways, or university-to-career transitions. The same structured roadmap pattern can make expert guidance more accessible while keeping human mentors in control.
-
-### Limitations and responsible use
-
-Polaris does not guarantee admission and says so explicitly. Retrieved material can become outdated, so source freshness and human verification remain important. Probability estimates are directional and use transparent academic/activity inputs rather than demographic attributes. High-stakes decisions should be reviewed with teachers, counselors, and official university sources.
-
-### What comes next
-
-We would add stronger source-freshness automation, university-specific evidence packs, Bangla voice input, calendar synchronization, verified family accounts, mentor review, and outcome-based evaluation with consenting students. We also want to compare generated plans against counselor rubrics and measure whether recommendations remain feasible over time.
+Next, we would add automated source-freshness checks, richer Bangladesh-specific opportunity packs, Bangla voice input, calendar synchronization, verified family accounts, mentor review, and longitudinal evaluation with consenting students.
 
 ### Links
 
-- **Live app and demo:** https://polaris-gemma4.vercel.app/demo
+- **Live product workspace:** https://polaris-gemma4.vercel.app/demo
 - **Action Lab:** https://polaris-gemma4.vercel.app/demo/action-lab
 - **Public repository:** https://github.com/ImtiazHossain-Eshan/polaris-gemma4
 - **Executed notebook:** `notebooks/polaris_gemma4_decision_lab.ipynb`
 - **Model:** Gemma 4 via the official Google Gen AI SDK
 
-Polaris turns open-model intelligence into something a student can use: a north star, a sequence of next steps, and a reason to begin now.
+Polaris gives an ambitious student something more useful than another list of links: a north star, a sequence of evidence-backed actions, and a reason to begin years earlier.

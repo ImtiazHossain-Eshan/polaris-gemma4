@@ -291,6 +291,42 @@ html.lenis body {
   background-clip: padding-box;
 }
 *::-webkit-scrollbar-corner { background: transparent; }
+
+/* Consistent product scrollers for nested workspaces and floating controls. */
+.polaris-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(178, 118, 76, 0.58) rgba(49, 36, 28, 0.22);
+  scrollbar-gutter: stable;
+}
+.polaris-scrollbar::-webkit-scrollbar { width: 9px; height: 9px; }
+.polaris-scrollbar::-webkit-scrollbar-track {
+  background: rgba(49, 36, 28, 0.22);
+  border-radius: 999px;
+}
+.polaris-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(204, 143, 94, 0.76), rgba(139, 94, 60, 0.68));
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+.polaris-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(220, 158, 106, 0.9), rgba(157, 103, 65, 0.82));
+  background-clip: padding-box;
+}
+:root[data-theme="dark"] .polaris-scrollbar {
+  scrollbar-color: rgba(204, 143, 94, 0.7) rgba(49, 36, 28, 0.36);
+}
+:root[data-theme="dark"] .polaris-scrollbar::-webkit-scrollbar-track {
+  background: rgba(49, 36, 28, 0.36);
+}
+:root[data-theme="dark"] .polaris-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(204, 143, 94, 0.76), rgba(139, 94, 60, 0.68));
+  background-clip: padding-box;
+}
+:root[data-theme="dark"] .polaris-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(220, 158, 106, 0.9), rgba(157, 103, 65, 0.82));
+  background-clip: padding-box;
+}
 /* Always show the vertical scrollbar so layout doesn't jump between long /
    short pages. */
 html { scrollbar-gutter: stable; }

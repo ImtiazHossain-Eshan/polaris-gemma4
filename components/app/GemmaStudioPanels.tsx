@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Btn, Card, Icon, Pill, Progress, RingMini, Tag } from "@/components/app/ui";
@@ -430,6 +430,7 @@ export function GemmaEssayStudio({ lang }: { lang: Lang }) {
   const [hydrated, setHydrated] = useState(false);
   const [savedAt, setSavedAt] = useState("");
   const [scan, setScan] = useState<ScannedEssay | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [scanBusy, setScanBusy] = useState(false);
   const [scanError, setScanError] = useState("");
   const [uncertainText, setUncertainText] = useState("");
@@ -553,6 +554,14 @@ export function GemmaEssayStudio({ lang }: { lang: Lang }) {
     });
   };
 
+  const clearImage = () => {
+    setScan(null);
+    setScanError("");
+    setUncertainText("");
+    setTranslation("");
+    if (imageInputRef.current) imageInputRef.current.value = "";
+  };
+
   const chooseImage = async (file?: File) => {
     if (!file) return;
     setScanBusy(true);
@@ -661,14 +670,27 @@ export function GemmaEssayStudio({ lang }: { lang: Lang }) {
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-aurora-500/15 text-lg text-aurora-600">↑</span>
               <span className="mt-2 text-[12px] font-semibold text-ink">{scan ? (bn ? "অন্য ছবি বেছে নিন" : "Choose another image") : (bn ? "স্ক্যান করুন বা ছবি আপলোড করুন" : "Scan or upload a page")}</span>
               <span className="mt-1 text-[9.5px] text-ink-muted">JPEG, PNG, WebP</span>
-              <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="sr-only" onChange={(event) => void chooseImage(event.target.files?.[0])} />
+              <input ref={imageInputRef} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="sr-only" onChange={(event) => void chooseImage(event.target.files?.[0])} />
             </label>
             <p className="mt-2 text-[9.5px] leading-relaxed text-ink-muted">{bn ? "ছবি সংরক্ষণ করা হয় না। সক্রিয় extraction অনুরোধে এটি শুধু Gemma-কে পাঠানো হয়।" : "The image is not stored. It is sent to Gemma only for the active extraction request."}</p>
           </div>
           <div className="rounded-2xl border border-ink-faint/15 bg-bg/50 p-4">
             {scan ? (
               <div className="grid gap-3 md:grid-cols-[190px_1fr]">
-                <Image src={scan.preview} alt={bn ? "আপলোড করা হাতের লেখা" : "Uploaded handwriting"} width={190} height={208} unoptimized className="h-52 w-full rounded-xl object-contain bg-white/90 ring-1 ring-inset ring-ink-faint/10" />
+                <div className="relative">
+                  <Image src={scan.preview} alt={bn ? "আপলোড করা হাতের লেখা" : "Uploaded handwriting"} width={190} height={208} unoptimized className="h-52 w-full rounded-xl object-contain bg-white/90 ring-1 ring-inset ring-ink-faint/10" />
+                  <button
+                    type="button"
+                    onClick={clearImage}
+                    disabled={scanBusy}
+                    aria-label={bn ? "আপলোড করা ছবি মুছুন" : "Remove uploaded image"}
+                    title={bn ? "ছবি মুছুন" : "Remove image"}
+                    className="absolute right-2 top-2 inline-flex h-7 items-center gap-1 rounded-full bg-ink/85 px-2.5 text-[9.5px] font-semibold text-paper shadow-sm backdrop-blur transition hover:bg-signal-rose disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Icon.close size={10} />
+                    <span>{bn ? "মুছুন" : "Remove"}</span>
+                  </button>
+                </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <Tag tone="aurora">{sourceLanguage === "bn" ? "বাংলা" : sourceLanguage === "mixed" ? (bn ? "মিশ্র ভাষা" : "Mixed") : "English"}</Tag>

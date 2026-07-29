@@ -765,7 +765,7 @@ export function AgentChat({ studentInitials, pathLabel, contextChips = [], demo 
         </div>
       )}
 
-      <div ref={scroller} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 space-y-4">
+      <div ref={scroller} className="polaris-scrollbar flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 space-y-4">
         {messages.length === 0 && <EmptyState onPick={send}/>}
         {messages.map(m => <Bubble key={m.id} m={m} initials={studentInitials}/>)}
         {thinking && streaming && <ThinkingIndicator label={thinking} />}

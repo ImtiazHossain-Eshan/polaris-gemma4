@@ -5,7 +5,7 @@
 <h1 align="center">Polaris</h1>
 
 <p align="center">
-  <strong>A Gemma 4 academic strategist that turns ambition into an evidence-backed plan a student can act on today.</strong>
+  <strong>A Bengali-first Gemma 4 strategist that helps students start early, prove progress, and turn global education goals into weekly action.</strong>
 </p>
 
 <p align="center">
@@ -18,9 +18,9 @@
 
 ## Why Polaris exists
 
-University applicants have more information than ever, but very little of it becomes a reliable weekly plan. Requirements live across university pages, scholarship rules, test calendars, saved notes, family expectations, and scattered advice. Students still have to decide what matters now, what evidence is missing, and what should change when a deadline moves.
+A Bangladeshi student can reach HSC, open a scholarship or university application, and discover that the strongest preparation should have started years earlier. Tests need months of practice. Competitive applications ask for sustained projects, leadership, and evidence of impact. Important deadlines may already be close. The ambition was always there; the roadmap arrived too late.
 
-Polaris closes that planning gap. It combines a student profile, goals, constraints, deadlines, and retrieved evidence. Gemma 4 then turns that context into a measurable roadmap, explains trade-offs, and keeps the plan responsive as the student progresses.
+Polaris is built to close that timing gap. It helps students start as early as Class 5, 7, or 8 with a connected view of academic growth, Olympiads, hackathons, community projects, English preparation, scholarships, and future deadlines. Gemma 4 turns the student's profile, goals, constraints, evidence, and retrieved sources into a measurable roadmap, then keeps the plan responsive as the student progresses.
 
 The competition workspace is public. Judges can use every feature without creating an account, entering a card, or enabling a paid plan.
 
@@ -134,14 +134,14 @@ The new generation surfaces follow the same Bengali contract as the Strategist. 
 
 ![Shared main and side-panel Strategist conversation history](docs/assets/screenshots/18-shared-strategist-history.png)
 
-The full-page Strategist and the right-side Strategist now write to the same searchable history. Each public-demo thread records whether it was used in the main surface, the side panel, or both, and keeps its messages across refreshes in browser storage with an in-memory fallback.
+The full-page Strategist and the right-side Strategist now write to the same searchable history. Each public-workspace thread records whether it was used in the main surface, the side panel, or both, and keeps its messages across refreshes in browser storage with an in-memory fallback.
 
-### Settings and model transparency that work in the public demo
+### Settings and model transparency that work in the public workspace
 
 <table>
   <tr>
     <td width="50%">
-      <img src="docs/assets/screenshots/10-settings-profile.png" alt="Functional public demo profile settings" />
+      <img src="docs/assets/screenshots/10-settings-profile.png" alt="Functional public workspace profile settings" />
       <br />
       <strong>Editable student context</strong><br />
       Profile, curriculum, scores, goals, target tier, and activities persist safely on the judge's device.
@@ -307,7 +307,7 @@ app/api/demo/                Public roadmap and Strategist APIs
 app/api/action-lab/          Decision, evidence, and routine contracts
 app/api/gemma-studio/       Mock, video, notes, multimodal essay, translation, and discovery contracts
 components/app/              Product workspace and model response surfaces
-components/demo/             Browser-local public demo controls
+components/demo/             Browser-local public workspace controls
 data/                        Curated university, scholarship, and case-study evidence
 notebooks/                   Executed Gemma 4 Kaggle notebook
 lib/action-lab/              Typed exams, routines, videos, and results

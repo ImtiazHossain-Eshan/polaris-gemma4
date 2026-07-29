@@ -211,7 +211,7 @@ export function PremiumSelect({
                 role="listbox"
                 id={listboxId}
                 aria-activedescendant={highlight ? `${listboxId}-${highlight}` : undefined}
-                className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5"
+                className="polaris-scrollbar max-h-[280px] overflow-y-auto overscroll-contain p-1.5"
               >
                 {visible.length === 0 ? (
                   <div className="px-3 py-6 text-center">

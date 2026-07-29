@@ -6,8 +6,8 @@ import { DemoWorkspaceSeed } from "@/components/demo/DemoWorkspaceSeed";
 import { DEMO_PATHS, DEMO_USER } from "@/lib/demo/polaris";
 
 export const metadata: Metadata = {
-  title: "Polaris | Public Gemma 4 Demo",
-  description: "The complete Polaris workspace, available without sign-in for hackathon judging.",
+  title: "Polaris | Gemma 4 Academic Strategist",
+  description: "A bilingual Gemma 4 academic strategist that turns student ambition into an evidence-backed plan.",
 };
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
@@ -26,7 +26,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
         />
         <div className="flex-1 min-w-0 flex flex-col h-full">
           <TopBar basePath="/demo" demoUser={DEMO_USER} />
-          <main className="flex-1 min-h-0 overflow-y-auto">{children}</main>
+          <main className="polaris-scrollbar flex-1 min-h-0 overflow-y-auto">{children}</main>
         </div>
         <AgentChat
           studentInitials={DEMO_USER.initials}
