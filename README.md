@@ -54,7 +54,7 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
 <table>
   <tr>
     <td width="50%">
-      <img src="docs/assets/screenshots/gemma-mock-generator.png" alt="Gemma 4 fresh SAT and IELTS mock generator" />
+      <img src="docs/assets/screenshots/gemma-mock-exam-listening.png" alt="Gemma 4 generated IELTS listening mock exam" />
       <br />
       <strong>Fresh mock generation and grading</strong><br />
       Gemma 4 creates a new original three-question IELTS or SAT diagnostic for the selected section and difficulty. Deterministic scoring stays auditable, then Gemma 4 diagnoses the error pattern and prescribes the next practice block.
@@ -81,6 +81,12 @@ The roadmap connects a long-term goal to phases, milestones, deadlines, evidence
     </td>
   </tr>
 </table>
+
+### Inclusive IELTS listening practice
+
+![Synchronized visual speaker for a Gemma 4 generated IELTS listening mock](docs/assets/screenshots/gemma-lip-sync-listening.png)
+
+Gemma 4 creates the listening scenario, question, and answer contract. The exam player keeps the transcript hidden in standard mode and permits one playback. Students who need visual support can activate a synchronized speaker with eight distinct visemes, word-boundary alignment, a rolling caption, and a live sound-family indicator. The visual mode is clearly presented as an inclusive practice aid, not an official IELTS accommodation.
 
 ### Section-aware video learning inside Polaris
 

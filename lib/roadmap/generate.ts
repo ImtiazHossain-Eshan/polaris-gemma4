@@ -29,6 +29,7 @@ import { completeText, extractJson } from "@/lib/llm/complete";
 import { summarizeProfile, type StudentProfile } from "@/lib/profile";
 import type { Lang } from "@/lib/i18n/strings";
 import { generationLanguageInstruction } from "@/lib/i18n/server";
+import { stabilizeGeneratedText } from "@/lib/gemma/output-quality";
 
 /* ─── helpers ─── */
 
@@ -71,24 +72,26 @@ function buildNode(partial: {
   const explicitScores = (partial.scoreKeys ?? [])
     .filter((k) => k in SCORE_DEFS)
     .map((key) => ({ key, ...SCORE_DEFS[key] }));
+  const title = stabilizeGeneratedText(partial.title);
+  const description = stabilizeGeneratedText(partial.description);
   return {
     id: shortId(),
-    title: partial.title,
-    description: partial.description,
-    why: partial.why,
-    how: partial.how,
+    title,
+    description,
+    why: stabilizeGeneratedText(partial.why),
+    how: stabilizeGeneratedText(partial.how),
     type: partial.type,
     priority: partial.priority,
     difficulty: Math.max(1, Math.min(5, Math.round(partial.difficulty))) as RoadmapNode["difficulty"],
     phase: partial.phase,
     estimatedHoursPerWeek: Math.round(partial.hours * 2) / 2,
-    tasks: partial.tasks.map((t) => ({ id: shortId(), text: t, done: false })),
+    tasks: partial.tasks.map((t) => ({ id: shortId(), text: stabilizeGeneratedText(t), done: false })),
     topics: safeTopics,
     resources: resourcesForTopics(safeTopics),
     scoreInputs: explicitScores.length ? explicitScores : scoreInputsForTopics(safeTopics),
-    completionCriteria: partial.completionCriteria,
-    strategistContext: `${partial.title}: ${partial.description}`,
-    impact: partial.impact,
+    completionCriteria: stabilizeGeneratedText(partial.completionCriteria),
+    strategistContext: `${title}: ${description}`,
+    impact: stabilizeGeneratedText(partial.impact),
     status: "locked",
     progress: 0,
     notes: [],
@@ -165,7 +168,7 @@ function fromGenPlan(plan: GenPlan, phases: number): RoadmapBranch[] {
     const category = normalizeCategory(b.category);
     return {
       id: shortId(),
-      title: b.title,
+      title: stabilizeGeneratedText(b.title),
       category,
       priority: b.priority,
       tone: CATEGORY_TONES[category] ?? "polaris",
@@ -208,7 +211,7 @@ export async function generateRoadmap(
     const parsed = GenPlanSchema.safeParse(extractJson(raw));
     if (parsed.success) {
       branches = fromGenPlan(parsed.data, phases);
-      title = parsed.data.title;
+      title = stabilizeGeneratedText(parsed.data.title);
     }
   }
   if (!branches) branches = fromTemplates(config, phases);

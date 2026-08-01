@@ -71,6 +71,7 @@ type StoreState = {
 };
 
 const EVENTS_KEY = "polaris.roadmap.events";
+export const DEMO_ROADMAP_KEY = "polaris.demo.roadmap.v1";
 const MAX_EVENTS = 20;
 
 let state: StoreState = { doc: null, selectedNodeId: null, events: [], lastSyncAt: null };
@@ -93,6 +94,37 @@ function hydrateEvents() {
     const raw = sessionStorage.getItem(EVENTS_KEY);
     if (raw) state.events = JSON.parse(raw) as RoadmapEvent[];
   } catch { /* ignore */ }
+}
+
+export function loadDemoRoadmap(): RoadmapDoc | null {
+  try {
+    const raw = localStorage.getItem(DEMO_ROADMAP_KEY);
+    if (!raw) return null;
+    const doc = JSON.parse(raw) as RoadmapDoc;
+    doc.createdAt = new Date(doc.createdAt);
+    doc.updatedAt = new Date(doc.updatedAt);
+    doc.adaptations = doc.adaptations.map((item) => ({ ...item, at: new Date(item.at) }));
+    doc.scores = doc.scores.map((item) => ({ ...item, at: new Date(item.at) }));
+    doc.branches = doc.branches.map((branch) => ({
+      ...branch,
+      nodes: branch.nodes.map((node) => ({
+        ...node,
+        ...(node.completedAt ? { completedAt: new Date(node.completedAt) } : {}),
+        notes: node.notes.map((note) => ({ ...note, at: new Date(note.at) })),
+      })),
+    }));
+    return doc;
+  } catch {
+    return null;
+  }
+}
+
+export function saveDemoRoadmap(doc: RoadmapDoc): void {
+  try { localStorage.setItem(DEMO_ROADMAP_KEY, JSON.stringify(doc)); } catch { /* ignore */ }
+}
+
+export function clearDemoRoadmap(): void {
+  try { localStorage.removeItem(DEMO_ROADMAP_KEY); } catch { /* ignore */ }
 }
 
 export const roadmapStore = {

@@ -10,6 +10,11 @@ import {
   generationLanguageInstruction,
   requestLanguage,
 } from "@/lib/i18n/server";
+import {
+  hasDegenerateRepetition,
+  hasUniqueChoices,
+  stabilizeGeneratedText,
+} from "@/lib/gemma/output-quality";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,6 +33,16 @@ const questionSchema = z.object({
   difficulty: z.enum(["Foundation", "Medium", "Advanced"]),
 });
 
+const writingTaskSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  prompt: z.string(),
+  requirements: z.array(z.string()).min(2).max(4),
+  timeLimitMinutes: z.number().int().min(10).max(60),
+  minimumWords: z.number().int().min(100).max(400),
+  difficulty: z.enum(["Foundation", "Medium", "Advanced"]),
+});
+
 const bodySchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("exam-generate"),
@@ -41,6 +56,16 @@ const bodySchema = z.discriminatedUnion("kind", [
     exam: z.enum(["IELTS", "SAT"]),
     questions: z.array(questionSchema).min(1).max(8),
     answers: z.record(z.string(), z.number().int().min(0).max(3)),
+  }),
+  z.object({
+    kind: z.literal("writing-generate"),
+    difficulty: z.enum(["Foundation", "Medium", "Advanced"]),
+  }),
+  z.object({
+    kind: z.literal("writing-grade"),
+    task: writingTaskSchema,
+    response: z.string().min(20).max(12000),
+    elapsedSeconds: z.number().int().min(0).max(7200),
   }),
   z.object({
     kind: z.literal("videos"),
@@ -102,6 +127,18 @@ const ESSAY_OCR_JSON = {
   },
   required: ["detectedLanguage", "title", "transcription", "uncertainText"],
 } as const;
+
+const WRITING_TASK_JSON = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    prompt: { type: "string" },
+    requirement1: { type: "string" },
+    requirement2: { type: "string" },
+    requirement3: { type: "string" },
+  },
+  required: ["title", "prompt", "requirement1", "requirement2", "requirement3"],
+} as const;
 const VIDEO_FIELDS = ["reason"] as const;
 const VIDEO_JSON = {
   type: "object",
@@ -134,21 +171,112 @@ function parseObject(text: string): Record<string, unknown> {
   return JSON.parse(text.slice(start, end + 1)) as Record<string, unknown>;
 }
 
+function fallbackWritingTask(difficulty: "Foundation" | "Medium" | "Advanced") {
+  const prompts = {
+    Foundation: {
+      title: "Public spaces and community life",
+      prompt: "Some people believe that cities should invest more in public parks and community spaces, while others think this money should be spent on transport and roads. Discuss both views and give your own opinion.",
+    },
+    Medium: {
+      title: "Technology and independent learning",
+      prompt: "Online learning tools give students greater control over what and when they study. Some people believe this makes learners more independent, while others think it reduces the guidance they need. Discuss both views and give your own opinion.",
+    },
+    Advanced: {
+      title: "Measuring educational success",
+      prompt: "Governments often judge education systems mainly through examination results. To what extent do examination scores provide a fair measure of educational success? Support your answer with reasons and relevant examples.",
+    },
+  } as const;
+  const selected = prompts[difficulty];
+  return {
+    id: `writing-${difficulty.toLowerCase()}-${Date.now()}`,
+    ...selected,
+    requirements: [
+      "Write at least 250 words.",
+      "Present a clear position and support it with relevant reasons or examples.",
+      "Use an introduction, logically organised body paragraphs, and a conclusion.",
+    ],
+    timeLimitMinutes: 40,
+    minimumWords: 250,
+    difficulty,
+  };
+}
+
+function flatWritingTask(value: Record<string, unknown> | null, difficulty: "Foundation" | "Medium" | "Advanced") {
+  if (!value) return null;
+  const title = stabilizeGeneratedText(String(value.title || ""));
+  const prompt = stabilizeGeneratedText(String(value.prompt || ""));
+  const requirements = [1, 2, 3].map((index) => stabilizeGeneratedText(String(value[`requirement${index}`] || "")));
+  if (title.length < 5 || prompt.length < 60 || hasDegenerateRepetition(prompt) || requirements.some((item) => item.length < 8)) return null;
+  return {
+    id: `writing-gemma-${Date.now()}`,
+    title,
+    prompt,
+    requirements,
+    timeLimitMinutes: 40,
+    minimumWords: 250,
+    difficulty,
+  };
+}
+
 function fallbackQuestions(exam: "IELTS" | "SAT", section: string, difficulty: "Foundation" | "Medium" | "Advanced") {
+  if (exam === "IELTS" && section === "Listening") {
+    const items = [
+      {
+        skill: "Listening for specific information",
+        passage: "Good morning. The science workshop begins at nine fifteen in Room 204, not the main hall. Please bring a pencil and your student identification card. Bags can be left beside the reception desk.",
+        prompt: "Where will the science workshop take place?",
+        options: ["Room 204", "The main hall", "The library", "The reception area"],
+        answer: 0,
+        explanation: "The speaker corrects the venue and says Room 204.",
+      },
+      {
+        skill: "Listening for times and changes",
+        passage: "The campus tour was planned for Tuesday afternoon, but the guide is unavailable. It will now leave the student centre at ten thirty on Wednesday morning. Please arrive ten minutes early.",
+        prompt: "When will the campus tour leave?",
+        options: ["Tuesday at 10:30", "Wednesday at 10:20", "Wednesday at 10:30", "Wednesday afternoon"],
+        answer: 2,
+        explanation: "The changed departure is Wednesday at 10:30.",
+      },
+      {
+        skill: "Listening for purpose",
+        passage: "Students using the media room must reserve a computer online. Headphones are available at the help desk, but you should bring your own storage device if you want to save your work.",
+        prompt: "Why should students bring a storage device?",
+        options: ["To reserve a computer", "To save their work", "To borrow headphones", "To enter the media room"],
+        answer: 1,
+        explanation: "The storage device is needed to save completed work.",
+      },
+    ];
+    return items.map((item, index) => ({
+      id: `preview-ielts-listening-${index + 1}`,
+      exam,
+      section,
+      ...item,
+      difficulty,
+    }));
+  }
   const math = exam === "SAT" && section === "Math";
+  const readingPrompts = [
+    "Which conclusion is best supported by the passage?",
+    "What was held constant in the comparison?",
+    "Which result did the spaced plan produce?",
+  ];
+  const readingOptions = [
+    ["Study time never matters", "Spacing can support longer recall", "All students learn identically", "Tests should be removed"],
+    ["Total study time", "Student age", "Classroom size", "Exam difficulty"],
+    ["Stronger recall after one month", "Less total study time", "Identical immediate scores", "No measurable difference"],
+  ];
+  const readingAnswers = [1, 0, 0];
   return Array.from({ length: 3 }, (_, index) => ({
     id: `preview-${exam.toLowerCase()}-${section.toLowerCase().replace(/\W+/g, "-")}-${index + 1}`,
     exam,
     section,
     skill: math ? "Problem solving" : "Evidence and meaning",
     passage: math ? undefined : `Practice passage ${index + 1}: A student team compared two study plans using the same total study time. The spaced plan produced stronger recall after one month.`,
-    prompt: math
-      ? `If ${index + 2}x + ${index + 4} = ${(index + 2) * 5 + index + 4}, what is x?`
-      : "Which conclusion is best supported by the passage?",
+    prompt: math ? `If ${index + 2}x + ${index + 4} = ${(index + 2) * 5 + index + 4}, what is x?` : readingPrompts[index],
     options: math
       ? ["3", "4", "5", "6"]
-      : ["Study time never matters", "Spacing can support longer recall", "All students learn identically", "Tests should be removed"],
-    answer: math ? 2 : 1,
+      : readingOptions[index],
+    answer: math ? 2 : readingAnswers[index],
     explanation: math ? "Subtract the constant, then divide by the coefficient to get x = 5." : "The comparison holds total time constant and finds stronger later recall for spaced study.",
     difficulty,
   }));
@@ -156,24 +284,45 @@ function fallbackQuestions(exam: "IELTS" | "SAT", section: string, difficulty: "
 
 function flatQuestions(value: Record<string, unknown> | null, exam: "IELTS" | "SAT", section: string, difficulty: "Foundation" | "Medium" | "Advanced") {
   if (!value) return [];
-  return Array.from({ length: 3 }, (_, i) => i + 1).map((index) => ({
-    id: `gemma-${exam.toLowerCase()}-${Date.now()}-${index}`,
-    exam,
-    section,
-    skill: String(value[`q${index}_skill`] || "Core skill"),
-    passage: String(value[`q${index}_passage`] || "") || undefined,
-    prompt: String(value[`q${index}_prompt`] || ""),
-    options: [1, 2, 3, 4].map((option) => String(value[`q${index}_o${option}`] || "")),
-    answer: Math.max(0, Math.min(3, Number(value[`q${index}_answer`] ?? 0))),
-    explanation: String(value[`q${index}_explanation`] || ""),
-    difficulty,
-  })).filter((item) => item.prompt && item.options.every(Boolean) && item.explanation);
+  const seenPrompts = new Set<string>();
+  return Array.from({ length: 3 }, (_, i) => i + 1).flatMap((index) => {
+    const rawAnswer = Number(value[`q${index}_answer`]);
+    const passage = stabilizeGeneratedText(String(value[`q${index}_passage`] || ""));
+    const prompt = stabilizeGeneratedText(String(value[`q${index}_prompt`] || ""));
+    const options = [1, 2, 3, 4].map((option) => stabilizeGeneratedText(String(value[`q${index}_o${option}`] || "")));
+    const explanation = stabilizeGeneratedText(String(value[`q${index}_explanation`] || ""));
+    const promptKey = prompt.toLocaleLowerCase().replace(/\W+/g, " ").trim();
+    const valid = prompt.length >= 8
+      && explanation.length >= 8
+      && Number.isInteger(rawAnswer)
+      && rawAnswer >= 0
+      && rawAnswer <= 3
+      && hasUniqueChoices(options)
+      && (!passage || !hasDegenerateRepetition(passage))
+      && !hasDegenerateRepetition(prompt)
+      && !seenPrompts.has(promptKey)
+      && (section !== "Listening" || passage.length >= 45);
+    if (!valid) return [];
+    seenPrompts.add(promptKey);
+    return [{
+      id: `gemma-${exam.toLowerCase()}-${Date.now()}-${index}`,
+      exam,
+      section,
+      skill: stabilizeGeneratedText(String(value[`q${index}_skill`] || "Core skill")),
+      passage: passage || undefined,
+      prompt,
+      options,
+      answer: rawAnswer,
+      explanation,
+      difficulty,
+    }];
+  });
 }
 
 function flatVideos(value: Record<string, unknown> | null, candidates: typeof LEARNING_VIDEOS) {
   if (!value) return [];
   return candidates.slice(0, 3).flatMap((video, index) => {
-    const reason = String(value[`v${index + 1}_reason`] || "").trim();
+    const reason = stabilizeGeneratedText(String(value[`v${index + 1}_reason`] || ""));
     return reason ? [{ ...video, reason }] : [];
   });
 }
@@ -181,11 +330,11 @@ function flatVideos(value: Record<string, unknown> | null, candidates: typeof LE
 function flatDiscovery(value: Record<string, unknown> | null) {
   if (!value) return [];
   return Array.from({ length: 3 }, (_, i) => i + 1).map((index) => ({
-    title: String(value[`d${index}_title`] || ""),
-    subtitle: String(value[`d${index}_subtitle`] || ""),
-    why: String(value[`d${index}_why`] || ""),
-    action: String(value[`d${index}_action`] || ""),
-    sourceLabel: String(value[`d${index}_sourceLabel`] || ""),
+    title: stabilizeGeneratedText(String(value[`d${index}_title`] || "")),
+    subtitle: stabilizeGeneratedText(String(value[`d${index}_subtitle`] || "")),
+    why: stabilizeGeneratedText(String(value[`d${index}_why`] || "")),
+    action: stabilizeGeneratedText(String(value[`d${index}_action`] || "")),
+    sourceLabel: stabilizeGeneratedText(String(value[`d${index}_sourceLabel`] || "")),
   })).filter((item) => item.title && item.why && item.action);
 }
 async function gemmaJson(
@@ -197,6 +346,8 @@ async function gemmaJson(
 ): Promise<Record<string, unknown> | null> {
   const apiKey = userKey(req);
   if (!hasGemmaKey(apiKey)) return null;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 18_000);
   try {
     const text = await generateGemmaText({
       system,
@@ -205,13 +356,15 @@ async function gemmaJson(
       temperature: 0.2,
       maxOutputTokens,
       thinkingLevel: "minimal",
-      abortSignal: AbortSignal.timeout(45000),
+      abortSignal: controller.signal,
       apiKey,
     });
     return text ? parseObject(text) : null;
   } catch (error) {
     console.warn("[gemma-studio] structured generation fell back", error instanceof Error ? error.message : "unknown error");
     return null;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -229,24 +382,62 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   const apiKey = userKey(req);
   const live = hasGemmaKey(apiKey);
 
+  if (body.kind === "writing-generate") {
+    const generated = await gemmaJson(
+      req,
+      "You create original, unofficial IELTS Academic Writing Task 2 practice prompts. Gemma 4 is the only generative model. The task itself must be entirely in English. It must feel realistic without reproducing an official copyrighted question. Ask for an argument, discussion, problem-solution response, or an opinion. Never include multiple-choice answers. Never repeat a sentence or idea.",
+      `Create one ${body.difficulty} IELTS Academic Writing Task 2 prompt. The candidate has 40 minutes and should write at least 250 words. Return a short topic title, one complete exam prompt, and three concise requirements.`,
+      WRITING_TASK_JSON,
+      950,
+    );
+    const liveTask = flatWritingTask(generated, body.difficulty);
+    return Response.json({
+      task: liveTask || fallbackWritingTask(body.difficulty),
+      source: liveTask ? "gemma4" : "deterministic-fallback",
+      model: liveTask ? getGemmaModelId() : "none",
+    });
+  }
+
+  if (body.kind === "writing-grade") {
+    const wordCount = body.response.trim().split(/\s+/).filter(Boolean).length;
+    const generated = live
+      ? await generateGemmaText({
+          system: `You are a constructive IELTS Academic Writing Task 2 practice examiner. ${languageRule} Gemma 4 is the only generative model. Evaluate only the learner's submitted response against Task Response, Coherence and Cohesion, Lexical Resource, and Grammatical Range and Accuracy. Give a clearly labelled unofficial practice band range, evidence from the response, the two highest-impact corrections, and a short practice task. Do not claim to issue an official IELTS score. Keep quoted examples from the essay in English. Use clean Markdown and stay under 420 words.`,
+          contents: `TASK:\n${body.task.prompt}\n\nREQUIREMENTS:\n${body.task.requirements.join("\n")}\n\nTIME USED: ${Math.round(body.elapsedSeconds / 60)} minutes\nWORD COUNT: ${wordCount}\n\nCANDIDATE RESPONSE:\n${body.response}`,
+          temperature: 0.25,
+          maxOutputTokens: 1500,
+          thinkingLevel: "minimal",
+          abortSignal: AbortSignal.timeout(30000),
+          apiKey,
+        }).catch(() => null)
+      : null;
+    const fallback = lang === "bn"
+      ? `### অনানুষ্ঠানিক অনুশীলন মূল্যায়ন\n\nআপনি ${wordCount}টি শব্দ লিখেছেন। Task Response, Coherence and Cohesion, Lexical Resource এবং Grammatical Range and Accuracy অনুযায়ী আরও নির্দিষ্ট প্রতিক্রিয়ার জন্য Gemma API key ব্যবহার করুন। এখন আপনার অবস্থানটি প্রথম অনুচ্ছেদে স্পষ্ট করুন, প্রতিটি মূল ধারণাকে একটি প্রাসঙ্গিক উদাহরণ দিয়ে সমর্থন করুন এবং শেষে নিজের যুক্তির সঙ্গে সামঞ্জস্যপূর্ণ উপসংহার দিন।`
+      : `### Unofficial practice review\n\nYou wrote ${wordCount} words. Connect a Gemma API key for detailed evidence across Task Response, Coherence and Cohesion, Lexical Resource, and Grammatical Range and Accuracy. For now, state your position clearly in the introduction, support each main idea with a relevant example, and make the conclusion consistent with your argument.`;
+    return Response.json({
+      wordCount,
+      feedback: finalizeGeneratedLanguage(generated || fallback, lang),
+      source: generated ? "gemma4" : "deterministic-fallback",
+      model: generated ? getGemmaModelId() : "none",
+    });
+  }
+
   if (body.kind === "exam-generate") {
     const sectionRules = body.exam === "IELTS"
       ? "IELTS sections are Listening, Reading, Writing, and Speaking."
       : "Digital SAT sections are Reading and Writing, or Math.";
-    const system = `You create original, unofficial practice questions. ${languageRule} Keep IELTS and SAT names in English. ${sectionRules} Never reproduce copyrighted official questions. answer is a zero-based index from 0 to 3. All question prompts, passages, options, skill names, and explanations must stay in English because IELTS and SAT are English-language tests. The surrounding interface and later coaching feedback may follow the selected language. Gemma 4 is the only generative model.`;
-    const createQuestion = (index: number, retry = false) => gemmaJson(
+    const listeningRule = body.exam === "IELTS" && body.section === "Listening"
+      ? "For Listening, passage is a natural 55-90 word spoken script for text-to-speech. Use an announcement, conversation, or short monologue with realistic names, times, corrections, and signposting. Never repeat a sentence. The prompt and answer must test information heard in that script."
+      : "Keep each reading passage under 55 words.";
+    const system = `You create original, unofficial practice questions. ${languageRule} Keep IELTS and SAT names in English. ${sectionRules} ${listeningRule} Never reproduce copyrighted official questions. answer is a zero-based index from 0 to 3. Every option must be meaningfully different; never duplicate or paraphrase the same choice. Never repeat a sentence, clause, or paragraph. All question prompts, passages, options, skill names, and explanations must stay in English because IELTS and SAT are English-language tests. The surrounding interface and later coaching feedback may follow the selected language. Gemma 4 is the only generative model.`;
+    const createQuestion = (index: number) => gemmaJson(
       req,
       system,
-      `${retry ? "Retry with an especially compact complete object. " : ""}Create question ${index} of a three-question ${body.difficulty} ${body.exam} diagnostic for ${body.section}. Use a distinct skill focus. Fill every q${index}_ field exactly once and close the JSON object. Keep the passage under 35 words, every option under 9 words, and the explanation under 18 words.`,
+      `Create question ${index} of a three-question ${body.difficulty} ${body.exam} diagnostic for ${body.section}. Use a distinct skill focus. Fill every q${index}_ field exactly once and close the JSON object. Every option must be unique and under 12 words. Keep the explanation under 22 words.`,
       questionJson(index),
-      retry ? 1600 : 1400,
+      1400,
     );
     const generatedParts = await Promise.all([1, 2, 3].map((index) => createQuestion(index)));
-    const missingIndexes = generatedParts.flatMap((part, index) => part ? [] : [index]);
-    if (missingIndexes.length) {
-      const retries = await Promise.all(missingIndexes.map((index) => createQuestion(index + 1, true)));
-      missingIndexes.forEach((partIndex, retryIndex) => { generatedParts[partIndex] = retries[retryIndex]; });
-    }
     const generated = generatedParts.reduce<Record<string, unknown>>(
       (combined, part) => part ? Object.assign(combined, part) : combined,
       {},

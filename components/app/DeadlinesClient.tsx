@@ -14,7 +14,7 @@
  * emits shared-store events so the Strategist stays aware.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { roadmapStore } from "@/lib/roadmap/store";
 import { UniversityLogo } from "./UniversityLogo";
@@ -46,6 +46,7 @@ export type UiDeadline = {
 
 type View = "agenda" | "month" | "board";
 type Risk = "overdue" | "urgent" | "approaching" | "safe" | "done";
+const DEMO_DEADLINES_KEY = "polaris.demo.deadlines.v1";
 
 const TYPE_META: Record<string, { label: string; tone: string; tile: string }> = {
   "application":       { label: "Application",    tone: "text-polaris-600 dark:text-polaris-300", tile: "from-polaris-500/20 to-polaris-500/5 text-polaris-600 dark:text-polaris-300" },
@@ -150,14 +151,34 @@ function fmtDate(date: string): string {
 /* ════════════════════════════════════════════════════════════════════════ */
 
 export function DeadlinesClient({ initial, demo = false }: { initial: UiDeadline[]; demo?: boolean }) {
-  void demo;
   const [items, setItems] = useState<UiDeadline[]>(initial);
   const [view, setView] = useState<View>(demo ? "month" : "agenda");
   const [openId, setOpenId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState<string | null>(null); // prefill date
   const [monthAnchor, setMonthAnchor] = useState(() => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); });
 
+  useEffect(() => {
+    if (!demo) return;
+    try {
+      const saved = localStorage.getItem(DEMO_DEADLINES_KEY);
+      if (saved !== null) setItems(JSON.parse(saved) as UiDeadline[]);
+      else localStorage.setItem(DEMO_DEADLINES_KEY, JSON.stringify(initial));
+    } catch { /* keep the server-provided preview */ }
+  }, [demo, initial]);
+
+  const saveDemoItems = (next: UiDeadline[]) => {
+    setItems(next);
+    try { localStorage.setItem(DEMO_DEADLINES_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+  };
+
   const refresh = async () => {
+    if (demo) {
+      try {
+        const saved = localStorage.getItem(DEMO_DEADLINES_KEY);
+        setItems(saved === null ? initial : JSON.parse(saved) as UiDeadline[]);
+      } catch { /* keep current state */ }
+      return;
+    }
     const r = await fetch("/api/deadlines", { cache: "no-store" });
     if (r.ok) {
       const d = await r.json();
@@ -247,14 +268,22 @@ export function DeadlinesClient({ initial, demo = false }: { initial: UiDeadline
             onClose={() => setOpenId(null)}
             onChanged={refresh}
             onDeleted={() => { setOpenId(null); void refresh(); }}
+            demo={demo}
+            onLocalPatch={(id, patch) => saveDemoItems(items.map((item) => item.id === id ? { ...item, ...patch } : item))}
+            onLocalDelete={(id) => { saveDemoItems(items.filter((item) => item.id !== id)); setOpenId(null); }}
           />
         )}
         {createOpen && (
           <CreateModal
             key="create"
             prefillDate={createOpen}
+            demo={demo}
             onClose={() => setCreateOpen(null)}
-            onCreated={() => { setCreateOpen(null); void refresh(); }}
+            onCreated={(created) => {
+              setCreateOpen(null);
+              if (demo && created) saveDemoItems([...items, created].sort((a, b) => a.date.localeCompare(b.date)));
+              else void refresh();
+            }}
           />
         )}
       </AnimatePresence>
@@ -526,12 +555,15 @@ function RiskBoard({ items, onOpen }: { items: UiDeadline[]; onOpen: (id: string
 const REMINDER_OPTIONS = [0, 1, 3, 7, 14];
 
 function DetailModal({
-  d, onClose, onChanged, onDeleted,
+  d, onClose, onChanged, onDeleted, demo, onLocalPatch, onLocalDelete,
 }: {
   d: UiDeadline;
   onClose: () => void;
   onChanged: () => Promise<void> | void;
   onDeleted: () => void;
+  demo: boolean;
+  onLocalPatch: (id: string, patch: Partial<UiDeadline>) => void;
+  onLocalDelete: (id: string) => void;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [notes, setNotes] = useState(d.notes);
@@ -543,6 +575,11 @@ function DetailModal({
   async function patch(body: Record<string, unknown>, key: string) {
     setBusy(key);
     try {
+      if (demo) {
+        onLocalPatch(d.id, body as Partial<UiDeadline>);
+        await onChanged();
+        return;
+      }
       const r = await fetch(`/api/deadlines?id=${d.id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
@@ -569,6 +606,11 @@ function DetailModal({
   async function remove() {
     if (!confirm("Delete this deadline?")) return;
     setBusy("delete");
+    if (demo) {
+      onLocalDelete(d.id);
+      setBusy(null);
+      return;
+    }
     const r = await fetch(`/api/deadlines?id=${d.id}`, { method: "DELETE" });
     if (r.ok || r.status === 204) onDeleted();
     setBusy(null);
@@ -743,11 +785,12 @@ function DetailModal({
  * ════════════════════════════════════════════════════════════════════════ */
 
 function CreateModal({
-  prefillDate, onClose, onCreated,
+  prefillDate, onClose, onCreated, demo,
 }: {
   prefillDate: string;
   onClose: () => void;
-  onCreated: () => void;
+  onCreated: (created?: UiDeadline) => void;
+  demo: boolean;
 }) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(prefillDate);
@@ -755,26 +798,46 @@ function CreateModal({
   const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
   const [seedChecklist, setSeedChecklist] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   async function create() {
     if (!title.trim() || !date) return;
     setBusy(true);
+    setError("");
     try {
       const seeds = seedChecklist ? CHECKLIST_SEEDS[type] : undefined;
+      const checklist = seeds?.map((text, i) => ({ id: `c${i}`, text, done: false })) ?? [];
+      const draft = {
+        date,
+        title: title.trim(),
+        kind: priority === "high" ? "hard" as const : "soft" as const,
+        type,
+        priority,
+        reminderDays: [7, 1],
+        checklist,
+      };
+      if (demo) {
+        onCreated({
+          id: `demo-${crypto.randomUUID()}`,
+          ...draft,
+          status: "pending",
+          notes: "",
+          source: "user",
+        });
+        return;
+      }
       const r = await fetch("/api/deadlines", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          date,
-          title: title.trim(),
-          kind: priority === "high" ? "hard" : "soft",
-          type,
-          priority,
-          reminderDays: [7, 1],
-          ...(seeds ? { checklist: seeds.map((text, i) => ({ id: `c${i}`, text, done: false })) } : {}),
-        }),
+        body: JSON.stringify(draft),
       });
       if (r.ok) onCreated();
+      else {
+        const data = await r.json().catch(() => ({})) as { error?: string };
+        setError(data.error || "The deadline could not be added. Please try again.");
+      }
+    } catch {
+      setError("The deadline could not be added. Please check your connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -838,6 +901,7 @@ function CreateModal({
               Start with a {TYPE_META[type].label.toLowerCase()} checklist ({CHECKLIST_SEEDS[type].length} items)
             </label>
           )}
+          {error && <p role="alert" className="text-[11px] text-rose-600 dark:text-rose-300">{error}</p>}
         </div>
         <div className="mt-5 flex items-center justify-end gap-2">
           <button onClick={onClose} disabled={busy} className="text-[13px] text-ink-dim hover:text-ink px-3 py-2">Cancel</button>

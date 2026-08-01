@@ -69,6 +69,16 @@ export type PracticeQuestion = {
   difficulty: "Foundation" | "Medium" | "Advanced";
 };
 
+export type WritingTask = {
+  id: string;
+  title: string;
+  prompt: string;
+  requirements: string[];
+  timeLimitMinutes: number;
+  minimumWords: number;
+  difficulty: "Foundation" | "Medium" | "Advanced";
+};
+
 export type LearningVideo = {
   id: string;
   title: string;
