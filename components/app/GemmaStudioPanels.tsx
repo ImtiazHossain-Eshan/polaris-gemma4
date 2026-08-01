@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Btn, Card, Icon, Pill, Progress, RingMini, Tag } from "@/components/app/ui";
 import { MarkdownMessage } from "@/components/app/MarkdownMessage";
 import { LEARNING_VIDEOS } from "@/lib/action-lab/data";
-import type { LearningVideo, PracticeQuestion } from "@/lib/action-lab/types";
+import type { LearningVideo, PracticeQuestion, WritingTask } from "@/lib/action-lab/types";
 import { gemmaHeaders, getBrowserGemmaKey, setBrowserGemmaKey } from "@/lib/gemma/browser-key";
 import { cn } from "@/lib/cn";
 import { translateUiText } from "@/lib/i18n/bengali";
@@ -33,11 +33,324 @@ const IELTS_SECTIONS = ["Listening", "Reading", "Writing", "Speaking"] as const;
 const SAT_SECTIONS = ["Reading and Writing", "Math"] as const;
 const DIFFICULTIES = ["Foundation", "Medium", "Advanced"] as const;
 
+type Viseme = "rest" | "closed" | "open" | "wide" | "round" | "bite" | "dental" | "narrow";
+type SpeechFrame = { word: string; wordIndex: number; charStart: number; viseme: Viseme; duration: number };
+
+const VISEME_SHAPES: Record<Viseme, { outer: string; inner: string; teeth: boolean; tongue: boolean }> = {
+  rest: { outer: "M25 37 Q60 31 95 37 Q60 44 25 37 Z", inner: "M34 37 Q60 35 86 37 Q60 39 34 37 Z", teeth: false, tongue: false },
+  closed: { outer: "M20 37 Q60 32 100 37 Q60 42 20 37 Z", inner: "M28 37 Q60 36 92 37 Q60 38 28 37 Z", teeth: false, tongue: false },
+  open: { outer: "M24 34 Q60 18 96 34 Q60 61 24 34 Z", inner: "M34 34 Q60 25 86 34 Q60 53 34 34 Z", teeth: true, tongue: true },
+  wide: { outer: "M14 35 Q60 22 106 35 Q60 52 14 35 Z", inner: "M25 35 Q60 28 95 35 Q60 45 25 35 Z", teeth: true, tongue: false },
+  round: { outer: "M39 28 Q60 16 81 28 Q91 37 81 50 Q60 62 39 50 Q29 37 39 28 Z", inner: "M46 30 Q60 23 74 30 Q82 37 74 46 Q60 53 46 46 Q38 37 46 30 Z", teeth: false, tongue: false },
+  bite: { outer: "M21 34 Q60 23 99 34 Q60 49 21 34 Z", inner: "M31 34 Q60 28 89 34 Q60 43 31 34 Z", teeth: true, tongue: false },
+  dental: { outer: "M24 33 Q60 20 96 33 Q60 55 24 33 Z", inner: "M34 33 Q60 26 86 33 Q60 48 34 33 Z", teeth: true, tongue: true },
+  narrow: { outer: "M31 31 Q60 23 89 31 Q60 53 31 31 Z", inner: "M40 32 Q60 28 80 32 Q60 46 40 32 Z", teeth: false, tongue: false },
+};
+
+function tokenViseme(token: string): Viseme {
+  if (/^(m|b|p)$/.test(token)) return "closed";
+  if (/^(f|v|ph)$/.test(token)) return "bite";
+  if (token === "th") return "dental";
+  if (/^(o|u|w|q|oo|ou|ow)$/.test(token)) return "round";
+  if (/^(i|y|ee|ea|ai|ay)$/.test(token)) return "wide";
+  if (/^(a|e)$/.test(token)) return "open";
+  if (/^(t|d|s|z|n|l)$/.test(token)) return "dental";
+  if (/^(sh|ch|j|r|k|g|h|c|x)$/.test(token)) return "narrow";
+  return "rest";
+}
+
+function buildSpeechFrames(script: string): SpeechFrame[] {
+  const frames: SpeechFrame[] = [];
+  const matcher = /\S+/g;
+  let match: RegExpExecArray | null;
+  let wordIndex = 0;
+  while ((match = matcher.exec(script))) {
+    const word = match[0];
+    const clean = word.toLowerCase().replace(/[^a-z]/g, "");
+    const tokens = clean.match(/th|sh|ch|ph|oo|ee|ea|ai|ay|ou|ow|[a-z]/g) || [""];
+    tokens.forEach((token) => frames.push({
+      word,
+      wordIndex,
+      charStart: match?.index ?? 0,
+      viseme: tokenViseme(token),
+      duration: /[.!?]$/.test(word) ? 125 : /[,;:]$/.test(word) ? 105 : 78,
+    }));
+    frames.push({ word, wordIndex, charStart: match.index, viseme: "rest", duration: /[.!?]$/.test(word) ? 180 : 42 });
+    wordIndex += 1;
+  }
+  return frames;
+}
+
+function VisemeMouth({ viseme }: { viseme: Viseme }) {
+  const shape = VISEME_SHAPES[viseme];
+  return (
+    <svg viewBox="0 0 120 72" className="h-full w-full overflow-visible" aria-hidden="true">
+      <motion.path d={shape.outer} fill="#7d3140" stroke="#4a1e29" strokeWidth="4" animate={{ d: shape.outer }} transition={{ duration: 0.09, ease: "easeOut" }} />
+      <motion.path d={shape.inner} fill="#2c1118" animate={{ d: shape.inner }} transition={{ duration: 0.09, ease: "easeOut" }} />
+      {shape.teeth && <path d="M36 33 Q60 27 84 33 L81 38 Q60 34 39 38 Z" fill="#fff8ed" opacity="0.96" />}
+      {shape.tongue && <path d="M43 45 Q60 39 77 45 Q60 53 43 45 Z" fill="#d56c7d" opacity="0.88" />}
+      <path d="M24 34 Q60 17 96 34" fill="none" stroke="#d78a91" strokeWidth="1.5" opacity="0.65" />
+    </svg>
+  );
+}
+
+function ListeningExamPlayer({ script, questionId, lang }: { script: string; questionId: string; lang: Lang }) {
+  const bn = lang === "bn";
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const visualTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const visualFrameIndexRef = useRef(0);
+  const [state, setState] = useState<"ready" | "playing" | "paused" | "finished" | "unsupported" | "error">("ready");
+  const [progress, setProgress] = useState(0);
+  const [lipReading, setLipReading] = useState(false);
+  const [activeWord, setActiveWord] = useState("");
+  const [activeWordIndex, setActiveWordIndex] = useState(-1);
+  const [viseme, setViseme] = useState<Viseme>("rest");
+  const words = useMemo(() => script.split(/\s+/).filter(Boolean), [script]);
+  const frames = useMemo(() => buildSpeechFrames(script), [script]);
+
+  const stopVisual = () => {
+    if (visualTimerRef.current) clearTimeout(visualTimerRef.current);
+    visualTimerRef.current = null;
+  };
+
+  const startVisual = () => {
+    stopVisual();
+    if (!frames.length) return;
+    const advance = () => {
+      const frame = frames[visualFrameIndexRef.current];
+      if (!frame) {
+        stopVisual();
+        setViseme("rest");
+        if (!("speechSynthesis" in window) || !window.speechSynthesis.speaking) {
+          setProgress(100);
+          setState("finished");
+        }
+        return;
+      }
+      setActiveWord(frame.word);
+      setActiveWordIndex(frame.wordIndex);
+      setViseme(frame.viseme);
+      setProgress(Math.min(98, Math.round(((visualFrameIndexRef.current + 1) / frames.length) * 100)));
+      visualTimerRef.current = setTimeout(() => {
+        visualFrameIndexRef.current += 1;
+        advance();
+      }, frame.duration);
+    };
+    advance();
+  };
+
+  useEffect(() => {
+    window.speechSynthesis?.cancel();
+    stopVisual();
+    utteranceRef.current = null;
+    visualFrameIndexRef.current = 0;
+    setState(typeof window === "undefined" || !("speechSynthesis" in window) ? "unsupported" : "ready");
+    setProgress(0);
+    setActiveWord("");
+    setActiveWordIndex(-1);
+    setViseme("rest");
+    return () => {
+      window.speechSynthesis?.cancel();
+      stopVisual();
+    };
+  }, [questionId, script]);
+
+  const play = () => {
+    if (state === "finished") return;
+    if (state === "paused") {
+      window.speechSynthesis?.resume();
+      startVisual();
+      setState("playing");
+      return;
+    }
+    visualFrameIndexRef.current = 0;
+    if (!("speechSynthesis" in window)) {
+      if (lipReading) {
+        setState("playing");
+        startVisual();
+      }
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(script);
+    const voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices.find((voice) => /^en-GB/i.test(voice.lang))
+      ?? voices.find((voice) => /^en/i.test(voice.lang))
+      ?? null;
+    utterance.lang = utterance.voice?.lang || "en-GB";
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
+    utterance.onstart = () => { setState("playing"); startVisual(); };
+    utterance.onboundary = (event) => {
+      if (typeof event.charIndex !== "number") return;
+      const alignedIndex = frames.findIndex((frame) => frame.charStart >= event.charIndex);
+      if (alignedIndex >= 0 && Math.abs(alignedIndex - visualFrameIndexRef.current) > 2) {
+        visualFrameIndexRef.current = alignedIndex;
+      }
+    };
+    utterance.onend = () => { stopVisual(); setViseme("rest"); setProgress(100); setState("finished"); };
+    utterance.onerror = () => {
+      stopVisual();
+      if (lipReading) {
+        setState("playing");
+        startVisual();
+      } else {
+        setState("error");
+        setProgress(0);
+      }
+    };
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const pause = () => {
+    if (state !== "playing") return;
+    window.speechSynthesis?.pause();
+    stopVisual();
+    setViseme("rest");
+    setState("paused");
+  };
+
+  const status = state === "playing"
+    ? (lipReading ? (bn ? "ভিজ্যুয়াল স্পিকার চলছে" : "Visual speaker playing") : (bn ? "অডিও চলছে" : "Audio playing"))
+    : state === "paused"
+      ? (bn ? "পরীক্ষা বিরতিতে" : "Playback paused")
+      : state === "finished"
+        ? (bn ? "শোনার সুযোগ শেষ" : "Listening complete")
+        : state === "unsupported"
+          ? (lipReading ? (bn ? "ভিজ্যুয়াল মোড প্রস্তুত" : "Visual mode ready") : (bn ? "এই ব্রাউজারে ভয়েস চালু নেই" : "Voice is unavailable in this browser"))
+          : state === "error"
+            ? (bn ? "অডিও চালানো যায়নি" : "Audio could not play")
+            : (bn ? "শোনার জন্য প্রস্তুত" : "Ready to listen");
+  const captionStart = Math.max(0, activeWordIndex - 2);
+  const captionWords = words.slice(captionStart, Math.min(words.length, activeWordIndex + 4));
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-2xl border border-nova-500/25 bg-nova-500/[0.06]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink-faint/10 px-4 py-3">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink-muted">{bn ? "অ্যাক্সেসিবিলিটি" : "Accessibility"}</p>
+          <p className="mt-0.5 text-[11px] text-ink-dim">{bn ? "Gemma-এর তৈরি স্ক্রিপ্টের ভিজ্যুয়াল বক্তা" : "Visual speaker for the Gemma-generated script"}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setLipReading((value) => !value)}
+          aria-pressed={lipReading}
+          className={cn("rounded-full border px-3 py-1.5 text-[10.5px] font-semibold transition", lipReading ? "border-aurora-500/40 bg-aurora-500/15 text-aurora-500" : "border-ink-faint/20 text-ink-dim hover:border-polaris-500/40")}
+        >
+          {lipReading ? (bn ? "✓ লিপ-রিডিং চালু" : "✓ Lip-reading on") : (bn ? "লিপ-রিডিং সংস্করণ" : "Lip-reading version")}
+        </button>
+      </div>
+
+      {lipReading && (
+        <div className="grid gap-5 border-b border-ink-faint/10 bg-gradient-to-br from-polaris-500/[0.08] via-bg/70 to-aurora-500/[0.08] p-4 sm:p-5 2xl:grid-cols-[220px_minmax(0,1fr)] 2xl:items-center">
+          <div className="relative mx-auto h-[230px] w-[205px] overflow-hidden rounded-[28px] border border-polaris-500/20 bg-[#171111] shadow-card" aria-label={bn ? `অ্যানিমেটেড বক্তার মুখ, বর্তমান ভিসিম ${viseme}` : `Animated speaker face, current viseme ${viseme}`} data-viseme={viseme}>
+            <div className="absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_50%_100%,rgba(201,126,82,0.22),transparent_65%)]" />
+            <motion.svg viewBox="0 0 220 260" className="absolute inset-0 h-full w-full" animate={{ y: state === "playing" ? [0, -1.5, 0] : 0 }} transition={{ repeat: state === "playing" ? Infinity : 0, duration: 1.7 }}>
+              <defs>
+                <linearGradient id={`skin-${questionId}`} x1="0" y1="0" x2="0.8" y2="1">
+                  <stop offset="0" stopColor="#e0ad83" />
+                  <stop offset="1" stopColor="#a95f45" />
+                </linearGradient>
+                <linearGradient id={`shirt-${questionId}`} x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#75442e" />
+                  <stop offset="1" stopColor="#35211e" />
+                </linearGradient>
+              </defs>
+              <path d="M20 260 Q28 208 74 199 L146 199 Q192 208 200 260 Z" fill={`url(#shirt-${questionId})`} />
+              <path d="M83 181 L137 181 L143 211 Q110 228 77 211 Z" fill="#b87354" />
+              <ellipse cx="110" cy="108" rx="72" ry="91" fill={`url(#skin-${questionId})`} stroke="#d99b72" strokeWidth="2" />
+              <path d="M39 91 Q41 17 110 13 Q181 20 181 92 Q164 66 149 51 Q105 70 49 58 Z" fill="#2b1b1a" />
+              <path d="M47 67 Q29 111 47 151" fill="none" stroke="#2b1b1a" strokeWidth="10" strokeLinecap="round" />
+              <path d="M173 67 Q191 111 173 151" fill="none" stroke="#2b1b1a" strokeWidth="10" strokeLinecap="round" />
+              <ellipse cx="75" cy="104" rx="15" ry="9" fill="#fff8ed" />
+              <ellipse cx="145" cy="104" rx="15" ry="9" fill="#fff8ed" />
+              <motion.ellipse cx="76" cy="104" rx="5" ry={state === "playing" ? 5 : 4} fill="#241817" animate={{ cy: state === "playing" ? [104, 103, 104] : 104 }} transition={{ repeat: state === "playing" ? Infinity : 0, duration: 2.1 }} />
+              <motion.ellipse cx="144" cy="104" rx="5" ry={state === "playing" ? 5 : 4} fill="#241817" animate={{ cy: state === "playing" ? [104, 103, 104] : 104 }} transition={{ repeat: state === "playing" ? Infinity : 0, duration: 2.1 }} />
+              <path d="M59 88 Q75 79 91 88" fill="none" stroke="#422824" strokeWidth="5" strokeLinecap="round" />
+              <path d="M129 88 Q145 79 161 88" fill="none" stroke="#422824" strokeWidth="5" strokeLinecap="round" />
+              <path d="M109 105 Q101 130 111 138 Q120 137 123 134" fill="none" stroke="#8f503e" strokeWidth="3" strokeLinecap="round" />
+              <ellipse cx="75" cy="139" rx="18" ry="7" fill="#c97966" opacity="0.22" />
+              <ellipse cx="146" cy="139" rx="18" ry="7" fill="#c97966" opacity="0.22" />
+              <foreignObject x="50" y="139" width="120" height="72">
+                <div className="h-full w-full"><VisemeMouth viseme={viseme} /></div>
+              </foreignObject>
+            </motion.svg>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/35 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.18em] text-white/65 backdrop-blur">Gemma visual speech</div>
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2"><Pill tone="aurora">{bn ? "৮টি ভিসিম" : "8 visemes"}</Pill><Tag tone="ink">{bn ? "শব্দের সীমার সঙ্গে সিঙ্ক" : "word-boundary synced"}</Tag></div>
+            <h4 className="mt-3 font-serif text-[20px] font-bold text-ink">{bn ? "মুখের নড়াচড়া ও লাইভ ক্যাপশন" : "Mouth movement with live caption"}</h4>
+            <div className="mt-3 min-h-[76px] rounded-2xl border border-ink-faint/15 bg-bg/70 px-4 py-4 text-center shadow-soft" aria-live="polite">
+              {activeWordIndex < 0 ? (
+                <span className="text-[12px] text-ink-muted">{bn ? "প্লে করলে বক্তার ঠোঁট ও ক্যাপশন একসঙ্গে চলবে" : "Press play to synchronize the speaker's lips and caption"}</span>
+              ) : (
+                <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[17px] font-semibold">
+                  {captionWords.map((word, offset) => {
+                    const wordPosition = captionStart + offset;
+                    return <span key={`${wordPosition}-${word}`} className={cn("transition-all duration-100", wordPosition === activeWordIndex ? "scale-110 rounded-md bg-polaris-500 px-2 py-0.5 text-white shadow-sm" : "text-ink-muted opacity-55")}>{word}</span>;
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="mt-3 grid grid-cols-4 gap-1.5 text-center text-[8px] font-semibold uppercase tracking-wide text-ink-muted" aria-label={bn ? `বর্তমান মুখভঙ্গি ${viseme}` : `Current mouth shape ${viseme}`}>
+              {([
+                ["rest", bn ? "বিরতি" : "pause"],
+                ["closed", "M B P"],
+                ["open", "A E"],
+                ["wide", "I Y"],
+                ["round", "O U W"],
+                ["bite", "F V"],
+                ["dental", "TH T D"],
+                ["narrow", "R SH K"],
+              ] as Array<[Viseme, string]>).map(([shapeName, label]) => (
+                <span key={shapeName} className={cn("rounded-lg border border-ink-faint/15 px-1 py-1.5 transition", viseme === shapeName && "scale-105 border-polaris-500 bg-polaris-500/15 text-polaris-500 shadow-soft")}>{label}</span>
+              ))}
+            </div>
+            <p className="mt-3 text-[10.5px] leading-relaxed text-ink-muted">{bn ? "ঠোঁট, দাঁত, জিহ্বা ও চোয়ালের আটটি আলাদা ভঙ্গি ব্যবহার করা হয়। এটি শ্রবণ-প্রতিবন্ধী শিক্ষার্থীদের অনুশীলন সহায়তা, IELTS-এর আনুষ্ঠানিক সুবিধা নয়।" : "Eight distinct lip, teeth, tongue, and jaw positions are used. This is an inclusive practice aid, not an official IELTS accommodation."}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center gap-3 p-4">
+        <button
+          type="button"
+          onClick={state === "playing" ? pause : play}
+          disabled={state === "finished" || (state === "unsupported" && !lipReading)}
+          aria-label={state === "playing" ? "Pause audio" : lipReading ? "Start visual listening" : "Play audio"}
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-paper shadow-card transition hover:bg-polaris-700 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <span className="text-[15px]">{state === "playing" ? "Ⅱ" : "▶"}</span>
+        </button>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-[12px] font-semibold text-ink">{status}</span>
+            <span className="rounded-full border border-ink-faint/20 px-2 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider text-ink-muted">{bn ? "একবার" : "One play"}</span>
+          </div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink/10 dark:bg-white/10">
+            <div className="h-full rounded-full bg-nova-500 transition-[width] duration-300" style={{ width: `${progress}%` }} />
+          </div>
+          <p className="mt-2 text-[10.5px] text-ink-muted">{bn ? "স্ট্যান্ডার্ড মোডে ট্রান্সক্রিপ্ট লুকানো থাকে এবং রেকর্ডিং একবার চলে। প্রয়োজন হলে লিপ-রিডিং সংস্করণ চালু করুন।" : "Standard mode hides the transcript and plays once. Activate the lip-reading version when an accessibility aid is needed."}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function examTime(seconds: number) {
+  const safe = Math.max(0, seconds);
+  return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
+}
+
+function wordCount(value: string) {
+  return value.trim() ? value.trim().split(/\s+/).filter(Boolean).length : 0;
+}
+
 export function GemmaExamStudio({ lang }: { lang: Lang }) {
   const bn = lang === "bn";
   const [exam, setExam] = useState<"IELTS" | "SAT">("IELTS");
   const sections = exam === "IELTS" ? IELTS_SECTIONS : SAT_SECTIONS;
-  const [section, setSection] = useState<string>("Reading");
+  const [section, setSection] = useState<string>("Listening");
   const [difficulty, setDifficulty] = useState<(typeof DIFFICULTIES)[number]>("Medium");
   const [questions, setQuestions] = useState<PracticeQuestion[]>([]);
   const [index, setIndex] = useState(0);
@@ -47,24 +360,72 @@ export function GemmaExamStudio({ lang }: { lang: Lang }) {
   const [trace, setTrace] = useState<Trace | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [writingTask, setWritingTask] = useState<WritingTask | null>(null);
+  const [writingResponse, setWritingResponse] = useState("");
+  const [writingSeconds, setWritingSeconds] = useState(0);
+  const [writingRunning, setWritingRunning] = useState(false);
+  const [writingSubmitted, setWritingSubmitted] = useState(false);
+  const [writingFeedback, setWritingFeedback] = useState("");
 
   const question = questions[index];
   const score = questions.filter((item) => answers[item.id] === item.answer).length;
+  const listening = exam === "IELTS" && section === "Listening";
+  const writing = exam === "IELTS" && section === "Writing";
+  const responseWords = wordCount(writingResponse);
+
+  useEffect(() => {
+    if (!writingRunning || writingSubmitted) return;
+    const timer = window.setInterval(() => {
+      setWritingSeconds((value) => {
+        if (value <= 1) {
+          setWritingRunning(false);
+          return 0;
+        }
+        return value - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [writingRunning, writingSubmitted]);
+
+  const resetWriting = () => {
+    setWritingTask(null);
+    setWritingResponse("");
+    setWritingSeconds(0);
+    setWritingRunning(false);
+    setWritingSubmitted(false);
+    setWritingFeedback("");
+  };
 
   const changeExam = (next: "IELTS" | "SAT") => {
     setExam(next);
-    setSection(next === "IELTS" ? "Reading" : "Reading and Writing");
+    setSection(next === "IELTS" ? "Listening" : "Reading and Writing");
     setQuestions([]);
     setAnswers({});
     setFinished(false);
     setFeedback("");
     setTrace(null);
+    resetWriting();
   };
 
   const generate = async () => {
     setBusy(true);
     setError("");
     try {
+      if (writing) {
+        const result = await studioPost<{ task: WritingTask } & Trace>({
+          kind: "writing-generate",
+          difficulty,
+        }, lang);
+        setWritingTask(result.task);
+        setWritingResponse("");
+        setWritingSeconds(result.task.timeLimitMinutes * 60);
+        setWritingRunning(false);
+        setWritingSubmitted(false);
+        setWritingFeedback("");
+        setTrace(result);
+        setQuestions([]);
+        return;
+      }
       const result = await studioPost<{ questions: PracticeQuestion[] } & Trace>({
         kind: "exam-generate",
         exam,
@@ -79,7 +440,31 @@ export function GemmaExamStudio({ lang }: { lang: Lang }) {
       setFinished(false);
       setFeedback("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : (bn ? "প্রশ্ন তৈরি করা যায়নি।" : "Questions could not be generated."));
+      setError(cause instanceof Error ? cause.message : writing
+        ? (bn ? "রচনার বিষয় তৈরি করা যায়নি।" : "The writing task could not be generated.")
+        : (bn ? "প্রশ্ন তৈরি করা যায়নি।" : "Questions could not be generated."));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitWriting = async () => {
+    if (!writingTask || writingSubmitted || writingResponse.trim().length < 20) return;
+    setWritingRunning(false);
+    setWritingSubmitted(true);
+    setBusy(true);
+    setError("");
+    try {
+      const result = await studioPost<{ wordCount: number; feedback: string } & Trace>({
+        kind: "writing-grade",
+        task: writingTask,
+        response: writingResponse,
+        elapsedSeconds: (writingTask.timeLimitMinutes * 60) - writingSeconds,
+      }, lang);
+      setWritingFeedback(result.feedback);
+      setTrace(result);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : (bn ? "রচনাটি মূল্যায়ন করা যায়নি।" : "The response could not be evaluated."));
     } finally {
       setBusy(false);
     }
@@ -132,6 +517,9 @@ export function GemmaExamStudio({ lang }: { lang: Lang }) {
                   {bn ? "প্রশ্ন" : "Question"} {itemIndex + 1}: {item.skill}
                 </summary>
                 <p className="mt-3 pl-7 text-[11.5px] leading-relaxed text-ink-dim">{item.explanation}</p>
+                {item.section === "Listening" && item.passage && (
+                  <p className="mt-2 pl-7 text-[11px] leading-relaxed text-ink-muted"><span className="font-semibold text-ink-dim">{bn ? "ট্রান্সক্রিপ্ট:" : "Transcript:"}</span> {item.passage}</p>
+                )}
               </details>
             );
           })}
@@ -144,33 +532,116 @@ export function GemmaExamStudio({ lang }: { lang: Lang }) {
     <div className="grid gap-4 xl:grid-cols-[0.72fr_1.28fr]">
       <Card className="relative overflow-hidden border border-ink-faint/15 p-5">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-polaris-500/15 blur-3xl" />
-        <Pill tone="polaris"><Icon.spark size={11} /> {bn ? "চাহিদামতো প্রশ্ন" : "On-demand questions"}</Pill>
-        <h2 className="mt-3 font-serif text-[24px] font-bold text-ink">{bn ? "Gemma মক পরীক্ষার নির্মাতা" : "Gemma Mock Generator"}</h2>
-        <p className="mt-2 text-[12px] leading-relaxed text-ink-dim">{bn ? "পরীক্ষা, বিভাগ ও কঠিনতার মাত্রা বেছে নিন। প্রতিবার নতুন মৌলিক অনুশীলন সেট তৈরি হবে।" : "Choose an exam, section, and difficulty. Gemma creates a fresh original practice set every time."}</p>
+        <Pill tone="polaris"><Icon.spark size={11} /> {writing ? (bn ? "সময়বদ্ধ রচনা" : "Timed writing task") : (bn ? "চাহিদামতো প্রশ্ন" : "On-demand questions")}</Pill>
+        <h2 className="mt-3 font-serif text-[24px] font-bold text-ink">{writing ? (bn ? "Gemma IELTS রচনা পরীক্ষা" : "Gemma IELTS Writing Exam") : (bn ? "Gemma মক পরীক্ষার নির্মাতা" : "Gemma Mock Generator")}</h2>
+        <p className="mt-2 text-[12px] leading-relaxed text-ink-dim">{writing
+          ? (bn ? "Gemma একটি বাস্তবসম্মত IELTS Writing Task 2 বিষয় তৈরি করবে। ৪০ মিনিটের মধ্যে কমপক্ষে ২৫০ শব্দ লিখুন।" : "Gemma creates a realistic IELTS Writing Task 2 prompt. Write at least 250 words within 40 minutes.")
+          : (bn ? "পরীক্ষা, বিভাগ ও কঠিনতার মাত্রা বেছে নিন। প্রতিবার নতুন মৌলিক অনুশীলন সেট তৈরি হবে।" : "Choose an exam, section, and difficulty. Gemma creates a fresh original practice set every time.")}</p>
         <Segmented value={exam} options={["IELTS", "SAT"]} onChange={(value) => changeExam(value as "IELTS" | "SAT")} />
         <label className="mt-4 block text-[10px] font-bold uppercase tracking-wider text-ink-muted">
           {bn ? "বিভাগ" : "Section"}
-          <select value={section} onChange={(event) => setSection(event.target.value)} className="mt-1.5 h-10 w-full rounded-xl border border-ink-faint/20 bg-bg px-3 text-[12.5px] normal-case tracking-normal text-ink outline-none">
-            {sections.map((item) => <option key={item}>{item}</option>)}
+          <select value={section} onChange={(event) => { setSection(event.target.value); setQuestions([]); setAnswers({}); setFeedback(""); setFinished(false); setTrace(null); resetWriting(); }} className="mt-1.5 h-10 w-full rounded-xl border border-ink-faint/20 bg-bg px-3 text-[12.5px] normal-case tracking-normal text-ink outline-none">
+            {sections.map((item) => <option key={item} value={item}>{bn ? translateUiText(item) : item}</option>)}
           </select>
         </label>
         <label className="mt-3 block text-[10px] font-bold uppercase tracking-wider text-ink-muted">
           {bn ? "কঠিনতার মাত্রা" : "Difficulty"}
           <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as (typeof DIFFICULTIES)[number])} className="mt-1.5 h-10 w-full rounded-xl border border-ink-faint/20 bg-bg px-3 text-[12.5px] normal-case tracking-normal text-ink outline-none">
-            {DIFFICULTIES.map((item) => <option key={item}>{item}</option>)}
+            {DIFFICULTIES.map((item) => <option key={item} value={item}>{bn ? translateUiText(item) : item}</option>)}
           </select>
         </label>
         <Btn className="mt-5 w-full" variant="accent" size="lg" disabled={busy} onClick={() => void generate()} icon={<Icon.spark size={13} />}>
-          {busy ? (bn ? "Gemma প্রশ্ন তৈরি করছে…" : "Gemma is generating…") : (bn ? "নতুন মক তৈরি করুন" : "Generate fresh mock")}
+          {busy
+            ? (writing ? (bn ? "Gemma রচনার বিষয় তৈরি করছে…" : "Gemma is creating the writing task…") : (bn ? "Gemma প্রশ্ন তৈরি করছে…" : "Gemma is generating…"))
+            : (writing ? (bn ? "নতুন রচনার বিষয় তৈরি করুন" : "Generate writing task") : (bn ? "নতুন মক তৈরি করুন" : "Generate fresh mock"))}
         </Btn>
         {error && <p className="mt-3 text-[11px] text-signal-rose">{error}</p>}
         <div className="mt-5 rounded-xl border border-aurora-500/20 bg-aurora-500/[0.06] p-3 text-[11px] leading-relaxed text-ink-dim">
-          {bn ? "এগুলো মৌলিক অনানুষ্ঠানিক অনুশীলন প্রশ্ন। এগুলো IELTS ব্যান্ড বা SAT স্কোরের আনুষ্ঠানিক পূর্বাভাস নয়।" : "These are original unofficial practice questions. They do not predict an official IELTS band or SAT score."}
+          {writing
+            ? (bn ? "এটি একটি অনানুষ্ঠানিক IELTS অনুশীলন। Gemma-এর মূল্যায়ন কোনো আনুষ্ঠানিক IELTS ব্যান্ড স্কোর নয়।" : "This is unofficial IELTS practice. Gemma's evaluation is not an official IELTS band score.")
+            : (bn ? "এগুলো মৌলিক অনানুষ্ঠানিক অনুশীলন প্রশ্ন। এগুলো IELTS ব্যান্ড বা SAT স্কোরের আনুষ্ঠানিক পূর্বাভাস নয়।" : "These are original unofficial practice questions. They do not predict an official IELTS band or SAT score.")}
         </div>
       </Card>
 
       <Card className="min-h-[520px] overflow-hidden border border-ink-faint/15">
-        {!question ? (
+        {writing ? (
+          !writingTask ? (
+            <div className="grid min-h-[520px] place-items-center p-8 text-center">
+              <div>
+                <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-polaris-500/20 bg-polaris-500/[0.07] text-polaris-500"><Icon.spark size={25} /></div>
+                <h3 className="mt-4 font-serif text-[22px] font-bold text-ink">{bn ? "আপনার রচনার পরীক্ষা তৈরি করুন" : "Create your writing exam"}</h3>
+                <p className="mx-auto mt-2 max-w-sm text-[12px] leading-relaxed text-ink-dim">{bn ? "Gemma একটি মৌলিক IELTS Writing Task 2 বিষয় তৈরি করবে। প্রশ্ন তৈরি হলে টাইমার আলাদাভাবে শুরু করুন।" : "Gemma will create an original IELTS Writing Task 2 prompt. Start the timer separately when you are ready."}</p>
+              </div>
+            </div>
+          ) : writingSubmitted ? (
+            <div className="p-5 sm:p-7">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <Pill tone="aurora"><Icon.check size={11} /> {bn ? "জমা হয়েছে" : "Submitted"}</Pill>
+                  <h3 className="mt-3 font-serif text-[24px] font-bold text-ink">{bn ? "Gemma রচনা পর্যালোচনা" : "Gemma writing review"}</h3>
+                  <p className="mt-1 text-[11px] text-ink-muted">{responseWords} {bn ? "শব্দ" : "words"} · {writingTask.title}</p>
+                </div>
+                <ModelTrace trace={trace} />
+              </div>
+              <Card className="mt-5 border border-ink-faint/15 p-5">
+                {busy
+                  ? <p className="text-[12.5px] text-ink-dim">{bn ? "Gemma Task Response, সামঞ্জস্য, শব্দভাণ্ডার ও ব্যাকরণ বিশ্লেষণ করছে…" : "Gemma is evaluating task response, coherence, vocabulary, and grammar…"}</p>
+                  : <MarkdownMessage className="text-[12.5px]" text={writingFeedback || error} theme="light" />}
+              </Card>
+              <details className="mt-4 rounded-xl border border-ink-faint/15 bg-bg/40 p-4">
+                <summary className="cursor-pointer text-[12px] font-semibold text-ink">{bn ? "জমা দেওয়া রচনা দেখুন" : "View submitted response"}</summary>
+                <p className="mt-3 whitespace-pre-wrap text-[12px] leading-[1.75] text-ink-dim">{writingResponse}</p>
+              </details>
+              <Btn className="mt-5" variant="accent" disabled={busy} onClick={() => void generate()} icon={<Icon.spark size={13} />}>{bn ? "নতুন রচনা পরীক্ষা" : "New writing exam"}</Btn>
+            </div>
+          ) : (
+            <div className="p-5 sm:p-7">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2"><Pill tone="polaris">IELTS Writing Task 2</Pill><Tag tone="ink">{writingTask.difficulty}</Tag></div>
+                <div className={cn("rounded-xl border px-3 py-2 font-mono text-[18px] font-bold tabular-nums", writingSeconds <= 300 ? "border-signal-rose/35 bg-signal-rose/10 text-signal-rose" : "border-ink-faint/20 bg-bg text-ink")}>
+                  {examTime(writingSeconds)}
+                </div>
+              </div>
+              <Progress value={writingTask.timeLimitMinutes ? ((writingTask.timeLimitMinutes * 60 - writingSeconds) / (writingTask.timeLimitMinutes * 60)) * 100 : 0} tone={writingSeconds <= 300 ? "rose" : "polaris"} height="h-1 mt-4" />
+              <div className="mt-5 rounded-2xl border border-nova-500/20 bg-nova-500/[0.06] p-5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink-muted">{writingTask.title}</p>
+                <h3 className="mt-3 text-[17px] font-semibold leading-[1.6] text-ink">{writingTask.prompt}</h3>
+                <ul className="mt-4 space-y-2">
+                  {writingTask.requirements.map((requirement) => <li key={requirement} className="flex gap-2 text-[11.5px] leading-relaxed text-ink-dim"><span className="text-polaris-500">●</span><span>{requirement}</span></li>)}
+                </ul>
+              </div>
+
+              {!writingRunning && writingSeconds === writingTask.timeLimitMinutes * 60 && !writingResponse ? (
+                <div className="mt-6 rounded-2xl border border-dashed border-polaris-500/30 bg-polaris-500/[0.04] p-5 text-center">
+                  <p className="text-[12px] leading-relaxed text-ink-dim">{bn ? "প্রস্তুত হলে পরীক্ষা শুরু করুন। শুরু করার পর টাইমার বিরতি দেওয়া যাবে না।" : "Start when you are ready. The timer cannot be paused after the exam begins."}</p>
+                  <Btn className="mt-4" variant="accent" size="lg" onClick={() => setWritingRunning(true)}>{bn ? "৪০ মিনিটের পরীক্ষা শুরু করুন" : "Start 40-minute exam"}</Btn>
+                </div>
+              ) : (
+                <div className="mt-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <label htmlFor="ielts-writing-response" className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">{bn ? "আপনার উত্তর" : "Your response"}</label>
+                    <span className={cn("text-[11px] font-semibold", responseWords >= writingTask.minimumWords ? "text-aurora-500" : "text-ink-muted")}>{responseWords} / {writingTask.minimumWords} {bn ? "শব্দ" : "words"}</span>
+                  </div>
+                  <textarea
+                    id="ielts-writing-response"
+                    value={writingResponse}
+                    onChange={(event) => setWritingResponse(event.target.value)}
+                    disabled={!writingRunning || writingSeconds === 0}
+                    rows={13}
+                    spellCheck
+                    placeholder={bn ? "IELTS পরীক্ষার মতো ইংরেজিতে আপনার উত্তর লিখুন…" : "Write your response in English as you would in the IELTS exam…"}
+                    className="mt-2 w-full resize-y rounded-2xl border border-ink-faint/20 bg-bg px-4 py-4 text-[13px] leading-[1.8] text-ink outline-none transition focus:border-polaris-500 disabled:cursor-not-allowed disabled:opacity-70"
+                  />
+                  {writingSeconds === 0 && <p className="mt-2 text-[11px] font-semibold text-signal-rose">{bn ? "সময় শেষ। এখন আপনার লেখা জমা দিন।" : "Time is up. Submit the response for review."}</p>}
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-[10.5px] text-ink-muted">{bn ? "খসড়াটি এই পরীক্ষার ভেতরেই থাকে এবং জমা দেওয়ার পর সম্পাদনা করা যায় না।" : "The response stays in this exam and cannot be edited after submission."}</p>
+                    <Btn variant="accent" disabled={busy || responseWords < 20} onClick={() => void submitWriting()}>{bn ? "জমা দিয়ে Gemma মূল্যায়ন" : "Submit for Gemma review"} <Icon.check size={13} /></Btn>
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        ) : !question ? (
           <div className="grid min-h-[520px] place-items-center p-8 text-center">
             <div>
               <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-polaris-500/20 bg-polaris-500/[0.07] text-polaris-500"><Icon.spark size={25} /></div>
@@ -185,7 +656,9 @@ export function GemmaExamStudio({ lang }: { lang: Lang }) {
               <span className="font-mono text-[11px] text-ink-muted">{index + 1} / {questions.length}</span>
             </div>
             <Progress value={((index + 1) / questions.length) * 100} tone="polaris" height="h-1 mt-4" />
-            {question.passage && <div className="mt-6 rounded-2xl border border-nova-500/20 bg-nova-500/[0.06] p-4 text-[13px] leading-[1.75] text-ink-dim">{question.passage}</div>}
+            {question.passage && (listening
+              ? <ListeningExamPlayer key={question.id} script={question.passage} questionId={question.id} lang={lang} />
+              : <div className="mt-6 rounded-2xl border border-nova-500/20 bg-nova-500/[0.06] p-4 text-[13px] leading-[1.75] text-ink-dim">{question.passage}</div>)}
             <h3 className="mt-6 text-[17px] font-semibold leading-relaxed text-ink">{question.prompt}</h3>
             <div className="mt-4 grid gap-2.5">
               {question.options.map((option, optionIndex) => {

@@ -1,4 +1,5 @@
 import type { Lang } from "./strings";
+import { stabilizeGeneratedText } from "@/lib/gemma/output-quality";
 
 export function requestLanguage(request: Request): Lang {
   const explicit = request.headers.get("x-polaris-language");
@@ -61,8 +62,10 @@ function polishBengaliProse(value: string): string {
  * URLs, citations, or mathematical notation.
  */
 export function finalizeGeneratedLanguage(value: string, lang: Lang): string {
-  if (lang !== "bn" || !value) return value;
-  return value
+  if (!value) return value;
+  const stable = stabilizeGeneratedText(value);
+  if (lang !== "bn") return stable;
+  return stable
     .split(/(```[\s\S]*?```|`[^`\n]+`|\\\[[\s\S]*?\\\]|\\\([^)\n]*\\\))/g)
     .map((part, index) => (index % 2 === 0 ? polishBengaliProse(part) : part))
     .join("");

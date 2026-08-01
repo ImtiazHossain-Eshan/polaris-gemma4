@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/cn";
 import type { RoadmapDoc, RoadmapConfig, EducationLevel } from "@/lib/roadmap/types";
 import { overallProgress } from "@/lib/roadmap/types";
-import { roadmapStore, useRoadmapStrategist } from "@/lib/roadmap/store";
+import { clearDemoRoadmap, loadDemoRoadmap, roadmapStore, saveDemoRoadmap, useRoadmapStrategist } from "@/lib/roadmap/store";
 import { RoadmapSetup, type ProfileSeed, type SetupInitialProfile } from "./RoadmapSetup";
 import { RoadmapTree } from "./RoadmapTree";
 import { RoadmapNodeModal } from "./RoadmapNodeModal";
@@ -37,7 +37,10 @@ export function RoadmapPageClient({
 
   useEffect(() => {
     if (initialDoc) {
-      roadmapStore.setDoc(initialDoc);
+      const next = demo ? (loadDemoRoadmap() ?? initialDoc) : initialDoc;
+      setDoc(next);
+      if (demo) saveDemoRoadmap(next);
+      roadmapStore.setDoc(next);
       return;
     }
     let cancelled = false;
@@ -50,7 +53,7 @@ export function RoadmapPageClient({
       })
       .catch(() => { if (!cancelled) setDoc(null); });
     return () => { cancelled = true; };
-  }, [apiBase, initialDoc]);
+  }, [apiBase, demo, initialDoc]);
 
   // Adopt updates that arrive FROM the Strategist rail (Apply-to-roadmap):
   // the store is the shared channel; if its doc is newer, take it.
@@ -59,9 +62,10 @@ export function RoadmapPageClient({
     if (!shared.doc || doc === undefined) return;
     if (doc === null || shared.doc.updatedAt !== doc.updatedAt) {
       setDoc(shared.doc);
+      if (demo) saveDemoRoadmap(shared.doc);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shared.doc]);
+  }, [demo, shared.doc]);
 
   useEffect(() => {
     if (!toast) return;
@@ -86,18 +90,20 @@ export function RoadmapPageClient({
         return;
       }
       setDoc(d.doc as RoadmapDoc);
+      if (demo) saveDemoRoadmap(d.doc as RoadmapDoc);
       roadmapStore.setDoc(d.doc as RoadmapDoc);
       roadmapStore.emit("ROADMAP_GENERATED", `Generated roadmap "${(d.doc as RoadmapDoc).title}"`);
     } finally {
       setGenBusy(false);
     }
-  }, [apiBase]);
+  }, [apiBase, demo]);
 
   const onDocUpdated = useCallback((next: RoadmapDoc, adaptation?: string | null) => {
     setDoc(next);
+    if (demo) saveDemoRoadmap(next);
     roadmapStore.setDoc(next);
     if (adaptation) setToast(adaptation);
-  }, []);
+  }, [demo]);
 
   const openNode = useCallback((id: string | null) => {
     setOpenNodeId(id);
@@ -168,7 +174,9 @@ export function RoadmapPageClient({
               onClick={async () => {
                 if (!confirm("Start over with a new setup? Your current tree will be replaced.")) return;
                 if (!demo) await fetch(apiBase, { method: "DELETE" });
+                if (demo) clearDemoRoadmap();
                 setDoc(null);
+                roadmapStore.setDoc(null);
               }}
               className="rounded-full hairline bg-paper-card px-3.5 py-2 text-[12px] font-medium text-ink-dim hover:text-ink transition-colors"
               title="Re-run setup"
@@ -234,6 +242,7 @@ export function RoadmapPageClient({
             onClose={() => setAdaptOpen(false)}
             onDone={(next) => {
               setDoc(next);
+              if (demo) saveDemoRoadmap(next);
               roadmapStore.setDoc(next);
               roadmapStore.emit("ROADMAP_REBALANCED", "Strategist re-planned the upcoming phases");
               setAdaptOpen(false);
